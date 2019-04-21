@@ -1,4 +1,4 @@
-package com.buraksergenozge.coursediary;
+package com.buraksergenozge.coursediary.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 
