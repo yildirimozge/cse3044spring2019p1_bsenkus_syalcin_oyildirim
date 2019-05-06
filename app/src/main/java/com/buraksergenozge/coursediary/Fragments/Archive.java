@@ -1,4 +1,4 @@
-package com.buraksergenozge.coursediary.Activities;
+package com.buraksergenozge.coursediary.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
@@ -26,11 +27,8 @@ public class Archive extends Fragment {
     public Archive() { // Required empty public constructor
     }
 
-    public static Archive newInstance(String param1, String param2) {
-        Archive fragment = new Archive();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+    public static Archive newInstance() {
+        return new Archive();
     }
 
     @Override
@@ -59,29 +57,32 @@ public class Archive extends Fragment {
         super.onStart();
         semesterListView = getView().findViewById(R.id.semesterListView);
         emptyArchiveTextView = getView().findViewById(R.id.emptyArchiveTextView);
-       // semesters = ProjectDatabase.getDBInstance(getActivity()).semesterDAO().getAll();
-        setVisibilities();
+        boolean isEmpty = updateSemesterList();
+        setVisibilities(isEmpty); // If semester database is not empty
     }
 
-    private void setVisibilities() {
-        if(semesters == null || semesters.isEmpty()) {
+    public ListView getSemesterListView() {
+        return semesterListView;
+    }
+
+    private boolean setVisibilities(boolean isEmpty) {
+        if(isEmpty) {
             semesterListView.setVisibility(View.GONE);
             emptyArchiveTextView.setVisibility(View.VISIBLE);
+            return false;
         }
         else {
             emptyArchiveTextView.setVisibility(View.GONE);
             semesterListView.setVisibility(View.VISIBLE);
-            //ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), ProjectDatabase.getDBInstance(getActivity()).semesterDAO().getAll());
-            //semesterListView.setAdapter(adapter);
-
+            return true;
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    public boolean updateSemesterList() {
+        semesters = CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAll();
+        ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), semesters);
+        semesterListView.setAdapter(adapter);
+        return semesters.isEmpty();
     }
 
     @Override
@@ -91,7 +92,6 @@ public class Archive extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
     }
 }

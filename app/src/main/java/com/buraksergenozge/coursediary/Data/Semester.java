@@ -5,6 +5,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
+import android.support.v4.app.DialogFragment;
+
+import com.buraksergenozge.coursediary.Fragments.SemesterCreationDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Entity
-public class Semester {
+public class Semester extends AppContent {
     @PrimaryKey(autoGenerate = true)
     private long semesterID;
     @ColumnInfo
@@ -25,6 +28,8 @@ public class Semester {
     private List<Course> courses;
     @ColumnInfo
     private float gpa;
+    @Ignore
+    private static DialogFragment creationDialog = new SemesterCreationDialog();
 
     public Semester(String name, Calendar startDate, Calendar endDate) {
         this.name = name;
@@ -85,20 +90,24 @@ public class Semester {
         float point = 0;
         int i = 0;
         for (Course course: courses) {
-           // point = course.getCredit() * course.getGrade().getCoefficient();
+            point = course.getCredit() * course.getGrade().getCoefficient();
             i++;
         }
         gpa = point / i;
     }
 
+    public static DialogFragment getCreationDialog() {
+        return creationDialog;
+    }
+
     public void addCourse(Context context, Course course) {
         courses.add(course);
-      //  ProjectDatabase.getDBInstance(context).courseDAO().addCourse(course);
+        CourseDiaryDB.getDBInstance(context).courseDAO().addCourse(course);
     }
 
     public void deleteCourse(Context context, Course course) {
         courses.remove(course);
-        //ProjectDatabase.getDBInstance(context).courseDAO().deleteCourse(course);
+        CourseDiaryDB.getDBInstance(context).courseDAO().deleteCourse(course);
     }
 
     public long getNumberOfDaysRemaining() {

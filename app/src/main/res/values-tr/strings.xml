@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ders Günlüğü</string>
+    <string name="tab1_title">Akış</string>
+    <string name="tab2_title">Arşiv</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="title">Başlık</string>
+    <string name="deadline">Teslim</string>
+    <string name="close">Kapat</string>
+    <string name="new_assignment">Yeni Ödev</string>
+    <string name="create">Oluştur</string>
+    <string name="new_semester">Yeni Dönem</string>
+    <string name="name">İsim</string>
+    <string name="start_date">Başlangıç</string>
+    <string name="end_date">Bitiş</string>
+    <string name="add_new">Yeni Ekle</string>
+    <string name="semester">Dönem</string>
+    <string name="assignment">Ödev</string>
+    <string name="audio">Ses</string>
+    <string name="photo">Fotoğraf</string>
+    <string name="course">Ders</string>
+    <string name="empty_feed">Akışta yeni bir şey yok!</string>
+    <string name="empty_archive">Hiç dönem eklenmedi!</string>
+    <string name="note">Not</string>
+</resources>
