@@ -5,11 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
+
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -18,13 +20,15 @@ public class Course extends AppContent{
     @PrimaryKey(autoGenerate = true)
     private long courseID;
     @ColumnInfo
+    private String name;
+    @ColumnInfo
     private Semester semester;
     @ColumnInfo
     private int credit;
     @ColumnInfo
     private float attendanceObligation;
     @ColumnInfo
-    private Map<Integer, Calendar[]> schedule; // Integer represents the day of week, and array is for starting and end times of course
+    private List<Calendar[]> schedule; // List of start and end hours of course
     @ColumnInfo
     private GradingSystem gradingSystem;
     @ColumnInfo
@@ -34,12 +38,16 @@ public class Course extends AppContent{
     @Ignore
     private List<Assignment> assignments;
     @Ignore
-    private static DialogFragment creationDialog;
+    private static DialogFragment creationDialog = new CourseCreationDialog();
 
-    public Course(Semester semester, float attendanceObligation, Map<Integer, Calendar[]> schedule) {
+    public Course(String name, Semester semester, int credit, float attendanceObligation, List<Calendar[]> schedule) {
+        this.name = name;
         this.semester = semester;
+        this.credit = credit;
         this.attendanceObligation = attendanceObligation;
         this.schedule = schedule;
+        this.gradingSystem = null;
+        this.grade = null;
     }
 
     public long getCourseID() {
@@ -48,6 +56,14 @@ public class Course extends AppContent{
 
     public void setCourseID(long courseID) {
         this.courseID = courseID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Semester getSemester() {
@@ -74,11 +90,11 @@ public class Course extends AppContent{
         this.attendanceObligation = attendanceObligation;
     }
 
-    public Map<Integer, Calendar[]> getSchedule() {
+    public List<Calendar[]> getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(Map<Integer, Calendar[]> schedule) {
+    public void setSchedule(List<Calendar[]> schedule) {
         this.schedule = schedule;
     }
 
@@ -108,9 +124,11 @@ public class Course extends AppContent{
     }
 
     public void schedule() {
-        for (Map.Entry<Integer, Calendar[]> entry : schedule.entrySet()) {
+        for (Calendar[] entry : schedule) {
             CourseHour courseHour;
-            int dayDifference = entry.getKey() - semester.getStartDate().get(Calendar.DAY_OF_WEEK);
+            Calendar startTime = entry[0];
+            Calendar endTime = entry[1];
+            int dayDifference = startTime.get(Calendar.DAY_OF_WEEK) - semester.getStartDate().get(Calendar.DAY_OF_WEEK);
             Calendar currentDate = (Calendar)semester.getStartDate().clone();
             if(dayDifference < 0)
                 dayDifference += 7;
@@ -121,9 +139,8 @@ public class Course extends AppContent{
                 int year = currentDate.get(Calendar.YEAR);
                 int month = currentDate.get(Calendar.MONTH);
                 int day = currentDate.get(Calendar.DAY_OF_MONTH);
-                Calendar[] clocks = entry.getValue();
-                start.set(year, month, day, clocks[0].get(Calendar.HOUR_OF_DAY), clocks[0].get(Calendar.MINUTE));
-                start.set(year, month, day, clocks[1].get(Calendar.HOUR_OF_DAY), clocks[1].get(Calendar.MINUTE));
+                start.set(year, month, day, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE));
+                start.set(year, month, day, endTime.get(Calendar.HOUR_OF_DAY), endTime.get(Calendar.MINUTE));
                 courseHour = new CourseHour(this, start, end);
                 courseHours.add(courseHour);
                 currentDate.add(Calendar.DATE, 7);
@@ -147,11 +164,23 @@ public class Course extends AppContent{
         Course.creationDialog = creationDialog;
     }
 
-    public void addAssignment(Assignment assignment) {
+    public void addAssignment(Context context, Assignment assignment) {
         assignments.add(assignment);
+        CourseDiaryDB.getDBInstance(context).assignmentDAO().addAssignment(assignment);
     }
 
-    public void deleteAssignment(Assignment assignment) {
+    public void deleteAssignment(Context context, Assignment assignment) {
         assignments.remove(assignment);
+        CourseDiaryDB.getDBInstance(context).assignmentDAO().deleteAssignment(assignment);
+    }
+
+    public void integrateWithDB(Context context) {
+        courseHours = CourseDiaryDB.getDBInstance(context).courseDAO().getAllCourseHoursOfCourse(this);
+        assignments = CourseDiaryDB.getDBInstance(context).courseDAO().getAllAssignmentsOfCourse(this);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

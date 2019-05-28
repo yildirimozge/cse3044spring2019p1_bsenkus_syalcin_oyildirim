@@ -93,10 +93,12 @@
 
         <TextView
             android:id="@+id/deadlineTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/deadline"
+            android:textAlignment="textEnd"
             app:layout_constraintBaseline_toBaselineOf="@id/deadlineView"
+            app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
@@ -112,6 +114,48 @@
             app:layout_constraintStart_toEndOf="@+id/deadlineTextView"
             app:layout_constraintTop_toBottomOf="@+id/assignmentTitle_ET" />
 
+        <TextView
+            android:id="@+id/assignmentCreationSemesterSelection_TV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/semester"
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/assignmentCreationSemesterSelectionSpinner" />
+
+        <Spinner
+            android:id="@+id/assignmentCreationSemesterSelectionSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
+            app:layout_constraintTop_toBottomOf="@+id/deadlineView" />
+
+        <TextView
+            android:id="@+id/courseSelection_TV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/course"
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toBottomOf="@+id/courseSelectionSpinner"
+            app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/courseSelectionSpinner" />
+
+        <Spinner
+            android:id="@+id/courseSelectionSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/courseSelection_TV"
+            app:layout_constraintTop_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner" />
+
         <Button
             android:id="@+id/assignmentCreateButton"
             android:layout_width="wrap_content"
@@ -119,8 +163,9 @@
             android:layout_marginTop="35dp"
             android:text="@string/create"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deadlineView" />
+            app:layout_constraintTop_toBottomOf="@+id/courseSelectionSpinner" />
 
     </android.support.constraint.ConstraintLayout>
 

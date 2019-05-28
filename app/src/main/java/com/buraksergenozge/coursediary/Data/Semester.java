@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.support.v4.app.DialogFragment;
 
-import com.buraksergenozge.coursediary.Fragments.SemesterCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.SemesterCreationDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,6 +108,11 @@ public class Semester extends AppContent {
     public void deleteCourse(Context context, Course course) {
         courses.remove(course);
         CourseDiaryDB.getDBInstance(context).courseDAO().deleteCourse(course);
+    }
+
+    public List<Course> integrateWithDB(Context context) {
+        courses = CourseDiaryDB.getDBInstance(context).semesterDAO().getAllCoursesOfSemester(this);
+        return courses;
     }
 
     public long getNumberOfDaysRemaining() {

@@ -22,4 +22,16 @@
     <string name="empty_feed">Akışta yeni bir şey yok!</string>
     <string name="empty_archive">Hiç dönem eklenmedi!</string>
     <string name="note">Not</string>
+    <string name="semester_created">Dönem oluşturuldu.</string>
+    <string name="assignment_created">Ödev oluşturuldu.</string>
+    <string name="empty_semester">Hiç ders eklenmedi!</string>
+    <string name="delete">Sil</string>
+    <string name="info">Bilgi</string>
+    <string name="semester_deleted">Dönem silindi.</string>
+    <string name="empty_course">Gösterilecek ders saati yok!</string>
+    <string name="new_course">Yeni Ders</string>
+    <string name="course_created">Ders oluşturuldu.</string>
+    <string name="course_deleted">Ders silindi.</string>
+    <string name="attendance_obligation">Devam Zorunluluğu</string>
+    <string name="credit">Kredi</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.buraksergenozge.coursediary.Fragments;
+package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -69,7 +69,7 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
                 User.addSemester(getContext(), newSemester);
                 this.dismiss();
                 if(mListener != null)
-                    mListener.onSemesterAdded();
+                    mListener.onSemesterOperation(getString(R.string.semester_created));
                 break;
             case R.id.startDateView:
                 new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -99,6 +99,6 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
     }
 
     public interface OnFragmentInteractionListener {
-        void onSemesterAdded();
+        void onSemesterOperation(String message);
     }
 }

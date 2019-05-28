@@ -15,6 +15,10 @@ public class User {
         return semesters;
     }
 
+    public static void setSemesters(List<Semester> semesters) {
+        User.semesters = semesters;
+    }
+
     public static void addSemester(Context context, Semester semester) {
         semesters.add(semester);
         CourseDiaryDB.getDBInstance(context).semesterDAO().addSemester(semester);
@@ -22,6 +26,11 @@ public class User {
 
     public static void deleteSemester(Context context, Semester semester) {
         semesters.remove(semester);
-        CourseDiaryDB.getDBInstance(context).semesterDAO().addSemester(semester);
+        CourseDiaryDB.getDBInstance(context).semesterDAO().deleteSemester(semester);
+    }
+
+    public static List<Semester> integrateWithDB(Context context) { // Get latest data from DB
+        semesters = CourseDiaryDB.getDBInstance(context).semesterDAO().getAll();
+        return semesters;
     }
 }

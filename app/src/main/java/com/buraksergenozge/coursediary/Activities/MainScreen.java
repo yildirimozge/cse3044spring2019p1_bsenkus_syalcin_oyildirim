@@ -1,50 +1,55 @@
 package com.buraksergenozge.coursediary.Activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.buraksergenozge.coursediary.Data.Assignment;
-import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
-import com.buraksergenozge.coursediary.Data.Note;
-import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
+import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Fragments.Archive;
-import com.buraksergenozge.coursediary.Fragments.AssignmentCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
-import com.buraksergenozge.coursediary.Fragments.SemesterCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.AssignmentCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.SemesterCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.SemesterFragment;
 import com.buraksergenozge.coursediary.PagerAdapter;
 import com.buraksergenozge.coursediary.R;
 
 public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
-        DialogInterface.OnClickListener, Archive.OnFragmentInteractionListener, CourseFeed.OnFragmentInteractionListener,
-        SemesterCreationDialog.OnFragmentInteractionListener, AssignmentCreationDialog.OnFragmentInteractionListener {
+        DialogInterface.OnClickListener, SemesterCreationDialog.OnFragmentInteractionListener, CourseCreationDialog.OnFragmentInteractionListener,
+        AssignmentCreationDialog.OnFragmentInteractionListener, CourseFeed.OnFragmentInteractionListener {
     public View mainScreenLayout;
     private ViewPager viewPager;
     private String activeDialog;
-    private Fragment feedFragment, archiveFragment;
-    private FloatingActionButton addButton;
+    public static Archive mainArchiveFragment;
+    public static CourseFeed courseFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        integrateData(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         hasMenu = true;
         menuID = R.menu.menu_main;
 
         mainScreenLayout = findViewById(R.id.mainScreenLayout);
-        addButton = findViewById(R.id.addButton);
+        FloatingActionButton addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(this);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
@@ -53,16 +58,8 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(this);
-        feedFragment = pagerAdapter.getItem(0);
-        archiveFragment = pagerAdapter.getItem(1);
-    }
-
-    public Fragment getFeedFragment() {
-        return feedFragment;
-    }
-
-    public Fragment getArchiveFragment() {
-        return archiveFragment;
+        courseFeed = (CourseFeed) pagerAdapter.getItem(0);
+        mainArchiveFragment = (Archive) pagerAdapter.getItem(1);
     }
 
     @Override
@@ -118,6 +115,16 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
         }
     }
 
+    private void integrateData(Context context) {
+        User.integrateWithDB(context);
+        for (Semester semester: User.getSemesters()) {
+            semester.integrateWithDB(context);
+            for (Course course : semester.getCourses()) {
+                course.integrateWithDB(context);
+            }
+        }
+    }
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
@@ -132,12 +139,33 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     }
 
     @Override
-    public void onSemesterAdded() {
-        ((Archive)archiveFragment).updateSemesterList();
+    public void onSemesterOperation(String message) {
+        ArchiveFragment archiveFragment = (ArchiveFragment) getSupportFragmentManager().findFragmentByTag("archiveFragment");
+        if (archiveFragment != null) {
+            archiveFragment.updateSemesterList();
+            archiveFragment.setVisibilities(User.getSemesters().isEmpty());
+        }
+        showSnackbarMessage(getWindow().getDecorView(), message);
     }
 
     @Override
-    public void onAssignmentAdded() {
+    public void onCourseOperation(String message) {
+        SemesterFragment semesterFragment = (SemesterFragment) getSupportFragmentManager().findFragmentByTag("semesterFragment");
+        if (semesterFragment != null) {
+            semesterFragment.updateCourseList();
+            semesterFragment.setVisibilities(semesterFragment.semester.getCourses().isEmpty());
+        }
+        showSnackbarMessage(getWindow().getDecorView(), message);
+    }
 
+    @Override
+    public void onAssignmentOperation(String message) {
+        showSnackbarMessage(getWindow().getDecorView(), message);
+    }
+
+    public static void showSnackbarMessage(View view, String message) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        ((TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
+        snackbar.show();
     }
 }

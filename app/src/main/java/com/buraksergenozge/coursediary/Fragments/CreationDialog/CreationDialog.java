@@ -1,4 +1,4 @@
-package com.buraksergenozge.coursediary.Fragments;
+package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.Dialog;
 import android.os.Bundle;

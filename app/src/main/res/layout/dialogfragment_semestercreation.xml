@@ -5,7 +5,8 @@
     android:id="@+id/semesterCreationLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp">
+    android:padding="0dp"
+    android:theme="@style/AppTheme">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/semesterCreationAppBarLayout"
@@ -135,5 +136,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/endDateView" />
+
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

@@ -79,21 +79,29 @@ public class Converter {
 
     @TypeConverter
     public static GradingSystem longToGradingSystem(long gradingSystemID) {
+        if (gradingSystemID == -1)
+            return null;
         return CourseDiaryDB.getDBInstance(null).gradingSystemDAO().find(gradingSystemID);
     }
 
     @TypeConverter
     public static long gradingSystemToLong(GradingSystem gradingSystem) {
+        if (gradingSystem == null)
+            return -1;
         return gradingSystem.getGradingSystemID();
     }
 
     @TypeConverter
     public static Grade longToGrade(long gradeID) {
+        if (gradeID == -1)
+            return null;
         return CourseDiaryDB.getDBInstance(null).gradeDAO().find(gradeID);
     }
 
     @TypeConverter
     public static long gradeToLong(Grade grade) {
+        if (grade == null)
+            return -1;
         return grade.getGradeID();
     }
 
@@ -111,38 +119,38 @@ public class Converter {
         return calendarString;
     }
 
-    @TypeConverter
-    public static Map<Integer, Calendar[]> stringToSchedule(String scheduleString) {
-        Map<Integer, Calendar[]> schedule = new HashMap<>();
-        String[] days = scheduleString.split(";");
+    @TypeConverter // scheduleString=2.9.30,2.11.30;4.10.30,4.11.30 means Monday 9.30-11.30 and Wednesday 10.30-11.30
+    public static List<Calendar[]> stringToSchedule(String scheduleString) { // scheduleString = 2.9.30,2.11.30;4.10.30,4.11.30
+        List<Calendar[]> schedule = new ArrayList<>();
+        String[] days = scheduleString.split(";"); // days = {(2.9.30,2.11.30), (4.10.30,4.11.30)}
         String[] day;
         for (String currentDay: days) {
-            day = currentDay.split(",");
-            Calendar startHour = Calendar.getInstance();
-            String[] clockTokens = day[1].split("\\.");
-            startHour.set(Calendar.HOUR_OF_DAY, Integer.parseInt(clockTokens[0]));
-            startHour.set(Calendar.MINUTE, Integer.parseInt(clockTokens[1]));
-            Calendar endHour = Calendar.getInstance();
-            clockTokens = day[2].split("\\.");
-            endHour.set(Calendar.HOUR_OF_DAY, Integer.parseInt(clockTokens[0]));
-            endHour.set(Calendar.MINUTE, Integer.parseInt(clockTokens[1]));
-            Calendar[] clocks = {startHour, endHour};
-            schedule.put(Integer.parseInt(day[0]), clocks);
+            day = currentDay.split(","); // day = {(2.9.30), (2.11.30)}
+            Calendar startTime = Calendar.getInstance();
+            String[] clockTokens = day[0].split("\\."); // clockTokens = {2, 9, 300}
+            startTime.set(Calendar.DAY_OF_WEEK, Integer.parseInt(clockTokens[0])); // startTime.DAY_OF_WEEK = 2 (Monday)
+            startTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(clockTokens[1])); // startTime.HOUR_OF_DAY = 9
+            startTime.set(Calendar.MINUTE, Integer.parseInt(clockTokens[2])); // startTime.MINUTE = 30
+            Calendar endTime = Calendar.getInstance();
+            clockTokens = day[1].split("\\.");
+            endTime.set(Calendar.DAY_OF_WEEK, Integer.parseInt(clockTokens[0]));
+            endTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(clockTokens[1]));
+            endTime.set(Calendar.MINUTE, Integer.parseInt(clockTokens[2]));
+            Calendar[] clocks = {startTime, endTime};
+            schedule.add(clocks);
         }
         return schedule;
     }
 
     @TypeConverter
-    public static String scheduleToString(Map<Integer, Calendar[]> schedule) {
+    public static String scheduleToString(List<Calendar[]> schedule) {
         String scheduleString = "";
-        Iterator it = schedule.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            Calendar[] clocks = (Calendar[]) pair.getValue();
-            String startClockString = clocks[0].get(Calendar.HOUR_OF_DAY) + "." + clocks[0].get(Calendar.MINUTE);
-            String endClockString = clocks[1].get(Calendar.HOUR_OF_DAY) + "." + clocks[1].get(Calendar.MINUTE);
-            scheduleString += pair.getKey() + "," + startClockString + "," + endClockString + ";";
-            it.remove(); // avoids a ConcurrentModificationException
+        for (Calendar[] entry: schedule) {
+            Calendar startTime = entry[0];
+            Calendar endTime = entry[1];
+            String startClockString = startTime.get(Calendar.DAY_OF_WEEK) + "." + startTime.get(Calendar.HOUR_OF_DAY) + "." + startTime.get(Calendar.MINUTE);
+            String endClockString = endTime.get(Calendar.DAY_OF_WEEK) + "." + endTime.get(Calendar.HOUR_OF_DAY) + "." + endTime.get(Calendar.MINUTE);
+            scheduleString += startClockString + "," + endClockString + ";";
         }
         return scheduleString.substring(0,scheduleString.length()-1);
     }
