@@ -120,12 +120,14 @@ public class Semester extends AppContent {
         long end = endDate.getTimeInMillis();
         long start = now.getTimeInMillis();
         long difference = end - start;
+        if (difference < 86400000)
+            return 0;
         return TimeUnit.MILLISECONDS.toDays(Math.abs(difference));
     }
 
     public String toString() {
-        String start = startDate.get(Calendar.YEAR) + "." + startDate.get(Calendar.MONTH + 1) + "." + startDate.get(Calendar.DAY_OF_MONTH);
-        String end = endDate.get(Calendar.YEAR) + "." + endDate.get(Calendar.MONTH + 1) + "." + endDate.get(Calendar.DAY_OF_MONTH);
+        String start = startDate.get(Calendar.YEAR) + "." + (startDate.get(Calendar.MONTH) + 1) + "." + startDate.get(Calendar.DAY_OF_MONTH);
+        String end = endDate.get(Calendar.YEAR) + "." + (endDate.get(Calendar.MONTH) + 1) + "." + endDate.get(Calendar.DAY_OF_MONTH);
         return name + " | " + start + " - " + end;
     }
 }
