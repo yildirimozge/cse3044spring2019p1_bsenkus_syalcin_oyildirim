@@ -7,18 +7,22 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.R;
+import com.buraksergenozge.coursediary.RegexChecker;
 
 import java.util.Calendar;
 
 public class SemesterCreationDialog extends CreationDialog implements View.OnClickListener {
+    private String semesterName;
     private Button createButton;
     private EditText nameEditText, startDateEditText, endDateEditText;
     private ImageView closeIcon;
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
+    private Calendar startDate, endDate;
     private OnFragmentInteractionListener mListener;
 
     @Override
@@ -46,6 +50,8 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
         eYear = sYear;
         eMonth = sMonth;
         eDay = sDay;
+        startDate = Calendar.getInstance();
+        endDate = Calendar.getInstance();
         startDateEditText = getView().findViewById(R.id.startDateView);
         startDateEditText.setText(sDay + "-" + (sMonth + 1) + "-" + sYear);
         startDateEditText.setOnClickListener(this);
@@ -61,11 +67,9 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
                 this.dismiss();
                 break;
             case R.id.semesterCreateButton:
-                Calendar start = Calendar.getInstance();
-                Calendar end = Calendar.getInstance();
-                start.set(sYear, sMonth, sDay);
-                end.set(eYear, eMonth, eDay);
-                Semester newSemester = new Semester(nameEditText.getText().toString(), start, end);
+                if (!checkInputValidity())
+                    return;
+                Semester newSemester = new Semester(semesterName, startDate, endDate);
                 User.addSemester(getContext(), newSemester);
                 this.dismiss();
                 if(mListener != null)
@@ -90,6 +94,42 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
             default:
                 break;
         }
+    }
+
+    private boolean checkInputValidity() {
+        semesterName = nameEditText.getText().toString().trim();
+        if (semesterName.length() < 1) {
+            Toast.makeText(getContext(), getString(R.string.invalid_semester_name), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String dateString = startDateEditText.getText().toString().trim();
+        if (!RegexChecker.check(dateString, RegexChecker.datePattern)) {
+            Toast.makeText(getContext(), getString(R.string.invalid_start_date), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String[] tokens = dateString.split("-");
+        sDay = Integer.parseInt(tokens[0]);
+        sMonth = Integer.parseInt(tokens[1]);
+        sYear = Integer.parseInt(tokens[2]);
+        startDate.set(sYear, sMonth - 1, sDay);
+        dateString = endDateEditText.getText().toString().trim();
+        if (!RegexChecker.check(dateString, RegexChecker.datePattern)) {
+            Toast.makeText(getContext(), getString(R.string.invalid_end_date), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        tokens = dateString.split("-");
+        eDay = Integer.parseInt(tokens[0]);
+        eMonth = Integer.parseInt(tokens[1]);
+        eYear = Integer.parseInt(tokens[2]);
+        endDate.set(eYear, eMonth - 1, eDay);
+
+        Calendar now = Calendar.getInstance();
+        now.roll(Calendar.DATE, -1);
+        if (!endDate.after(now)) {
+            Toast.makeText(getContext(), getString(R.string.end_date_past), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
