@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.RegexChecker;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
@@ -26,14 +27,16 @@ import java.util.Calendar;
 import java.util.List;
 
 public class CourseCreationDialog extends CreationDialog implements View.OnClickListener, AdapterView.OnItemSelectedListener, SeekBar.OnSeekBarChangeListener {
-    private EditText nameET, creditET, startTime_ET, endTime_ET;
+    private String courseName;
+    private int credit, sHour, sMinute, eHour, eMinute;
+    private float attendanceObligation;
+    private EditText courseName_ET, creditET, startTime_ET, endTime_ET;
     private TextView attendanceObligationValueTV;
     private SeekBar attendanceObligationSeekBar;
-    private Spinner semesterSelectionSpinner, daySelectionSpinner;
+    private Spinner semesterSelectionSpinner, startDaySelectionSpinner, endDaySelectionSpinner;
     private Semester selectedSemester;
     private Calendar startTime, endTime;
-    private int sHour, sMinute, eHour, eMinute;
-    List<Calendar[]> schedule;
+    private List<Calendar[]> schedule;
     private OnFragmentInteractionListener mListener;
 
     @Override
@@ -53,7 +56,7 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
     @Override
     public void onResume() {
         super.onResume();
-        nameET = getView().findViewById(R.id.courseName_ET);
+        courseName_ET = getView().findViewById(R.id.courseName_ET);
         creditET = getView().findViewById(R.id.credit_ET);
         startTime_ET = getView().findViewById(R.id.startTime_ET);
         startTime_ET.setOnClickListener(this);
@@ -73,12 +76,15 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         startTime.set(Calendar.MINUTE, sMinute);
         endTime.set(Calendar.HOUR_OF_DAY, eHour);
         endTime.set(Calendar.MINUTE, eMinute);
-        daySelectionSpinner = getView().findViewById(R.id.daySelectionSpinner);
+        startDaySelectionSpinner = getView().findViewById(R.id.startDaySelectionSpinner);
+        endDaySelectionSpinner = getView().findViewById(R.id.endDaySelectionSpinner);
         String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, days); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        daySelectionSpinner.setAdapter(spinnerArrayAdapter);
-        daySelectionSpinner.setOnItemSelectedListener(this);
+        startDaySelectionSpinner.setAdapter(spinnerArrayAdapter);
+        startDaySelectionSpinner.setOnItemSelectedListener(this);
+        endDaySelectionSpinner.setAdapter(spinnerArrayAdapter);
+        endDaySelectionSpinner.setOnItemSelectedListener(this);
         attendanceObligationValueTV = getView().findViewById(R.id.attendanceObligationValue_TV);
         attendanceObligationSeekBar = getView().findViewById(R.id.attendanceObligationSeekBar);
         attendanceObligationSeekBar.setOnSeekBarChangeListener(this);
@@ -89,10 +95,13 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         semesterSelectionSpinner.setAdapter(adapter);
         ImageView closeIcon = getView().findViewById(R.id.courseCreationCloseIcon);
         closeIcon.setOnClickListener(this);
+        schedule = new ArrayList<>();
         Button addScheduleButton = getView().findViewById(R.id.addScheduleButton);
         addScheduleButton.setOnClickListener(this);
         Button createButton = getView().findViewById(R.id.courseCreateButton);
         createButton.setOnClickListener(this);
+        Button clearButton = getView().findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(this);
     }
 
     @Override
@@ -102,11 +111,9 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                 this.dismiss();
                 break;
             case R.id.courseCreateButton:
-                // TODO: Hata kontrolü yap.
-                String name = nameET.getText().toString();
-                int credit = Integer.parseInt(creditET.getText().toString());
-                float attendanceObligation = (float)(attendanceObligationSeekBar.getProgress() / 100.0);
-                Course newCourse = new Course(name, selectedSemester, credit, attendanceObligation, schedule);
+                if(!checkInputValidity())
+                    return;
+                Course newCourse = new Course(courseName, selectedSemester, credit, attendanceObligation, schedule);
                 selectedSemester.addCourse(getContext(), newCourse);
                 this.dismiss();
                 if(mListener != null)
@@ -129,10 +136,19 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                         }, eHour, eMinute, true).show();
                 break;
             case R.id.addScheduleButton:
-                schedule = new ArrayList<>();
+                String timeString = startTime_ET.getText().toString().trim();
+                if (!RegexChecker.check(timeString, RegexChecker.clockPattern)) {
+                    Toast.makeText(getContext(), getString(R.string.invalid_start_time), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String[] tokens = startTime_ET.getText().toString().split(":");
                 sHour = Integer.parseInt(tokens[0]);
                 sMinute = Integer.parseInt(tokens[1]);
+                timeString = endTime_ET.getText().toString().trim();
+                if (!RegexChecker.check(timeString, RegexChecker.clockPattern)) {
+                    Toast.makeText(getContext(), getString(R.string.invalid_end_time), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 tokens = endTime_ET.getText().toString().split(":");
                 eHour = Integer.parseInt(tokens[0]);
                 eMinute = Integer.parseInt(tokens[1]);
@@ -142,18 +158,47 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                 endTime.set(Calendar.MINUTE, eMinute);
                 Calendar[] times = {startTime, endTime};
                 schedule.add(times);
-
-                getView().findViewById(R.id.scheduleScrollView).setVisibility(View.VISIBLE);
-
-                LinearLayout ll = getView().findViewById(R.id.scheduleInsideLayout);
+                getView().findViewById(R.id.scheduleLayout).setVisibility(View.VISIBLE);
+                LinearLayout layout = getView().findViewById(R.id.scheduleInsideLayout);
                 TextView tv = new TextView(getContext());
-                tv.setText(daySelectionSpinner.getSelectedItem().toString()+ "\n" + sHour + ":" + sMinute + " - "+ eHour + ":" + eMinute);
+                tv.setText(startDaySelectionSpinner.getSelectedItem().toString()+ "\n" + sHour + ":" + sMinute + " - "+ eHour + ":" + eMinute);
                 tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                ll.addView(tv);
+                layout.addView(tv);
+                break;
+            case R.id.clearButton:
+                schedule.clear();
+                layout = getView().findViewById(R.id.scheduleInsideLayout);
+                if(layout.getChildCount() > 0)
+                    layout.removeAllViews();
+                getView().findViewById(R.id.scheduleLayout).setVisibility(View.GONE);
                 break;
             default:
                 break;
         }
+    }
+
+    private boolean checkInputValidity() {
+        courseName = courseName_ET.getText().toString().trim();
+        if (courseName.length() < 1) {
+            Toast.makeText(getContext(), getString(R.string.invalid_course_name), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        try {
+            credit = Integer.parseInt(creditET.getText().toString().trim());
+        }catch (NumberFormatException ex) {
+            Toast.makeText(getContext(), getString(R.string.invalid_credit), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        attendanceObligation = (float)(attendanceObligationSeekBar.getProgress() / 100.0);
+        if (selectedSemester == null) {
+            Toast.makeText(getContext(), getString(R.string.invalid_semester), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (schedule.isEmpty()) {
+            Toast.makeText(getContext(), getString(R.string.empty_schedule_warning), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -167,17 +212,23 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         if (adapterView == semesterSelectionSpinner) {
             selectedSemester = (Semester) adapterView.getSelectedItem();
         }
-        else if (adapterView == daySelectionSpinner) {
+        else if (adapterView == startDaySelectionSpinner) {
             int day;
             day = (adapterView.getSelectedItemPosition() + 2) % 7;
             startTime.set(Calendar.DAY_OF_WEEK, day);
+            endDaySelectionSpinner.setSelection(adapterView.getSelectedItemPosition());
+        }
+        else if (adapterView == endDaySelectionSpinner) {
+            int day;
+            day = (adapterView.getSelectedItemPosition() + 2) % 7;
             endTime.set(Calendar.DAY_OF_WEEK, day);
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        selectedSemester = null;
+        if (adapterView == semesterSelectionSpinner)
+            selectedSemester = null;
     }
 
     @Override
