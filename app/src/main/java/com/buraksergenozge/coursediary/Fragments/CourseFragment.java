@@ -57,7 +57,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     public void onStart() {
         super.onStart();
         TextView semesterTitleTV = getView().findViewById(R.id.courseTitle_TV);
-        semesterTitleTV.setText("Course: " + course.toString());
+        semesterTitleTV.setText(course.getName());
         courseHourListView = getView().findViewById(R.id.courseHourListView);
         courseHourListView.setOnItemClickListener(this);
         registerForContextMenu(courseHourListView);
