@@ -9,13 +9,30 @@
 
     <TextView
         android:id="@+id/semesterTitle_TV"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center_vertical"
-        android:text="Semester:"
+        android:text="@string/semester"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="10dp" />
+        app:layout_constraintEnd_toStartOf="@id/daysToEnd"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/daysToEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        app:layout_constraintBaseline_toBaselineOf="@id/semesterTitle_TV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/semesterTitle_TV" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintTop_toBottomOf="@id/semesterTitle_TV" />
 
     <TextView
         android:id="@+id/emptySemester_TV"
@@ -33,6 +50,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/semesterTitle_TV" />
+            app:layout_constraintTop_toBottomOf="@id/line" />
 
 </android.support.constraint.ConstraintLayout>
