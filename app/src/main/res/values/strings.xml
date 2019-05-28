@@ -33,4 +33,23 @@
     <string name="course_deleted">Course has been deleted.</string>
     <string name="attendance_obligation">Attendance Obligation</string>
     <string name="credit">Credit</string>
+    <string name="invalid_course_name">Course name is invalid!</string>
+    <string name="invalid_credit">Credit is invalid!</string>
+    <string name="invalid_semester">Invalid semester!</string>
+    <string name="empty_schedule_warning">You have to add at least one course time!</string>
+    <string name="invalid_start_time">Invalid start time!</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="invalid_end_time">Invalid end time!</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="invalid_semester_name">Invalid semester name!</string>
+    <string name="invalid_start_date">Invalid start date!</string>
+    <string name="invalid_end_date">Invalid end date!</string>
+    <string name="end_date_past">End date cannot be a past date!</string>
 </resources>
