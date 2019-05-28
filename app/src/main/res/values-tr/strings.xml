@@ -34,4 +34,23 @@
     <string name="course_deleted">Ders silindi.</string>
     <string name="attendance_obligation">Devam Zorunluluğu</string>
     <string name="credit">Kredi</string>
+    <string name="invalid_course_name">Ders adı geçersiz!</string>
+    <string name="invalid_credit">Geçersiz kredi!</string>
+    <string name="invalid_semester">Geçersiz dönem!</string>
+    <string name="empty_schedule_warning">En az bir ders saati eklemeniz gerekli!</string>
+    <string name="invalid_start_time">Geçersiz başlangıç saati!</string>
+    <string name="start">Başlangıç</string>
+    <string name="end">Bitiş</string>
+    <string name="invalid_end_time">Geçersiz bitiş saati!</string>
+    <string name="friday">Cuma</string>
+    <string name="monday">Pazartesi</string>
+    <string name="saturday">Cumartesi</string>
+    <string name="wednesday">Çarşamba</string>
+    <string name="tuesday">Salı</string>
+    <string name="thursday">Perşembe</string>
+    <string name="sunday">Pazar</string>
+    <string name="invalid_semester_name">Geçersiz dönem adı!</string>
+    <string name="invalid_end_date">Geçersiz bitiş tarihi!</string>
+    <string name="invalid_start_date">Geçersiz başlangıç tarihi!</string>
+    <string name="end_date_past">Bitiş tarihi geçmiş bir tarih olamaz!</string>
 </resources>
