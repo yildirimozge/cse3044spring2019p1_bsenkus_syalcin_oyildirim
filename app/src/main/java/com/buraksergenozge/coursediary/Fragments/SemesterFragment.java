@@ -60,7 +60,8 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
     public void onStart() {
         super.onStart();
         TextView semesterTitleTV = getView().findViewById(R.id.semesterTitle_TV);
-        semesterTitleTV.setText("Semester: " + semester.toString());
+        semesterTitleTV.setText(semester.getName());
+        ((TextView)getView().findViewById(R.id.daysToEnd)).setText(semester.getNumberOfDaysRemaining() + "");
         courseListView = getView().findViewById(R.id.courseListView);
         courseListView.setOnItemClickListener(this);
         registerForContextMenu(courseListView);
