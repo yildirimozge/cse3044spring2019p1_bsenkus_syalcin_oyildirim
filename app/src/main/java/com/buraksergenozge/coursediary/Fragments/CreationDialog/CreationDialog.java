@@ -3,14 +3,15 @@ package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.buraksergenozge.coursediary.R;
 
 public abstract class CreationDialog extends DialogFragment {
+    protected OnFragmentInteractionListener mListener;
     protected int layoutID;
 
     @Override
@@ -34,5 +35,9 @@ public abstract class CreationDialog extends DialogFragment {
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
         }
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onAppContentOperation(String listFragmentTag, String message);
     }
 }

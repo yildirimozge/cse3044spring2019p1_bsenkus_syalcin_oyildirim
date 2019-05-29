@@ -18,17 +18,17 @@ import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
+import com.buraksergenozge.coursediary.RegexChecker;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class AssignmentCreationDialog extends CreationDialog implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    private Button createButton;
-    private EditText nameEditText, deadlineEditText;
+    private String title;
+    private Calendar deadline;
+    private EditText assignmentTitle_ET, deadlineEditText;
     private Spinner semesterSelectionSpinner, courseSelectionSpinner;
-    private ImageView closeIcon;
     private int year, month, day;
-    private List<Course> courses;
     private Semester selectedSemester = null;
     private Course selectedCourse = null;
     private OnFragmentInteractionListener mListener;
@@ -52,10 +52,12 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
     @Override
     public void onResume() {
         super.onResume();
-        nameEditText = getView().findViewById(R.id.semesterNameEditText);
-        closeIcon = getView().findViewById(R.id.assignmentCreationCloseIcon);
+        title = "";
+        deadline = Calendar.getInstance();
+        assignmentTitle_ET = getView().findViewById(R.id.assignmentTitle_ET);
+        ImageView closeIcon = getView().findViewById(R.id.assignmentCreationCloseIcon);
         closeIcon.setOnClickListener(this);
-        createButton = getView().findViewById(R.id.assignmentCreateButton);
+        Button createButton = getView().findViewById(R.id.assignmentCreateButton);
         createButton.setOnClickListener(this);
         semesterSelectionSpinner = getView().findViewById(R.id.assignmentCreationSemesterSelectionSpinner);
         semesterSelectionSpinner.setOnItemSelectedListener(this);
@@ -80,10 +82,7 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
                 break;
             case R.id.assignmentCreateButton:
                 if(selectedCourse != null) {
-                    Calendar deadline = Calendar.getInstance();
-                    deadline.set(year, month, day);
-                    String title = nameEditText.getText().toString();
-                    if (!checkInputValidity(title, deadline)) {
+                    if (!checkInputValidity()) {
                         Toast.makeText(getContext(), "Invalid inputs!", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -91,13 +90,13 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
                     selectedCourse.addAssignment(getContext(), newAssignment);
                     this.dismiss();
                     if(mListener != null)
-                        mListener.onAssignmentOperation(getString(R.string.assignment_created));
+                        mListener.onAppContentOperation("courseFragment", getString(R.string.assignment_created));
                 }
                 else {
                     Toast.makeText(getContext(), "Please select a course.", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.deadlineTextView:
+            case R.id.deadlineView:
                 new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -110,13 +109,34 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
         }
     }
 
-    private boolean checkInputValidity(String title, Calendar deadline) {
-        if (title.length() == 0)
+    private boolean checkInputValidity() {
+        title = assignmentTitle_ET.getText().toString().trim();
+        if (title.length() == 0) {
+            Toast.makeText(getContext(), getString(R.string.invalid_assignment_title), Toast.LENGTH_SHORT).show();
             return false;
-        if (!deadline.after(Calendar.getInstance()))
+        }
+        String deadlineString = deadlineEditText.getText().toString().trim();
+        if (!RegexChecker.check(deadlineString, RegexChecker.datePattern)) {
+            Toast.makeText(getContext(), getString(R.string.invalid_deadline), Toast.LENGTH_SHORT).show();
             return false;
-        if (selectedCourse == null && selectedSemester == null)
+        }
+        String[] tokens = deadlineString.split("-");
+        day = Integer.parseInt(tokens[0]);
+        month = Integer.parseInt(tokens[1]);
+        year = Integer.parseInt(tokens[2]);
+        deadline.set(year, month - 1, day, 23, 59);
+        if (!deadline.after(Calendar.getInstance())) {
+            Toast.makeText(getContext(), getString(R.string.deadline_past), Toast.LENGTH_SHORT).show();
             return false;
+        }
+        if (selectedCourse == null) {
+            Toast.makeText(getContext(), getString(R.string.missing_course_selection), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (selectedSemester == null) {
+            Toast.makeText(getContext(), getString(R.string.missing_semester_selection), Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
@@ -130,9 +150,10 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         if (adapterView == semesterSelectionSpinner) {
             selectedSemester = (Semester) adapterView.getSelectedItem();
-            courses = CourseDiaryDB.getDBInstance(getContext()).semesterDAO().getAllCoursesOfSemester(selectedSemester);
+            List<Course> courses = selectedSemester.getCourses();
             ListAdapter<Course> adapter = new ListAdapter<>(getActivity(), courses);
             courseSelectionSpinner.setAdapter(adapter);
+            selectedCourse = null;
         }
         else if (adapterView == courseSelectionSpinner)
             selectedCourse = (Course)adapterView.getSelectedItem();
@@ -140,10 +161,10 @@ public class AssignmentCreationDialog extends CreationDialog implements View.OnC
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        selectedCourse = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onAssignmentOperation(String message);
+        if (adapterView == semesterSelectionSpinner) {
+            selectedSemester = null;
+        }
+        else if (adapterView == courseSelectionSpinner)
+            selectedCourse = null;
     }
 }

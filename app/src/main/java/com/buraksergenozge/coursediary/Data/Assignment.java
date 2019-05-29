@@ -71,4 +71,9 @@ public class Assignment extends AppContent {
     public static void setCreationDialog(DialogFragment creationDialog) {
         Assignment.creationDialog = creationDialog;
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

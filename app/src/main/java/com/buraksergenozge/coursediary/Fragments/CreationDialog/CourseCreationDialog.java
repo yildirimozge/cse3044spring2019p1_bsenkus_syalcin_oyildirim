@@ -117,7 +117,7 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                 selectedSemester.addCourse(getContext(), newCourse);
                 this.dismiss();
                 if(mListener != null)
-                    mListener.onCourseOperation(getString(R.string.course_created));
+                    mListener.onAppContentOperation("semesterFragment", getString(R.string.course_created));
                 break;
             case R.id.startTime_ET:
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -242,9 +242,5 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onCourseOperation(String message);
     }
 }

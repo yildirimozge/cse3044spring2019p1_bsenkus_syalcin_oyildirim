@@ -23,7 +23,7 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
     private ImageView closeIcon;
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
     private Calendar startDate, endDate;
-    private OnFragmentInteractionListener mListener;
+
 
     @Override
     public void onAttach(Context context) {
@@ -73,7 +73,7 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
                 User.addSemester(getContext(), newSemester);
                 this.dismiss();
                 if(mListener != null)
-                    mListener.onSemesterOperation(getString(R.string.semester_created));
+                    mListener.onAppContentOperation("archiveFragment", getString(R.string.semester_created));
                 break;
             case R.id.startDateView:
                 new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -121,11 +121,9 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
         eDay = Integer.parseInt(tokens[0]);
         eMonth = Integer.parseInt(tokens[1]);
         eYear = Integer.parseInt(tokens[2]);
-        endDate.set(eYear, eMonth - 1, eDay);
+        endDate.set(eYear, eMonth - 1, eDay, 23, 59);
 
-        Calendar now = Calendar.getInstance();
-        now.roll(Calendar.DATE, -1);
-        if (!endDate.after(now)) {
+        if (!endDate.after(Calendar.getInstance())) {
             Toast.makeText(getContext(), getString(R.string.end_date_past), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -136,9 +134,5 @@ public class SemesterCreationDialog extends CreationDialog implements View.OnCli
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onSemesterOperation(String message);
     }
 }

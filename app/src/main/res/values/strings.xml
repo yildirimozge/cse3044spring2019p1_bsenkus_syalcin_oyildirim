@@ -52,4 +52,19 @@
     <string name="invalid_start_date">Invalid start date!</string>
     <string name="invalid_end_date">Invalid end date!</string>
     <string name="end_date_past">End date cannot be a past date!</string>
+    <string-array name="app_contents">
+        <item>@string/semester</item>
+        <item>@string/course</item>
+        <item>@string/assignment</item>
+        <item>@string/note</item>
+        <item>@string/photo</item>
+        <item>@string/audio</item>
+    </string-array>
+    <string name="invalid_assignment_title">Invalid title!</string>
+    <string name="invalid_deadline">Invalid deadline!</string>
+    <string name="deadline_past">Deadline canot be a past date!</string>
+    <string name="invalid_course">Invalid course!</string>
+    <string name="missing_semester_selection">Please select a semester!</string>
+    <string name="missing_course_selection">Please select a course!</string>
+    <string name="assignment_deleted">Assignment deleted.</string>
 </resources>

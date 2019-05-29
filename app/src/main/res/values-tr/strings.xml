@@ -53,4 +53,11 @@
     <string name="invalid_end_date">Geçersiz bitiş tarihi!</string>
     <string name="invalid_start_date">Geçersiz başlangıç tarihi!</string>
     <string name="end_date_past">Bitiş tarihi geçmiş bir tarih olamaz!</string>
+    <string name="invalid_assignment_title">Geçersiz başlık!</string>
+    <string name="invalid_deadline">Geçersiz teslim tarihi!</string>
+    <string name="deadline_past">Teslim tarihi geçmiş bir tarih olamaz!</string>
+    <string name="invalid_course">Geçersiz ders!</string>
+    <string name="missing_course_selection">Lütfen bir ders seçin!</string>
+    <string name="missing_semester_selection">Lütfen bir dönem seçin!</string>
+    <string name="assignment_deleted">Ödev silindi.</string>
 </resources>

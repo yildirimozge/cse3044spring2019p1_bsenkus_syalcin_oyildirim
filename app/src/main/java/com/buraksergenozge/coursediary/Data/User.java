@@ -29,6 +29,24 @@ public class User {
         CourseDiaryDB.getDBInstance(context).semesterDAO().deleteSemester(semester);
     }
 
+    public static Semester findSemesterByID(long semesterID) {
+        for (Semester semester:semesters) {
+            if (semester.getSemesterID() == semesterID)
+                return semester;
+        }
+        return null;
+    }
+
+    public static Course findCourseByID(long courseID) {
+        for (Semester semester:semesters) {
+            for (Course course: semester.getCourses()) {
+                if (course.getCourseID() == courseID)
+                    return course;
+            }
+        }
+        return null;
+    }
+
     public static List<Semester> integrateWithDB(Context context) { // Get latest data from DB
         semesters = CourseDiaryDB.getDBInstance(context).semesterDAO().getAll();
         return semesters;

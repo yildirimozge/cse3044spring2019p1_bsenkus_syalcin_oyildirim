@@ -19,18 +19,14 @@ import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Fragments.Archive;
-import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
-import com.buraksergenozge.coursediary.Fragments.CreationDialog.AssignmentCreationDialog;
-import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
-import com.buraksergenozge.coursediary.Fragments.CreationDialog.SemesterCreationDialog;
-import com.buraksergenozge.coursediary.Fragments.SemesterFragment;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
+import com.buraksergenozge.coursediary.Fragments.ListFragment;
 import com.buraksergenozge.coursediary.PagerAdapter;
 import com.buraksergenozge.coursediary.R;
 
 public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
-        DialogInterface.OnClickListener, SemesterCreationDialog.OnFragmentInteractionListener, CourseCreationDialog.OnFragmentInteractionListener,
-        AssignmentCreationDialog.OnFragmentInteractionListener, CourseFeed.OnFragmentInteractionListener {
+        DialogInterface.OnClickListener, CreationDialog.OnFragmentInteractionListener, CourseFeed.OnFragmentInteractionListener {
     public View mainScreenLayout;
     private ViewPager viewPager;
     private String activeDialog;
@@ -78,9 +74,7 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
             case R.id.addButton:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.add_new);
-                String[] addOptions = {getString(R.string.semester), getString(R.string.course), getString(R.string.assignment),
-                        getString(R.string.note), getString(R.string.photo), getString(R.string.audio)};
-                builder.setItems(addOptions, this);
+                builder.setItems(getResources().getStringArray(R.array.app_contents), this);
                 activeDialog = "creationDialog";
                 builder.show();
                 break;
@@ -95,21 +89,27 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
             switch (i) {
                 case 0:
                     Semester.openCreationDialog(this, Semester.getCreationDialog());
+                    activeDialog = "";
                     break;
                 case 1:
                     Course.openCreationDialog(this, Course.getCreationDialog());
+                    activeDialog = "";
                     break;
                 case 2:
                     Assignment.openCreationDialog(this, Assignment.getCreationDialog());
+                    activeDialog = "";
                     break;
                 case 3:
                    // Note.openCreationDialog(this);
+                    activeDialog = "";
                     break;
                 case 4:
                     //Photo.openCreationDialog(this);
+                    activeDialog = "";
                     break;
                 case 5:
                    // Audio.openCreationDialog(this);
+                    activeDialog = "";
                     break;
             }
         }
@@ -139,27 +139,10 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     }
 
     @Override
-    public void onSemesterOperation(String message) {
-        ArchiveFragment archiveFragment = (ArchiveFragment) getSupportFragmentManager().findFragmentByTag("archiveFragment");
-        if (archiveFragment != null) {
-            archiveFragment.updateSemesterList();
-            archiveFragment.setVisibilities(User.getSemesters().isEmpty());
-        }
-        showSnackbarMessage(getWindow().getDecorView(), message);
-    }
-
-    @Override
-    public void onCourseOperation(String message) {
-        SemesterFragment semesterFragment = (SemesterFragment) getSupportFragmentManager().findFragmentByTag("semesterFragment");
-        if (semesterFragment != null) {
-            semesterFragment.updateCourseList();
-            semesterFragment.setVisibilities(semesterFragment.semester.getCourses().isEmpty());
-        }
-        showSnackbarMessage(getWindow().getDecorView(), message);
-    }
-
-    @Override
-    public void onAssignmentOperation(String message) {
+    public void onAppContentOperation(String listFragmentTag, String message) {
+        ListFragment fragment = (ListFragment) getSupportFragmentManager().findFragmentByTag(listFragmentTag);
+        if (fragment != null)
+            fragment.updateView();
         showSnackbarMessage(getWindow().getDecorView(), message);
     }
 
