@@ -1,14 +1,10 @@
 package com.buraksergenozge.coursediary.Fragments;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -22,13 +18,14 @@ import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-public class ArchiveFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ArchiveFragment extends ListFragment implements AdapterView.OnItemClickListener {
     private ListView semesterListView;
     private TextView emptyArchiveTV;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_archive, container, false);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        layoutID = R.layout.fragment_archive;
     }
 
     @Override
@@ -38,8 +35,7 @@ public class ArchiveFragment extends Fragment implements AdapterView.OnItemClick
         registerForContextMenu(semesterListView);
         semesterListView.setOnItemClickListener(this);
         emptyArchiveTV = getView().findViewById(R.id.emptyArchive_TV);
-        boolean isEmpty = updateSemesterList();
-        setVisibilities(isEmpty); // If semester database is not empty
+        updateView();
     }
 
     public void setVisibilities(boolean isSemesterListEmpty) {
@@ -55,7 +51,7 @@ public class ArchiveFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     public boolean updateSemesterList() {
-        User.setSemesters(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAll());
+        //User.setSemesters(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAll());
         ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), User.getSemesters());
         semesterListView.setAdapter(adapter);
         ((BaseAdapter)semesterListView.getAdapter()).notifyDataSetChanged();
@@ -83,22 +79,13 @@ public class ArchiveFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        try {
-            getActivity().getMenuInflater().inflate(R.menu.menu_floating, menu);
-        }catch (NullPointerException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Semester semester = (Semester)semesterListView.getAdapter().getItem(info.position);
         switch (item.getItemId()) {
             case R.id.floating_delete:
                 User.deleteSemester(getContext(), semester);
-                ((MainScreen)getActivity()).onSemesterOperation(getString(R.string.semester_deleted));
+                ((MainScreen)getActivity()).onAppContentOperation("archiveFragment", getString(R.string.semester_deleted));
                 return true;
             case R.id.floating_info:
                 Toast.makeText(getContext(), semester.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
@@ -106,5 +93,11 @@ public class ArchiveFragment extends Fragment implements AdapterView.OnItemClick
             default:
                 return false;
         }
+    }
+
+    @Override
+    public void updateView() {
+        boolean isEmpty = updateSemesterList();
+        setVisibilities(isEmpty);
     }
 }

@@ -1,5 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -21,10 +22,11 @@ import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
 import com.buraksergenozge.coursediary.Data.Semester;
+import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-public class SemesterFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class SemesterFragment extends ListFragment implements AdapterView.OnItemClickListener {
     private static final String ARG_PARAM1 = "semesterID";
     public Semester semester;
 
@@ -43,17 +45,18 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        layoutID = R.layout.fragment_semester;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             long semesterID = getArguments().getLong(ARG_PARAM1);
-            semester = CourseDiaryDB.getDBInstance(getContext()).semesterDAO().find(semesterID);
+            semester = User.findSemesterByID(semesterID);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_semester, container, false);
     }
 
     @Override
@@ -66,8 +69,7 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
         courseListView.setOnItemClickListener(this);
         registerForContextMenu(courseListView);
         emptySemesterTV = getView().findViewById(R.id.emptySemester_TV);
-        boolean isEmpty = updateCourseList();
-        setVisibilities(isEmpty);
+        updateView();
     }
 
     @Override
@@ -104,7 +106,7 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     public boolean updateCourseList() {
-        semester.setCourses(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAllCoursesOfSemester(semester));
+        //semester.setCourses(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAllCoursesOfSemester(semester));
         ListAdapter<Course> adapter = new ListAdapter<>(getActivity(), semester.getCourses());
         courseListView.setAdapter(adapter);
         ((BaseAdapter)courseListView.getAdapter()).notifyDataSetChanged();
@@ -112,12 +114,9 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        try {
-            getActivity().getMenuInflater().inflate(R.menu.menu_floating, menu);
-        }catch (NullPointerException ex) {
-            ex.printStackTrace();
-        }
+    public void updateView() {
+        boolean isEmpty = updateCourseList();
+        setVisibilities(isEmpty);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class SemesterFragment extends Fragment implements AdapterView.OnItemClic
         switch (item.getItemId()) {
             case R.id.floating_delete:
                 semester.deleteCourse(getContext(), course);
-                ((MainScreen)getActivity()).onCourseOperation(getString(R.string.course_deleted));
+                ((MainScreen)getActivity()).onAppContentOperation("semesterFragment", getString(R.string.course_deleted));
                 return true;
             case R.id.floating_info:
                 Toast.makeText(getContext(), course.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();

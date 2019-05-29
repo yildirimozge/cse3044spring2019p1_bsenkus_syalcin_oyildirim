@@ -1,5 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,14 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-public class CourseFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class CourseFragment extends ListFragment implements AdapterView.OnItemClickListener {
     private static final String ARG_PARAM1 = "courseID";
     public Course course;
     private ListView courseHourListView, assignmentListView;
@@ -40,17 +43,18 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        layoutID = R.layout.fragment_course;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             long courseID = getArguments().getLong(ARG_PARAM1);
-            course = CourseDiaryDB.getDBInstance(getContext()).courseDAO().find(courseID);
+            course = User.findCourseByID(courseID);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_course, container, false);
     }
 
     @Override
@@ -66,9 +70,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
         registerForContextMenu(assignmentListView);
 
         emptyCourseTV = getView().findViewById(R.id.emptyCourse_TV);
-        boolean isCourseHoursEmpty = updateCourseHourList();
-        boolean isAssignmentsEmpty = updateAssignmentList();
-        setVisibilities(isCourseHoursEmpty, isAssignmentsEmpty);
+        updateView();
     }
 
     public void setVisibilities(boolean isCourseHourListEmpty, boolean isAssignmentListEmpty) {
@@ -86,7 +88,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     public boolean updateCourseHourList() {
-        course.setCourseHours(CourseDiaryDB.getDBInstance(getActivity()).courseDAO().getAllCourseHoursOfCourse(course));
+        //course.setCourseHours(CourseDiaryDB.getDBInstance(getActivity()).courseDAO().getAllCourseHoursOfCourse(course));
         ListAdapter<CourseHour> adapter = new ListAdapter<>(getActivity(), course.getCourseHours());
         courseHourListView.setAdapter(adapter);
         ((BaseAdapter)courseHourListView.getAdapter()).notifyDataSetChanged();
@@ -94,7 +96,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     public boolean updateAssignmentList() {
-        course.setAssignments(CourseDiaryDB.getDBInstance(getActivity()).courseDAO().getAllAssignmentsOfCourse(course));
+        //course.setAssignments(CourseDiaryDB.getDBInstance(getActivity()).courseDAO().getAllAssignmentsOfCourse(course));
         ListAdapter<Assignment> adapter = new ListAdapter<>(getActivity(), course.getAssignments());
         assignmentListView.setAdapter(adapter);
         ((BaseAdapter)assignmentListView.getAdapter()).notifyDataSetChanged();
@@ -138,29 +140,37 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        try {
-            getActivity().getMenuInflater().inflate(R.menu.menu_floating, menu);
-        }catch (NullPointerException ex) {
-            ex.printStackTrace();
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Object object = contextMenuSelectedListView.getAdapter().getItem(info.position);
+        switch (item.getItemId()) {
+            case R.id.floating_delete:
+                if (contextMenuSelectedListView == assignmentListView) {
+                    course.deleteAssignment(getContext(), (Assignment) object);
+                    ((MainScreen)getActivity()).onAppContentOperation("courseFragment", getString(R.string.assignment_deleted));
+                }
+                else if (contextMenuSelectedListView == courseHourListView) {
+//                    course.deleteCourseHour(getContext(), courseHour);
+//                    ((MainScreen)getActivity()).onAppContentOperation(getString(R.string.semester_deleted));
+                }
+                return true;
+            case R.id.floating_info:
+                if (contextMenuSelectedListView == assignmentListView) {
+                    Toast.makeText(getContext(), object.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+                }
+                else if (contextMenuSelectedListView == courseHourListView) {
+                    Toast.makeText(getContext(), object.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            default:
+                return super.onContextItemSelected(item);
         }
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        View asd = info.targetView;
-        CourseHour courseHour = (CourseHour) courseHourListView.getAdapter().getItem(info.position);
-        switch (item.getItemId()) {
-            case R.id.floating_delete:/*
-                course.deleteCourseHour(getContext(), courseHour);
-                ((MainScreen)getActivity()).onSemesterOperation(getString(R.string.semester_deleted));*/
-                return true;
-            case R.id.floating_info:
-                Toast.makeText(getContext(), courseHour.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return false;
-        }
+    public void updateView() {
+        boolean isCourseHourListEmpty = updateCourseHourList();
+        boolean isAssignmentListEmpty = updateAssignmentList();
+        setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);
     }
 }
