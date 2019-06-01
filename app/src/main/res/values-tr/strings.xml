@@ -28,7 +28,7 @@
     <string name="delete">Sil</string>
     <string name="info">Bilgi</string>
     <string name="semester_deleted">Dönem silindi.</string>
-    <string name="empty_course">Gösterilecek ders saati yok!</string>
+    <string name="empty_course_hour_list">Gösterilecek ders saati yok!</string>
     <string name="new_course">Yeni Ders</string>
     <string name="course_created">Ders oluşturuldu.</string>
     <string name="course_deleted">Ders silindi.</string>
@@ -60,4 +60,15 @@
     <string name="missing_course_selection">Lütfen bir ders seçin!</string>
     <string name="missing_semester_selection">Lütfen bir dönem seçin!</string>
     <string name="assignment_deleted">Ödev silindi.</string>
+    <string name="edit">Düzenle</string>
+    <string name="days_left">"Kalan gün: "</string>
+    <string name="gpa">"YANO: "</string>
+    <string name="course_hour_deleted">Ders saati silindi.</string>
+    <string name="course_hour">Ders saati</string>
+    <string name="no">Hayır</string>
+    <string name="yes">Evet</string>
+    <string name="confirm_delete">Silme işlemini onaylıyor musunuz?</string>
+    <string name="course_hours">Ders Saatleri</string>
+    <string name="assignments">Ödevler</string>
+    <string name="empty_assignment_list">Hiç ödev yok!</string>
 </resources>
