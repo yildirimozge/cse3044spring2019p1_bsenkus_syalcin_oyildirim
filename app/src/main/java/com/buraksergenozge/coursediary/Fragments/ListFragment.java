@@ -1,7 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.ListView;
 
 import com.buraksergenozge.coursediary.R;
 
-public abstract class ListFragment extends Fragment {
+public abstract class ListFragment extends BaseFragment {
     protected int layoutID;
     protected ListView contextMenuSelectedListView;
 
