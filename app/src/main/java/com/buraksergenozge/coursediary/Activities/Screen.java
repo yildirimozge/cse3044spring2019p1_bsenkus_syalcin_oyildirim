@@ -9,6 +9,8 @@ public abstract class Screen extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        invalidateOptionsMenu();
         if(hasMenu) {
             getMenuInflater().inflate(menuID, menu);
             return true;
