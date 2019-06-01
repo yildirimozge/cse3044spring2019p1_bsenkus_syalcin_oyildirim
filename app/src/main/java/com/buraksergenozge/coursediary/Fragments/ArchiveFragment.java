@@ -1,8 +1,10 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
@@ -36,6 +37,7 @@ public class ArchiveFragment extends ListFragment implements AdapterView.OnItemC
         semesterListView.setOnItemClickListener(this);
         emptyArchiveTV = getView().findViewById(R.id.emptyArchive_TV);
         updateView();
+        contextObject = null;
     }
 
     public void setVisibilities(boolean isSemesterListEmpty) {
@@ -81,11 +83,14 @@ public class ArchiveFragment extends ListFragment implements AdapterView.OnItemC
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Semester semester = (Semester)semesterListView.getAdapter().getItem(info.position);
+        final Semester semester = (Semester)semesterListView.getAdapter().getItem(info.position);
         switch (item.getItemId()) {
             case R.id.floating_delete:
-                User.deleteSemester(getContext(), semester);
-                ((MainScreen)getActivity()).onAppContentOperation("archiveFragment", getString(R.string.semester_deleted));
+                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        User.deleteSemester(getContext(), semester);
+                        ((MainScreen)getActivity()).onAppContentOperation("archiveFragment", getString(R.string.semester_deleted));
+                    }}).setNegativeButton(R.string.no, null).show();
                 return true;
             case R.id.floating_info:
                 Toast.makeText(getContext(), semester.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
