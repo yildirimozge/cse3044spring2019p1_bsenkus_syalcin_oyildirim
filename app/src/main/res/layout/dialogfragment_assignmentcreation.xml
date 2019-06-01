@@ -67,107 +67,114 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/assignmentCreationFormLayout"
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/assignmentCreationAppBarLayout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/assignmentCreationAppBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/assignmentTitle_ET"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/title"
-            android:inputType="text"
-            android:textColor="@color/darkTextColor"
-            android:textColorHint="@color/darkDisabledTextColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/deadlineTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/deadline"
-            android:textAlignment="textEnd"
-            app:layout_constraintBaseline_toBaselineOf="@id/deadlineView"
-            app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
-            app:layout_constraintStart_toStartOf="parent" />
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/assignmentCreationFormLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp">
 
-        <EditText
-            android:id="@+id/deadlineView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="35dp"
-            android:ems="10"
-            android:inputType="date"
-            android:textColor="@color/darkTextColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/deadlineTextView"
-            app:layout_constraintTop_toBottomOf="@+id/assignmentTitle_ET" />
+                <EditText
+                    android:id="@+id/assignmentTitle_ET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/title"
+                    android:inputType="text"
+                    android:textColor="@color/darkTextColor"
+                    android:textColorHint="@color/darkDisabledTextColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/assignmentCreationSemesterSelection_TV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/semester"
-            android:textAlignment="textEnd"
-            app:layout_constraintBottom_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/assignmentCreationSemesterSelectionSpinner" />
+                <TextView
+                    android:id="@+id/deadlineTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deadline"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBaseline_toBaselineOf="@id/deadlineView"
+                    app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-        <Spinner
-            android:id="@+id/assignmentCreationSemesterSelectionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="35dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
-            app:layout_constraintTop_toBottomOf="@+id/deadlineView" />
+                <EditText
+                    android:id="@+id/deadlineView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:textColor="@color/darkTextColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/deadlineTextView"
+                    app:layout_constraintTop_toBottomOf="@+id/assignmentTitle_ET" />
 
-        <TextView
-            android:id="@+id/courseSelection_TV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/course"
-            android:textAlignment="textEnd"
-            app:layout_constraintBottom_toBottomOf="@+id/courseSelectionSpinner"
-            app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/courseSelectionSpinner" />
+                <TextView
+                    android:id="@+id/assignmentCreationSemesterSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/semester"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/assignmentCreationSemesterSelectionSpinner" />
 
-        <Spinner
-            android:id="@+id/courseSelectionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="35dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/courseSelection_TV"
-            app:layout_constraintTop_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner" />
+                <Spinner
+                    android:id="@+id/assignmentCreationSemesterSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/deadlineView" />
 
-        <Button
-            android:id="@+id/assignmentCreateButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="@string/create"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/courseSelectionSpinner" />
+                <TextView
+                    android:id="@+id/courseSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/course"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/courseSelectionSpinner"
+                    app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/courseSelectionSpinner" />
 
-    </android.support.constraint.ConstraintLayout>
+                <Spinner
+                    android:id="@+id/courseSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/courseSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/assignmentCreationSemesterSelectionSpinner" />
+
+                <Button
+                    android:id="@+id/assignmentCreateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:text="@string/create"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/courseSelectionSpinner" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
