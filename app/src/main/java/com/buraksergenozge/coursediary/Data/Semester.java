@@ -25,7 +25,7 @@ public class Semester extends AppContent {
     @ColumnInfo
     private Calendar endDate;
     @Ignore
-    private List<Course> courses;
+    private List<Course> courses = new ArrayList<>();
     @ColumnInfo
     private float gpa;
     @Ignore
@@ -35,7 +35,6 @@ public class Semester extends AppContent {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
-        courses = new ArrayList<>();
     }
 
     public long getSemesterID() {
@@ -88,26 +87,43 @@ public class Semester extends AppContent {
 
     public void updateGPA() {
         float point = 0;
-        int i = 0;
+        int totalCredit = 0;
         for (Course course: courses) {
             point = course.getCredit() * course.getGrade().getCoefficient();
-            i++;
+            totalCredit += course.getCredit();
         }
-        gpa = point / i;
+        if (totalCredit == 0)
+            gpa = 0.0f;
+        else
+            gpa = point / totalCredit;
     }
 
     public static DialogFragment getCreationDialog() {
         return creationDialog;
     }
 
+    public String getStartDateString() {
+        return startDate.get(Calendar.YEAR) + "." + (startDate.get(Calendar.MONTH) + 1) + "." + startDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String getEndDateString() {
+        return endDate.get(Calendar.YEAR) + "." + (endDate.get(Calendar.MONTH) + 1) + "." + endDate.get(Calendar.DAY_OF_MONTH);
+    }
+
     public void addCourse(Context context, Course course) {
+        long courseID = CourseDiaryDB.getDBInstance(context).courseDAO().addCourse(course);
+        course.setCourseID(courseID);
         courses.add(course);
-        CourseDiaryDB.getDBInstance(context).courseDAO().addCourse(course);
+
     }
 
     public void deleteCourse(Context context, Course course) {
         courses.remove(course);
         CourseDiaryDB.getDBInstance(context).courseDAO().deleteCourse(course);
+    }
+
+    public void update(Context context) {
+        CourseDiaryDB.getDBInstance(context).semesterDAO().update(this);
     }
 
     public List<Course> integrateWithDB(Context context) {
@@ -126,8 +142,6 @@ public class Semester extends AppContent {
     }
 
     public String toString() {
-        String start = startDate.get(Calendar.YEAR) + "." + (startDate.get(Calendar.MONTH) + 1) + "." + startDate.get(Calendar.DAY_OF_MONTH);
-        String end = endDate.get(Calendar.YEAR) + "." + (endDate.get(Calendar.MONTH) + 1) + "." + endDate.get(Calendar.DAY_OF_MONTH);
-        return name + " | " + start + " - " + end;
+        return name;
     }
 }
