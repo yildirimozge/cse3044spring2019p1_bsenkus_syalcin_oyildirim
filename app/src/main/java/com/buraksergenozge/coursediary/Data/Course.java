@@ -10,7 +10,10 @@ import android.support.v4.app.DialogFragment;
 
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
@@ -34,9 +37,9 @@ public class Course extends AppContent{
     @ColumnInfo
     private Grade grade;
     @Ignore
-    private List<CourseHour> courseHours;
+    private List<CourseHour> courseHours = new ArrayList<>();
     @Ignore
-    private List<Assignment> assignments;
+    private List<Assignment> assignments = new ArrayList<>();;
     @Ignore
     private static DialogFragment creationDialog = new CourseCreationDialog();
 
@@ -123,27 +126,34 @@ public class Course extends AppContent{
         this.courseHours = courseHours;
     }
 
-    public void schedule() {
+    public void schedule(Context context) {
         for (Calendar[] entry : schedule) {
             CourseHour courseHour;
             Calendar startTime = entry[0];
             Calendar endTime = entry[1];
             int dayDifference = startTime.get(Calendar.DAY_OF_WEEK) - semester.getStartDate().get(Calendar.DAY_OF_WEEK);
-            Calendar currentDate = (Calendar)semester.getStartDate().clone();
             if(dayDifference < 0)
                 dayDifference += 7;
-            currentDate.add(Calendar.DATE, dayDifference);
-            while(semester.getEndDate().after(currentDate)) {
-                Calendar start = (Calendar) Calendar.getInstance().clone();
-                Calendar end = (Calendar) Calendar.getInstance().clone();
-                int year = currentDate.get(Calendar.YEAR);
-                int month = currentDate.get(Calendar.MONTH);
-                int day = currentDate.get(Calendar.DAY_OF_MONTH);
-                start.set(year, month, day, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE));
-                start.set(year, month, day, endTime.get(Calendar.HOUR_OF_DAY), endTime.get(Calendar.MINUTE));
+            Calendar currentStart = (Calendar)semester.getStartDate().clone();
+            currentStart.add(Calendar.DATE, dayDifference);
+            currentStart.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+            currentStart.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+
+            Calendar currentEnd = (Calendar) currentStart.clone();
+            currentEnd.set(Calendar.HOUR_OF_DAY, endTime.get(Calendar.HOUR_OF_DAY));
+            currentEnd.set(Calendar.MINUTE, endTime.get(Calendar.MINUTE));
+            int dayDifferenceOfStartAndEnd = startTime.get(Calendar.DAY_OF_WEEK) - endTime.get(Calendar.DAY_OF_WEEK);
+            if(dayDifferenceOfStartAndEnd < 0)
+                dayDifferenceOfStartAndEnd += 7;
+            currentEnd.add(Calendar.DATE, dayDifferenceOfStartAndEnd);
+
+            while(semester.getEndDate().after(currentStart)) {
+                Calendar start = (Calendar) currentStart.clone();
+                Calendar end = (Calendar) currentEnd.clone();
                 courseHour = new CourseHour(this, start, end);
-                courseHours.add(courseHour);
-                currentDate.add(Calendar.DATE, 7);
+                addCourseHour(context, courseHour);
+                currentStart.add(Calendar.DATE, 7);
+                currentEnd.add(Calendar.DATE, 7);
             }
         }
     }
@@ -164,9 +174,23 @@ public class Course extends AppContent{
         Course.creationDialog = creationDialog;
     }
 
+    public void addCourseHour(Context context, CourseHour courseHour) {
+        long courseHourID = CourseDiaryDB.getDBInstance(context).courseHourDAO().addCourseHour(courseHour);
+        courseHour.setCourseHourID(courseHourID);
+        courseHours.add(courseHour);
+
+    }
+
+    public void deleteCourseHour(Context context, CourseHour courseHour) {
+        courseHours.remove(courseHour);
+        CourseDiaryDB.getDBInstance(context).courseHourDAO().deleteCourseHour(courseHour);
+    }
+
     public void addAssignment(Context context, Assignment assignment) {
+        long assignmentID = CourseDiaryDB.getDBInstance(context).assignmentDAO().addAssignment(assignment);
+        assignment.setAssignmentID(assignmentID);
         assignments.add(assignment);
-        CourseDiaryDB.getDBInstance(context).assignmentDAO().addAssignment(assignment);
+
     }
 
     public void deleteAssignment(Context context, Assignment assignment) {
