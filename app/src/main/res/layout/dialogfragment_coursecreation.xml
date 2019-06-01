@@ -61,205 +61,213 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/courseCreationFormLayout"
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/courseCreationAppBarLayout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/courseCreationAppBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/courseName_ET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/name"
-            android:inputType="text"
-            android:textColor="@color/darkTextColor"
-            android:textColorHint="@color/darkDisabledTextColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/credit_TV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/credit"
-            android:textAlignment="textStart"
-            app:layout_constraintBottom_toBottomOf="@id/credit_ET"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/credit_ET" />
-
-        <EditText
-            android:id="@+id/credit_ET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="35dp"
-            android:ems="10"
-            android:inputType="number"
-            android:textColor="@color/darkTextColor"
-            android:textColorHint="@color/darkDisabledTextColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/credit_TV"
-            app:layout_constraintTop_toBottomOf="@id/courseName_ET" />
-
-        <TextView
-            android:id="@+id/attendanceObligation_TV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/attendance_obligation"
-            android:textAlignment="textStart"
-            app:layout_constraintBottom_toBottomOf="@id/attendanceObligationSeekBar"
-            app:layout_constraintEnd_toStartOf="@id/attendanceObligationValue_TV"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/attendanceObligationSeekBar" />
-
-        <TextView
-            android:id="@+id/attendanceObligationValue_TV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="70%"
-            android:textAlignment="textEnd"
-            app:layout_constraintBottom_toBottomOf="@id/attendanceObligationSeekBar"
-            app:layout_constraintEnd_toStartOf="@id/attendanceObligationSeekBar"
-            app:layout_constraintStart_toEndOf="@id/attendanceObligation_TV"
-            app:layout_constraintTop_toTopOf="@id/attendanceObligationSeekBar" />
-
-        <SeekBar
-            android:id="@+id/attendanceObligationSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:max="100"
-            android:progress="70"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/attendanceObligationValue_TV"
-            app:layout_constraintTop_toBottomOf="@+id/credit_ET" />
-
-        <TextView
-            android:id="@+id/courseCreationSemesterSelection_TV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/semester"
-            android:textAlignment="textStart"
-            app:layout_constraintBottom_toBottomOf="@+id/courseCreationSemesterSelectionSpinner"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/courseCreationSemesterSelectionSpinner" />
-
-        <Spinner
-            android:id="@+id/courseCreationSemesterSelectionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="35dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/courseCreationSemesterSelection_TV"
-            app:layout_constraintTop_toBottomOf="@+id/attendanceObligationSeekBar" />
-
-        <Spinner
-            android:id="@+id/startDaySelectionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/startTime_ET"
-            app:layout_constraintEnd_toStartOf="@id/startTime_ET"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
-
-        <Spinner
-            android:id="@+id/endDaySelectionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
-            app:layout_constraintEnd_toStartOf="@+id/endTime_ET"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/endTime_ET" />
-
-        <EditText
-            android:id="@+id/startTime_ET"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:hint="Start"
-            android:inputType="time"
-            app:layout_constraintEnd_toStartOf="@+id/addScheduleButton"
-            app:layout_constraintStart_toEndOf="@id/startDaySelectionSpinner"
-            app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner" />
-
-        <EditText
-            android:id="@+id/endTime_ET"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:hint="End"
-            android:inputType="time"
-            app:layout_constraintEnd_toStartOf="@id/addScheduleButton"
-            app:layout_constraintStart_toEndOf="@id/endDaySelectionSpinner"
-            app:layout_constraintTop_toBottomOf="@+id/startTime_ET" />
-
-        <Button
-            android:id="@+id/addScheduleButton"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:text="Add"
-            app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/scheduleLayout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/endTime_ET"
-            tools:layout_editor_absoluteX="20dp">
-
-            <HorizontalScrollView
-                android:id="@+id/scheduleScrollView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toStartOf="@id/clearButton"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <LinearLayout
-                    android:id="@+id/scheduleInsideLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal"></LinearLayout>
-            </HorizontalScrollView>
-
-            <Button
-                android:id="@+id/clearButton"
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:text="Clear"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-        <Button
-            android:id="@+id/courseCreateButton"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="@string/create"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scheduleLayout" />
+            android:orientation="vertical" >
 
-    </android.support.constraint.ConstraintLayout>
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/courseCreationFormLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp">
+
+                <EditText
+                    android:id="@+id/courseName_ET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/name"
+                    android:inputType="text"
+                    android:textColor="@color/darkTextColor"
+                    android:textColorHint="@color/darkDisabledTextColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/credit_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credit"
+                    android:textAlignment="textStart"
+                    app:layout_constraintBottom_toBottomOf="@id/credit_ET"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/credit_ET" />
+
+                <EditText
+                    android:id="@+id/credit_ET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:textColor="@color/darkTextColor"
+                    android:textColorHint="@color/darkDisabledTextColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/credit_TV"
+                    app:layout_constraintTop_toBottomOf="@id/courseName_ET" />
+
+                <TextView
+                    android:id="@+id/attendanceObligation_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/attendance_obligation"
+                    android:textAlignment="textStart"
+                    app:layout_constraintBottom_toBottomOf="@id/attendanceObligationSeekBar"
+                    app:layout_constraintEnd_toStartOf="@id/attendanceObligationValue_TV"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/attendanceObligationSeekBar" />
+
+                <TextView
+                    android:id="@+id/attendanceObligationValue_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="70%"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@id/attendanceObligationSeekBar"
+                    app:layout_constraintEnd_toStartOf="@id/attendanceObligationSeekBar"
+                    app:layout_constraintStart_toEndOf="@id/attendanceObligation_TV"
+                    app:layout_constraintTop_toTopOf="@id/attendanceObligationSeekBar" />
+
+                <SeekBar
+                    android:id="@+id/attendanceObligationSeekBar"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:max="100"
+                    android:progress="70"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/attendanceObligationValue_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/credit_ET" />
+
+                <TextView
+                    android:id="@+id/courseCreationSemesterSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/semester"
+                    android:textAlignment="textStart"
+                    app:layout_constraintBottom_toBottomOf="@+id/courseCreationSemesterSelectionSpinner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/courseCreationSemesterSelectionSpinner" />
+
+                <Spinner
+                    android:id="@+id/courseCreationSemesterSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/courseCreationSemesterSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/attendanceObligationSeekBar" />
+
+                <Spinner
+                    android:id="@+id/startDaySelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/startTime_ET"
+                    app:layout_constraintEnd_toStartOf="@id/startTime_ET"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
+
+                <Spinner
+                    android:id="@+id/endDaySelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
+                    app:layout_constraintEnd_toStartOf="@+id/endTime_ET"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/endTime_ET" />
+
+                <EditText
+                    android:id="@+id/startTime_ET"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:layout_marginEnd="8dp"
+                    android:ems="10"
+                    android:hint="Start"
+                    android:inputType="time"
+                    app:layout_constraintEnd_toStartOf="@+id/addScheduleButton"
+                    app:layout_constraintStart_toEndOf="@id/startDaySelectionSpinner"
+                    app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner" />
+
+                <EditText
+                    android:id="@+id/endTime_ET"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="8dp"
+                    android:ems="10"
+                    android:hint="End"
+                    android:inputType="time"
+                    app:layout_constraintEnd_toStartOf="@id/addScheduleButton"
+                    app:layout_constraintStart_toEndOf="@id/endDaySelectionSpinner"
+                    app:layout_constraintTop_toBottomOf="@+id/startTime_ET" />
+
+                <Button
+                    android:id="@+id/addScheduleButton"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/scheduleLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/endTime_ET"
+                    tools:layout_editor_absoluteX="20dp">
+
+                    <HorizontalScrollView
+                        android:id="@+id/scheduleScrollView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toStartOf="@id/clearButton"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <LinearLayout
+                            android:id="@+id/scheduleInsideLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:orientation="horizontal"></LinearLayout>
+                    </HorizontalScrollView>
+
+                    <Button
+                        android:id="@+id/clearButton"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:text="Clear"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/courseCreateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:text="@string/create"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/scheduleLayout" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>
