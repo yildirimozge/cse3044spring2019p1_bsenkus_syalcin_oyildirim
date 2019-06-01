@@ -27,7 +27,7 @@
     <string name="delete">Delete</string>
     <string name="info">Info</string>
     <string name="semester_deleted">Semester has been deleted.</string>
-    <string name="empty_course">No course hours created!</string>
+    <string name="empty_course_hour_list">No course hours created!</string>
     <string name="new_course">New Course</string>
     <string name="course_created">Course has been created.</string>
     <string name="course_deleted">Course has been deleted.</string>
@@ -60,6 +60,15 @@
         <item>@string/photo</item>
         <item>@string/audio</item>
     </string-array>
+    <string-array name="days">
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+        <item>@string/sunday</item>
+    </string-array>
     <string name="invalid_assignment_title">Invalid title!</string>
     <string name="invalid_deadline">Invalid deadline!</string>
     <string name="deadline_past">Deadline canot be a past date!</string>
@@ -67,4 +76,15 @@
     <string name="missing_semester_selection">Please select a semester!</string>
     <string name="missing_course_selection">Please select a course!</string>
     <string name="assignment_deleted">Assignment deleted.</string>
+    <string name="edit">Edit</string>
+    <string name="days_left">Days left:</string>
+    <string name="gpa">GPA:</string>
+    <string name="course_hour_deleted">Course hour deleted.</string>
+    <string name="course_hour">Course hour</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_delete">Do you confirm delete?</string>
+    <string name="course_hours">Course Hours</string>
+    <string name="assignments">Assignments</string>
+    <string name="empty_assignment_list">No assignment created!</string>
 </resources>
