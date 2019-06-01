@@ -58,12 +58,12 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         super.onResume();
         courseName_ET = getView().findViewById(R.id.courseName_ET);
         creditET = getView().findViewById(R.id.credit_ET);
+        startTime = (Calendar) Calendar.getInstance().clone();
+        endTime = (Calendar) startTime.clone();
         startTime_ET = getView().findViewById(R.id.startTime_ET);
         startTime_ET.setOnClickListener(this);
         endTime_ET = getView().findViewById(R.id.endTime_ET);
         endTime_ET.setOnClickListener(this);
-        startTime = Calendar.getInstance();
-        endTime = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
         sHour = calendar.get(Calendar.HOUR_OF_DAY);
         sMinute = calendar.get(Calendar.MINUTE);
@@ -72,14 +72,9 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         eHour = calendar.get(Calendar.HOUR_OF_DAY);
         eMinute = sMinute;
         endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
-        startTime.set(Calendar.HOUR_OF_DAY, sHour);
-        startTime.set(Calendar.MINUTE, sMinute);
-        endTime.set(Calendar.HOUR_OF_DAY, eHour);
-        endTime.set(Calendar.MINUTE, eMinute);
         startDaySelectionSpinner = getView().findViewById(R.id.startDaySelectionSpinner);
         endDaySelectionSpinner = getView().findViewById(R.id.endDaySelectionSpinner);
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, days); //selected item will look like a spinner set from XML
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.days)); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         startDaySelectionSpinner.setAdapter(spinnerArrayAdapter);
         startDaySelectionSpinner.setOnItemSelectedListener(this);
@@ -102,6 +97,19 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
         createButton.setOnClickListener(this);
         Button clearButton = getView().findViewById(R.id.clearButton);
         clearButton.setOnClickListener(this);
+        if (BaseFragment.contextObject instanceof Semester) {
+            Semester semester = (Semester) semesterSelectionSpinner.getSelectedItem();
+            if (semester.getSemesterID() != ((Semester)BaseFragment.contextObject).getSemesterID()) {
+                int count = semesterSelectionSpinner.getAdapter().getCount();
+                for (int i = 0; i < count; i++) {
+                    semester = (Semester) semesterSelectionSpinner.getItemAtPosition(i);
+                    if (((Semester)BaseFragment.contextObject).getSemesterID() == semester.getSemesterID()) {
+                        semesterSelectionSpinner.setSelection(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -115,6 +123,7 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                     return;
                 Course newCourse = new Course(courseName, selectedSemester, credit, attendanceObligation, schedule);
                 selectedSemester.addCourse(getContext(), newCourse);
+                newCourse.schedule(getContext());
                 this.dismiss();
                 if(mListener != null)
                     mListener.onAppContentOperation("semesterFragment", getString(R.string.course_created));
@@ -124,6 +133,9 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 startTime_ET.setText(String.format("%1$02d", hourOfDay) + ":" + String.format("%1$02d", minute));
+                                eHour = (hourOfDay + 1) % 24;
+                                eMinute = minute;
+                                endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
                             }
                         }, sHour, sMinute, true).show();
                 break;
@@ -152,6 +164,7 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                 tokens = endTime_ET.getText().toString().split(":");
                 eHour = Integer.parseInt(tokens[0]);
                 eMinute = Integer.parseInt(tokens[1]);
+
                 startTime.set(Calendar.HOUR_OF_DAY, sHour);
                 startTime.set(Calendar.MINUTE, sMinute);
                 endTime.set(Calendar.HOUR_OF_DAY, eHour);
@@ -164,6 +177,8 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
                 tv.setText(startDaySelectionSpinner.getSelectedItem().toString()+ "\n" + sHour + ":" + sMinute + " - "+ eHour + ":" + eMinute);
                 tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 layout.addView(tv);
+                startTime = (Calendar) startTime.clone(); // Create new objects to avoid overwriting previous ones
+                endTime = (Calendar) endTime.clone();
                 break;
             case R.id.clearButton:
                 schedule.clear();
@@ -210,7 +225,8 @@ public class CourseCreationDialog extends CreationDialog implements View.OnClick
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         if (adapterView == semesterSelectionSpinner) {
-            selectedSemester = (Semester) adapterView.getSelectedItem();
+            if (selectedSemester != adapterView.getSelectedItem())
+                selectedSemester = (Semester) adapterView.getSelectedItem();
         }
         else if (adapterView == startDaySelectionSpinner) {
             int day;
