@@ -1,17 +1,18 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -20,7 +21,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.Course;
-import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
+import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.ListAdapter;
@@ -65,11 +66,13 @@ public class SemesterFragment extends ListFragment implements AdapterView.OnItem
         TextView semesterTitleTV = getView().findViewById(R.id.semesterTitle_TV);
         semesterTitleTV.setText(semester.getName());
         ((TextView)getView().findViewById(R.id.daysToEnd)).setText(semester.getNumberOfDaysRemaining() + "");
+        ((TextView)getView().findViewById(R.id.gpa_TV)).setText(semester.getGpa() + "");
         courseListView = getView().findViewById(R.id.courseListView);
         courseListView.setOnItemClickListener(this);
         registerForContextMenu(courseListView);
         emptySemesterTV = getView().findViewById(R.id.emptySemester_TV);
         updateView();
+        contextObject = semester;
     }
 
     @Override
@@ -106,7 +109,6 @@ public class SemesterFragment extends ListFragment implements AdapterView.OnItem
     }
 
     public boolean updateCourseList() {
-        //semester.setCourses(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAllCoursesOfSemester(semester));
         ListAdapter<Course> adapter = new ListAdapter<>(getActivity(), semester.getCourses());
         courseListView.setAdapter(adapter);
         ((BaseAdapter)courseListView.getAdapter()).notifyDataSetChanged();
@@ -122,11 +124,14 @@ public class SemesterFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Course course = (Course)courseListView.getAdapter().getItem(info.position);
+        final Course course = (Course)courseListView.getAdapter().getItem(info.position);
         switch (item.getItemId()) {
             case R.id.floating_delete:
-                semester.deleteCourse(getContext(), course);
-                ((MainScreen)getActivity()).onAppContentOperation("semesterFragment", getString(R.string.course_deleted));
+                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        semester.deleteCourse(getContext(), course);
+                        ((MainScreen)getActivity()).onAppContentOperation("semesterFragment", getString(R.string.course_deleted));
+                    }}).setNegativeButton(R.string.no, null).show();
                 return true;
             case R.id.floating_info:
                 Toast.makeText(getContext(), course.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
