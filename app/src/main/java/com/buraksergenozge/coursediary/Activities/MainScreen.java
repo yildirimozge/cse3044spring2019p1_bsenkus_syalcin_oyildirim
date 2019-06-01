@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
@@ -32,6 +34,7 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     private String activeDialog;
     public static Archive mainArchiveFragment;
     public static CourseFeed courseFeed;
+    public static String activeFragmentTag = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,15 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                return true;
+            case R.id.action_edit:
+                Fragment activeFragment = getSupportFragmentManager().findFragmentByTag(MainScreen.activeFragmentTag);
+                if (activeFragment != null && activeFragment.isVisible()) {
+                    if (BaseFragment.contextObject != null)
+                        Toast.makeText(this, "Fragment: " + activeFragment.toString() + "\nObject: " + BaseFragment.contextObject.toString(), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(this, "Fragment: " + activeFragment.toString() + "\nObject: null", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -141,7 +153,7 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     @Override
     public void onAppContentOperation(String listFragmentTag, String message) {
         ListFragment fragment = (ListFragment) getSupportFragmentManager().findFragmentByTag(listFragmentTag);
-        if (fragment != null)
+        if (fragment != null && activeFragmentTag.equals(listFragmentTag))
             fragment.updateView();
         showSnackbarMessage(getWindow().getDecorView(), message);
     }
