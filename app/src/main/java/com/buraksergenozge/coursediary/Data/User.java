@@ -20,8 +20,10 @@ public class User {
     }
 
     public static void addSemester(Context context, Semester semester) {
+        long semesterID = CourseDiaryDB.getDBInstance(context).semesterDAO().addSemester(semester);
+        semester.setSemesterID(semesterID);
         semesters.add(semester);
-        CourseDiaryDB.getDBInstance(context).semesterDAO().addSemester(semester);
+
     }
 
     public static void deleteSemester(Context context, Semester semester) {
@@ -42,6 +44,30 @@ public class User {
             for (Course course: semester.getCourses()) {
                 if (course.getCourseID() == courseID)
                     return course;
+            }
+        }
+        return null;
+    }
+
+    public static CourseHour findCourseHourByID(long courseHourID) {
+        for (Semester semester:semesters) {
+            for (Course course: semester.getCourses()) {
+                for (CourseHour courseHour: course.getCourseHours()) {
+                    if (courseHour.getCourseHourID() == courseHourID)
+                        return courseHour;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Assignment findAssignmentByID(long assignmentID) {
+        for (Semester semester:semesters) {
+            for (Course course: semester.getCourses()) {
+                for (Assignment assignment: course.getAssignments()) {
+                    if (assignment.getAssignmentID() == assignmentID)
+                        return assignment;
+                }
             }
         }
         return null;
