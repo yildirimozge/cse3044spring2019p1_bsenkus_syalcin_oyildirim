@@ -23,40 +23,27 @@
         android:background="@color/colorAccent"
         app:layout_constraintTop_toBottomOf="@id/courseTitle_TV" />
 
-    <TextView
-        android:id="@+id/emptyCourse_TV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/empty_course"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/courseHourListContentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line2">
+        app:layout_constraintTop_toBottomOf="@id/line2"
+        tools:layout_editor_absoluteX="10dp">
 
-        <ListView
-            android:id="@+id/assignmentListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <TextView
+            android:id="@+id/emptyAssignmentList_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_assignment_list"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="0dp">
-
-        </ListView>
-
-        <ListView
-            android:id="@+id/courseHourListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
@@ -64,6 +51,101 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
+
+        <LinearLayout
+            android:id="@+id/assignmentListHeader"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="10dp">
+
+            <TextView
+                android:id="@+id/assignmentListHeader_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:gravity="center_vertical"
+                android:text="@string/assignments"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/assignmentListHeader_IV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line3"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/assignmentListHeader" />
+
+        <ListView
+            android:id="@+id/assignmentListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/line3"
+            app:layout_constraintBottom_toTopOf="@id/guideline">
+        </ListView>
+
+        <TextView
+            android:id="@+id/emptyCourseHourList_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_course_hour_list"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline" />
+
+        <LinearLayout
+            android:id="@+id/courseHourListHeader"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            app:layout_constraintTop_toBottomOf="@id/guideline">
+
+            <TextView
+                android:id="@+id/courseHourListHeader_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:gravity="center_vertical"
+                android:text="@string/course_hours"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/courseHourListHeader_IV"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line4"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/courseHourListHeader" />
+
+        <ListView
+            android:id="@+id/courseHourListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line4"
+            tools:layout_editor_absoluteX="10dp">
+
+        </ListView>
 
     </android.support.constraint.ConstraintLayout>
 
