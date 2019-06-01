@@ -2,16 +2,20 @@ package com.buraksergenozge.coursediary.Data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-@Entity
-public class CourseHour {
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = @ForeignKey(entity = Course.class, parentColumns = "courseID", childColumns = "course", onDelete = CASCADE))
+public class CourseHour implements Comparable<CourseHour>{
     @PrimaryKey(autoGenerate = true)
     private long courseHourID;
     @ColumnInfo
@@ -21,16 +25,14 @@ public class CourseHour {
     @ColumnInfo
     private Calendar endDate;
     @Ignore
-    private List<Note> notes;
+    private List<Note> notes = new ArrayList<>();
     @Ignore
-    private List<Photo> photos;
+    private List<Photo> photos = new ArrayList<>();
 
     public CourseHour(Course course, Calendar startDate, Calendar endDate) {
         this.course = course;
         this.startDate = startDate;
         this.endDate = endDate;
-        notes = new ArrayList<>();
-        photos = new ArrayList<>();
     }
 
     public long getCourseHourID() {
@@ -74,12 +76,32 @@ public class CourseHour {
     }
 
     public void addNote(Context context, Note note) {
+        long noteID = CourseDiaryDB.getDBInstance(context).noteDAO().addNote(note);
+        note.setNoteID(noteID);
         notes.add(note);
-        CourseDiaryDB.getDBInstance(context).noteDAO().addNote(note);
     }
 
     public void deleteNote(Context context, Note note) {
         notes.remove(note);
         CourseDiaryDB.getDBInstance(context).noteDAO().deleteNote(note);
+    }
+
+    @Override
+    public String toString() {
+        String repr;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM EEE");
+        SimpleDateFormat clockFormat = new SimpleDateFormat("HH:mm");
+        dateFormat.setTimeZone(startDate.getTimeZone());
+        clockFormat.setTimeZone(startDate.getTimeZone());
+        if (startDate.get(Calendar.DAY_OF_MONTH) == endDate.get(Calendar.DAY_OF_MONTH))
+            repr = dateFormat.format(startDate.getTime()) + " (" + clockFormat.format(startDate.getTime()) + " - " + clockFormat.format(endDate.getTime()) + ")";
+        else
+            repr = dateFormat.format(startDate.getTime()) + " " + clockFormat.format(startDate.getTime()) + " - " + dateFormat.format(endDate.getTime()) + " " + clockFormat.format(endDate.getTime());
+        return repr;
+    }
+
+    @Override
+    public int compareTo(CourseHour courseHour) {
+        return (int)(startDate.getTimeInMillis() - courseHour.startDate.getTimeInMillis());
     }
 }
