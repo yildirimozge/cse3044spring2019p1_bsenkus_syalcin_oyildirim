@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/assignmentCreationLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
@@ -23,7 +20,6 @@
 
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/assignmentCreationToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -31,12 +27,10 @@
             app:title="New Assignment">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/insideLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/assignmentCreationTitle_TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
@@ -57,7 +51,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/close" />
+                    app:srcCompat="@drawable/ic_close_white_36dp" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -79,7 +73,6 @@
             android:orientation="vertical" >
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/assignmentCreationFormLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp">
@@ -92,23 +85,23 @@
                     android:hint="@string/title"
                     android:inputType="text"
                     android:textColor="@color/darkTextColor"
-                    android:textColorHint="@color/darkDisabledTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:importantForAutofill="no" />
 
                 <TextView
-                    android:id="@+id/deadlineTextView"
+                    android:id="@+id/startTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/deadline"
                     android:textAlignment="textEnd"
-                    app:layout_constraintBaseline_toBaselineOf="@id/deadlineView"
+                    app:layout_constraintBaseline_toBaselineOf="@id/assignment_creation_start_date_ET"
                     app:layout_constraintEnd_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <EditText
-                    android:id="@+id/deadlineView"
+                    android:id="@+id/assignment_creation_start_date_ET"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -117,7 +110,7 @@
                     android:inputType="date"
                     android:textColor="@color/darkTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/deadlineTextView"
+                    app:layout_constraintStart_toEndOf="@+id/startTextView"
                     app:layout_constraintTop_toBottomOf="@+id/assignmentTitle_ET" />
 
                 <TextView
@@ -138,7 +131,7 @@
                     android:layout_marginTop="35dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/assignmentCreationSemesterSelection_TV"
-                    app:layout_constraintTop_toBottomOf="@+id/deadlineView" />
+                    app:layout_constraintTop_toBottomOf="@+id/assignment_creation_start_date_ET" />
 
                 <TextView
                     android:id="@+id/courseSelection_TV"

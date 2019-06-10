@@ -1,40 +1,70 @@
 package com.buraksergenozge.coursediary.Activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
+import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.GradingSystem;
+import com.buraksergenozge.coursediary.Data.Note;
+import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
-import com.buraksergenozge.coursediary.Fragments.Archive;
+import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
+import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
+import com.buraksergenozge.coursediary.Fragments.BaseFragment;
+import com.buraksergenozge.coursediary.Fragments.CourseFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
-import com.buraksergenozge.coursediary.Fragments.ListFragment;
-import com.buraksergenozge.coursediary.PagerAdapter;
+import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
+import com.buraksergenozge.coursediary.Tools.PagerAdapter;
 import com.buraksergenozge.coursediary.R;
 
-public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
-        DialogInterface.OnClickListener, CreationDialog.OnFragmentInteractionListener, CourseFeed.OnFragmentInteractionListener {
-    public View mainScreenLayout;
+import java.io.File;
+import java.util.Objects;
+
+public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
+        DialogInterface.OnClickListener, CreationDialog.OnFragmentInteractionListener {
     private ViewPager viewPager;
-    private String activeDialog;
-    public static Archive mainArchiveFragment;
-    public static CourseFeed courseFeed;
-    public static String activeFragmentTag = "";
+    public static String activeDialog;
+    private static String activeArchiveFragmentTag = ArchiveFragment.tag;
+    private static String activeCourseFeedFragmentTag = CourseFeed.tag;
+    public static int activeTabID = R.id.mainCourseFeedLayout;
+    private static int startControl = 2;
+    private boolean hasMenu;
+    private int menuID;
+    public static AppContent activeAppContent;
+    public static final int CAMERA_REQUEST = 1888;
+    private static final int CAMERA_PERMISSION_CODE = 100;
+    private static final int READ_PERMISSION_CODE = 200;
+    private static final int WRITE_PERMISSION_CODE = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +77,6 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
         hasMenu = true;
         menuID = R.menu.menu_main;
 
-        mainScreenLayout = findViewById(R.id.mainScreenLayout);
         FloatingActionButton addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(this);
 
@@ -57,8 +86,6 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(this);
-        courseFeed = (CourseFeed) pagerAdapter.getItem(0);
-        mainArchiveFragment = (Archive) pagerAdapter.getItem(1);
     }
 
     @Override
@@ -67,17 +94,36 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
             case R.id.action_settings:
                 return true;
             case R.id.action_edit:
-                Fragment activeFragment = getSupportFragmentManager().findFragmentByTag(MainScreen.activeFragmentTag);
-                if (activeFragment != null && activeFragment.isVisible()) {
-                    if (BaseFragment.contextObject != null)
-                        Toast.makeText(this, "Fragment: " + activeFragment.toString() + "\nObject: " + BaseFragment.contextObject.toString(), Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(this, "Fragment: " + activeFragment.toString() + "\nObject: null", Toast.LENGTH_SHORT).show();
+                if (activeAppContent != null) {
+                    if (activeAppContent instanceof Semester)
+                        AppContent.openCreationDialog(this, Semester.getCreationDialog(true));
+                    else if (activeAppContent instanceof Course)
+                            AppContent.openCreationDialog(this, Course.getCreationDialog(true));
+                    else if (activeAppContent instanceof Assignment)
+                        AppContent.openCreationDialog(this, Assignment.getCreationDialog(true));
+                    else if (activeAppContent instanceof CourseHour)
+                        AppContent.openCreationDialog(this, CourseHour.getCreationDialog(true));
+                    else if (activeAppContent instanceof Note)
+                        AppContent.openCreationDialog(this, Note.getCreationDialog(true));
+                    activeDialog = "";
                 }
+                return true;
+            case R.id.action_info:
+                if (activeAppContent != null)
+                    Toast.makeText(this, activeAppContent.toString() + " bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this, "USER bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        getVisibleFragment().onBackPressed();
+            super.onBackPressed();
     }
 
     @Override
@@ -90,6 +136,17 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
                 activeDialog = "creationDialog";
                 builder.show();
                 break;
+            case R.id.listItemCheckBox:
+                ItemViewHolder itemViewHolder = (ItemViewHolder)view.getTag();
+                CourseHour courseHour = (CourseHour) itemViewHolder.appContent;
+                if (((CheckBox)view).isChecked())
+                    User.setAttendance(this, courseHour, 1);
+                else
+                    User.setAttendance(this, courseHour, 0);
+                if (activeArchiveFragmentTag.equals(CourseFragment.tag))
+                    ((BaseFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(CourseFragment.tag))).updateView();
+                ((BaseFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(activeCourseFeedFragmentTag))).updateView();
+                break;
             default:
                 break;
         }
@@ -100,46 +157,59 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
         if(activeDialog.equals("creationDialog")) {
             switch (i) {
                 case 0:
-                    Semester.openCreationDialog(this, Semester.getCreationDialog());
+                    AppContent.openCreationDialog(this, Semester.getCreationDialog(false));
                     activeDialog = "";
                     break;
                 case 1:
-                    Course.openCreationDialog(this, Course.getCreationDialog());
+                    AppContent.openCreationDialog(this, Course.getCreationDialog(false));
                     activeDialog = "";
                     break;
                 case 2:
-                    Assignment.openCreationDialog(this, Assignment.getCreationDialog());
+                    AppContent.openCreationDialog(this, Assignment.getCreationDialog(false));
                     activeDialog = "";
                     break;
                 case 3:
-                   // Note.openCreationDialog(this);
+                    AppContent.openCreationDialog(this, Note.getCreationDialog(false));
                     activeDialog = "";
                     break;
                 case 4:
-                    //Photo.openCreationDialog(this);
+                    Photo.takePhoto(this);
                     activeDialog = "";
                     break;
                 case 5:
                    // Audio.openCreationDialog(this);
                     activeDialog = "";
                     break;
+                case 6:
+                    AppContent.openCreationDialog(this, GradingSystem.getCreationDialog(false));
+                    activeDialog = "";
+                    break;
             }
         }
     }
 
-    private void integrateData(Context context) {
+    public static void integrateData(Context context) {
         User.integrateWithDB(context);
         for (Semester semester: User.getSemesters()) {
             semester.integrateWithDB(context);
             for (Course course : semester.getCourses()) {
                 course.integrateWithDB(context);
+                for (CourseHour courseHour: course.getCourseHours())
+                    courseHour.integrateWithDB(context);
             }
+        }
+        for (GradingSystem gradingSystem : User.getGradingSystems()) {
+            gradingSystem.integrateWithDB(context);
         }
     }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
+        if (tab.getPosition() == 0)
+            activeTabID = R.id.mainCourseFeedLayout;
+        else if (tab.getPosition() == 1)
+            activeTabID = R.id.mainArchiveLayout;
     }
 
     @Override
@@ -150,17 +220,165 @@ public class MainScreen extends Screen implements TabLayout.BaseOnTabSelectedLis
     public void onTabReselected(TabLayout.Tab tab) {
     }
 
-    @Override
-    public void onAppContentOperation(String listFragmentTag, String message) {
-        ListFragment fragment = (ListFragment) getSupportFragmentManager().findFragmentByTag(listFragmentTag);
-        if (fragment != null && activeFragmentTag.equals(listFragmentTag))
-            fragment.updateView();
-        showSnackbarMessage(getWindow().getDecorView(), message);
+    public static void updateActiveFragmentTag(String fragmentTag) {
+        if (startControl > 0) { // This part is just for avoiding an error
+            startControl--;
+            return;
+        }
+        if (activeTabID == R.id.mainCourseFeedLayout)
+            activeCourseFeedFragmentTag = fragmentTag;
+        else if (activeTabID == R.id.mainArchiveLayout)
+            activeArchiveFragmentTag = fragmentTag;
+    }
+
+    public void updateViewsOfAppContent(AppContent appContent) {
+        String[] fragmentTags = appContent.getRelatedFragmentTags();
+        for (String fragmentTag: fragmentTags) {
+            BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(fragmentTag);
+            if (fragment != null && (MainScreen.activeArchiveFragmentTag.equals(fragmentTag) || MainScreen.activeCourseFeedFragmentTag.equals(fragmentTag)))
+                fragment.updateView();
+        }
     }
 
     public static void showSnackbarMessage(View view, String message) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         ((TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
         snackbar.show();
+    }
+
+    public BaseFragment getVisibleFragment() {
+        if (activeTabID == R.id.mainCourseFeedLayout)
+                return (BaseFragment) getSupportFragmentManager().findFragmentByTag(activeCourseFeedFragmentTag);
+        else
+            return (BaseFragment) getSupportFragmentManager().findFragmentByTag(activeArchiveFragmentTag);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (activeAppContent instanceof CourseHour) {
+                CourseHour courseHour = ((CourseHour)activeAppContent);
+                File newLocation = new File(courseHour.getContentDirectory(), Photo.currentPhotoName);
+                File photoFile = new File(Photo.getCurrentPhotoPath());
+                photoFile.renameTo(newLocation);
+                Photo photo = new Photo(courseHour, newLocation.getAbsolutePath());
+                photo.addOperation(this);
+                if (activeArchiveFragmentTag.equals(CourseHourFragment.tag)) {
+                    CourseHourFragment fragment = (CourseHourFragment) getSupportFragmentManager().findFragmentByTag(activeArchiveFragmentTag);
+                    if (fragment != null)
+                        fragment.updateView();
+                }
+                if (activeCourseFeedFragmentTag.equals(CourseHourFragment.tag)) {
+                    CourseHourFragment fragment = (CourseHourFragment) getSupportFragmentManager().findFragmentByTag(activeCourseFeedFragmentTag);
+                    if (fragment != null)
+                        fragment.updateView();
+                }
+            }
+            else {
+                //Photo.getCreationDialog(this);
+                Bitmap bitmap = BitmapFactory.decodeFile(Photo.getCurrentPhotoPath());
+                System.out.println();
+                System.out.println();
+                //imageView.setImageBitmap(photo);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Camera permission granted", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == READ_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Read permission granted", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Read permission denied", Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == WRITE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Write permission granted", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Write permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                    Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                    Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
+                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE))
+                    Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MainScreen.CAMERA_PERMISSION_CODE);
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainScreen.READ_PERMISSION_CODE);
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MainScreen.WRITE_PERMISSION_CODE);
+                return false;
+            } else
+                return true;
+        }
+        else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
+                    Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                    Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE))
+                    Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MainScreen.CAMERA_PERMISSION_CODE);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainScreen.READ_PERMISSION_CODE);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MainScreen.WRITE_PERMISSION_CODE);
+                return false;
+            } else
+                return true;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        if(hasMenu) {
+            getMenuInflater().inflate(menuID, menu);
+            MenuItem editItem = menu.findItem(R.id.action_edit);
+            if (MainScreen.activeArchiveFragmentTag == null || MainScreen.activeArchiveFragmentTag.equals("archiveFragment")) {
+                editItem.setVisible(false);
+            }
+            else {
+                editItem.setVisible(true);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.floating_delete:
+                new AlertDialog.Builder(this).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        activeAppContent.deleteOperation(MainScreen.this);
+                        updateViewsOfAppContent(activeAppContent);
+                        showSnackbarMessage(getWindow().getDecorView(), getString(activeAppContent.getDeleteMessage()));
+                    }}).setNegativeButton(R.string.no, null).show();
+                return true;
+            case R.id.floating_info:
+                activeAppContent.showInfo(this);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }

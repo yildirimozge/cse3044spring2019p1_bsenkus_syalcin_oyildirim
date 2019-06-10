@@ -1,71 +1,107 @@
 package com.buraksergenozge.coursediary.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Assignment;
+import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.R;
 
-public class CourseFeed extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.List;
+import java.util.Objects;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    public CourseFeed() { // Required empty public constructor
-    }
-
-    // TODO: Rename and change types and number of parameters
-    public static CourseFeed newInstance(String param1, String param2) {
-        CourseFeed fragment = new CourseFeed();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+public class CourseFeed extends BaseFragment implements View.OnClickListener {
+    private RecyclerView assignmentRecyclerView, courseHourRecyclerView;
+    public static String tag = "courseFeedFragment";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public int getLayoutID() {
+        return R.layout.fragment_course_feed;
+    }
+
+    private void setVisibilities(boolean isCourseHourListEmpty, boolean isAssignmentListEmpty) {
+        if(assignmentRecyclerView != null && courseHourRecyclerView != null) {
+            if (isCourseHourListEmpty)
+                courseHourRecyclerView.setVisibility(View.GONE);
+            else
+                courseHourRecyclerView.setVisibility(View.VISIBLE);
+            if (isAssignmentListEmpty)
+                assignmentRecyclerView.setVisibility(View.GONE);
+            else
+                assignmentRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_course_feed, container, false);
+    public void initializeViews() {
+        LinearLayout assignmentListHeader = Objects.requireNonNull(getView()).findViewById(R.id.coursefeed_assignmentListHeader);
+        assignmentListHeader.setOnClickListener(this);
+        LinearLayout courseHourListHeader = getView().findViewById(R.id.coursefeed_courseHourListHeader);
+        courseHourListHeader.setOnClickListener(this);
+        assignmentRecyclerView = getView().findViewById(R.id.coursefeed_assignment_recyclerview);
+        assignmentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(assignmentRecyclerView);
+        courseHourRecyclerView = getView().findViewById(R.id.coursefeed_coursehour_recyclerview);
+        courseHourRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(courseHourRecyclerView);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+    public void updateView() {
+        List<Assignment> assignmentList = User.getActiveAssignments();
+        List<CourseHour> courseHourList = User.getUpcomingCourseHours();
+        boolean isCourseHourListEmpty = updateRecyclerView(courseHourRecyclerView, courseHourList);
+        boolean isAssignmentListEmpty = updateRecyclerView(assignmentRecyclerView, assignmentList);
+        setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);
+        if (assignmentRecyclerView.getAdapter() != null) {
+            if (assignmentRecyclerView.getAdapter().getItemCount() > 4) {
+                ViewGroup.LayoutParams params = assignmentRecyclerView.getLayoutParams();
+                params.height = 515;
+                assignmentRecyclerView.setLayoutParams(params);
+                assignmentRecyclerView.requestLayout();
+            }
+        }
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.coursefeed_assignmentListHeader_TV)).setText(getResources().getString(R.string.assignments, assignmentList.size()));
+        ((TextView)getView().findViewById(R.id.coursefeed_courseHourListHeader_TV)).setText(getResources().getString(R.string.course_hours, courseHourList.size()));
+    }
+
+    @Override
+    public void open(AppContent appContent) {
+        if (appContent instanceof Assignment) {
+            childFragment = new AssignmentFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, AssignmentFragment.tag);
+        }
+        else if (appContent instanceof CourseHour) {
+            childFragment = new CourseHourFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, CourseHourFragment.tag);
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.coursefeed_assignmentListHeader:
+                if (assignmentRecyclerView.getVisibility() == View.VISIBLE)
+                    assignmentRecyclerView.setVisibility(View.GONE);
+                else
+                    assignmentRecyclerView.setVisibility(View.VISIBLE);
+                break;
+            case R.id.coursefeed_courseHourListHeader:
+                if (courseHourRecyclerView.getVisibility() == View.VISIBLE)
+                    courseHourRecyclerView.setVisibility(View.GONE);
+                else
+                    courseHourRecyclerView.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 }

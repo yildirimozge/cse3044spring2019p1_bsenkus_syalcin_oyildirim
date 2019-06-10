@@ -18,18 +18,16 @@
     <string name="audio">Audio</string>
     <string name="photo">Photo</string>
     <string name="course">Course</string>
-    <string name="empty_feed">Nothing to show!</string>
     <string name="empty_archive">No semesters added!</string>
     <string name="note">Note</string>
-    <string name="semester_created">Semester has been created.</string>
-    <string name="assignment_created">Assignment created.</string>
+    <string name="semester_saved">Semester saved.</string>
+    <string name="assignment_saved">Assignment saved.</string>
     <string name="empty_semester">No courses added!</string>
     <string name="delete">Delete</string>
     <string name="info">Info</string>
     <string name="semester_deleted">Semester has been deleted.</string>
-    <string name="empty_course_hour_list">No course hours created!</string>
     <string name="new_course">New Course</string>
-    <string name="course_created">Course has been created.</string>
+    <string name="course_saved">Course saved.</string>
     <string name="course_deleted">Course has been deleted.</string>
     <string name="attendance_obligation">Attendance Obligation</string>
     <string name="credit">Credit</string>
@@ -51,28 +49,9 @@
     <string name="invalid_semester_name">Invalid semester name!</string>
     <string name="invalid_start_date">Invalid start date!</string>
     <string name="invalid_end_date">Invalid end date!</string>
-    <string name="end_date_past">End date cannot be a past date!</string>
-    <string-array name="app_contents">
-        <item>@string/semester</item>
-        <item>@string/course</item>
-        <item>@string/assignment</item>
-        <item>@string/note</item>
-        <item>@string/photo</item>
-        <item>@string/audio</item>
-    </string-array>
-    <string-array name="days">
-        <item>@string/monday</item>
-        <item>@string/tuesday</item>
-        <item>@string/wednesday</item>
-        <item>@string/thursday</item>
-        <item>@string/friday</item>
-        <item>@string/saturday</item>
-        <item>@string/sunday</item>
-    </string-array>
     <string name="invalid_assignment_title">Invalid title!</string>
     <string name="invalid_deadline">Invalid deadline!</string>
     <string name="deadline_past">Deadline canot be a past date!</string>
-    <string name="invalid_course">Invalid course!</string>
     <string name="missing_semester_selection">Please select a semester!</string>
     <string name="missing_course_selection">Please select a course!</string>
     <string name="assignment_deleted">Assignment deleted.</string>
@@ -84,7 +63,61 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_delete">Do you confirm delete?</string>
-    <string name="course_hours">Course Hours</string>
-    <string name="assignments">Assignments</string>
-    <string name="empty_assignment_list">No assignment created!</string>
+    <string name="course_hours">Course Hours (%d)</string>
+    <string name="assignments">Assignments (%d)</string>
+    <string name="grade_tv">Grade:</string>
+    <string name="attendance_tv">Attendance:</string>
+    <string name="min">min</string>
+    <string name="mins">mins</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
+    <string name="week">week</string>
+    <string name="weeks">weeks</string>
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="over">Over</string>
+    <string name="notes">Notes (%d)</string>
+    <string name="photos">Photos (%d)</string>
+    <string name="audios">Audio Records (%d)</string>
+    <string name="attended">Attended</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="new_note">New Note</string>
+    <string name="note_enter">Type your note here</string>
+    <string name="invalid_note_title">Invalid note title!</string>
+    <string name="no_course_hours">You have to add at least one course hour!</string>
+    <string name="new_course_hour">New Course Hour</string>
+    <string name="save">Save</string>
+    <string name="grading_system">Grading System</string>
+    <string name="new_grading_system">New Grading System</string>
+    <string name="grade_code">Grade Code</string>
+    <string name="coefficient">Coefficient</string>
+    <string name="clear">Clear</string>
+    <string name="add">Add</string>
+    <string name="new_photo">New Photo</string>
+    <string name="grading_system_deleted">Grading system deleted.</string>
+    <string name="note_deleted">Note deleted.</string>
+    <string name="photo_deleted">Photo deleted.</string>
+    <string-array name="app_contents">
+        <item>@string/semester</item>
+        <item>@string/course</item>
+        <item>@string/assignment</item>
+        <item>@string/note</item>
+        <item>@string/photo</item>
+        <item>@string/audio</item>
+        <item>@string/grading_system</item>
+    </string-array>
+    <string-array name="days">
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+        <item>@string/sunday</item>
+    </string-array>
+    <string name="grading_system_saved">Grading system saved.</string>
+    <string name="note_saved">Note saved.</string>
+    <string name="photo_saved">Photo saved.</string>
+    <string name="course_hour_saved">Course hour saved.</string>
+    <string name="missing_course_hour">Please select a course hour!</string>
 </resources>

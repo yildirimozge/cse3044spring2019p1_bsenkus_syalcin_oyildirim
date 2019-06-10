@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/semesterCreationLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
@@ -21,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/semesterCreationToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -29,12 +26,10 @@
             app:title="New Semester">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/insideLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/semesterCreationTitle_TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
@@ -55,7 +50,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/close" />
+                    app:srcCompat="@drawable/ic_close_white_36dp" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.Toolbar>
@@ -73,7 +68,6 @@
             android:orientation="vertical" >
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/semesterCreationFormLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp">
@@ -89,7 +83,8 @@
                     android:textColorHint="@color/darkDisabledTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:autofillHints="" />
 
                 <TextView
                     android:id="@+id/startDateTextView"
@@ -110,7 +105,8 @@
                     android:textColor="@color/darkTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/startDateTextView"
-                    app:layout_constraintTop_toBottomOf="@+id/semesterNameEditText" />
+                    app:layout_constraintTop_toBottomOf="@+id/semesterNameEditText"
+                    android:autofillHints="" />
 
                 <EditText
                     android:id="@+id/endDateView"
@@ -122,10 +118,10 @@
                     android:textColor="@color/darkTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/startDateView"
-                    app:layout_constraintTop_toBottomOf="@+id/startDateView" />
+                    app:layout_constraintTop_toBottomOf="@+id/startDateView"
+                    android:autofillHints="" />
 
                 <TextView
-                    android:id="@+id/endDateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/end_date"

@@ -1,108 +1,57 @@
 package com.buraksergenozge.coursediary.Fragments;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.view.MenuItem;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.Semester;
+import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.User;
-import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-public class ArchiveFragment extends ListFragment implements AdapterView.OnItemClickListener {
-    private ListView semesterListView;
+import java.util.Objects;
+
+public class ArchiveFragment extends BaseFragment {
+    private RecyclerView semesterRecyclerView;
     private TextView emptyArchiveTV;
+    public static String tag = "archiveFragment";
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        layoutID = R.layout.fragment_archive;
+    public int getLayoutID() {
+        return R.layout.fragment_archive;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        semesterListView = getView().findViewById(R.id.semesterListView);
-        registerForContextMenu(semesterListView);
-        semesterListView.setOnItemClickListener(this);
-        emptyArchiveTV = getView().findViewById(R.id.emptyArchive_TV);
-        updateView();
-        contextObject = null;
-    }
-
-    public void setVisibilities(boolean isSemesterListEmpty) {
-        if(semesterListView != null && emptyArchiveTV != null) {
+    private void setVisibilities(boolean isSemesterListEmpty) {
+        if(semesterRecyclerView != null && emptyArchiveTV != null) {
             if (isSemesterListEmpty) {
-                semesterListView.setVisibility(View.GONE);
+                semesterRecyclerView.setVisibility(View.GONE);
                 emptyArchiveTV.setVisibility(View.VISIBLE);
             } else if (emptyArchiveTV.getVisibility() == View.VISIBLE) {
                 emptyArchiveTV.setVisibility(View.GONE);
-                semesterListView.setVisibility(View.VISIBLE);
+                semesterRecyclerView.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    public boolean updateSemesterList() {
-        //User.setSemesters(CourseDiaryDB.getDBInstance(getActivity()).semesterDAO().getAll());
-        ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), User.getSemesters());
-        semesterListView.setAdapter(adapter);
-        ((BaseAdapter)semesterListView.getAdapter()).notifyDataSetChanged();
-        return User.getSemesters().isEmpty();
+    @Override
+    public void initializeViews() {
+        semesterRecyclerView = Objects.requireNonNull(getView()).findViewById(R.id.semester_recycler_view);
+        semesterRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(semesterRecyclerView);
+        emptyArchiveTV = getView().findViewById(R.id.emptyArchive_TV);
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (adapterView == semesterListView) {
-            long semesterID = ((Semester)adapterView.getItemAtPosition(i)).getSemesterID();
-            FragmentManager fragManager;
-            try {
-                fragManager = getActivity().getSupportFragmentManager();
-            }catch (NullPointerException ex) {
-                ex.printStackTrace();
-                return;
-            }
-            FragmentTransaction fragTransaction = fragManager.beginTransaction();
-            fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            SemesterFragment semesterFragment = SemesterFragment.newInstance(semesterID);
-            fragTransaction.replace(R.id.mainArchiveLayout, semesterFragment,"semesterFragment");
-            fragTransaction.addToBackStack(null);
-            fragTransaction.commit();
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Semester semester = (Semester)semesterListView.getAdapter().getItem(info.position);
-        switch (item.getItemId()) {
-            case R.id.floating_delete:
-                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        User.deleteSemester(getContext(), semester);
-                        ((MainScreen)getActivity()).onAppContentOperation("archiveFragment", getString(R.string.semester_deleted));
-                    }}).setNegativeButton(R.string.no, null).show();
-                return true;
-            case R.id.floating_info:
-                Toast.makeText(getContext(), semester.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return false;
-        }
+    public void open(AppContent appContent) {
+        childFragment = new SemesterFragment();
+        childFragment.parentFragment = this;
+        BaseFragment.transferAppContent = appContent;
+        openFragment(childFragment, SemesterFragment.tag);
     }
 
     @Override
     public void updateView() {
-        boolean isEmpty = updateSemesterList();
+        boolean isEmpty = updateRecyclerView(semesterRecyclerView, User.getSemesters());
         setVisibilities(isEmpty);
     }
 }

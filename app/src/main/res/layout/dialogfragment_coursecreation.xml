@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/courseCreationLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/courseCreationToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -29,12 +27,10 @@
             app:title="New Course">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/insideLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/courseCreationTitle_TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
@@ -55,7 +51,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/close" />
+                    app:srcCompat="@drawable/ic_close_white_36dp" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.Toolbar>
@@ -73,7 +69,6 @@
             android:orientation="vertical" >
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/courseCreationFormLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp">
@@ -89,7 +84,8 @@
                     android:textColorHint="@color/darkDisabledTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:autofillHints="" />
 
                 <TextView
                     android:id="@+id/credit_TV"
@@ -110,10 +106,10 @@
                     android:ems="10"
                     android:inputType="number"
                     android:textColor="@color/darkTextColor"
-                    android:textColorHint="@color/darkDisabledTextColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/credit_TV"
-                    app:layout_constraintTop_toBottomOf="@id/courseName_ET" />
+                    app:layout_constraintTop_toBottomOf="@id/courseName_ET"
+                    android:autofillHints="" />
 
                 <TextView
                     android:id="@+id/attendanceObligation_TV"
@@ -174,10 +170,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/startTime_ET"
-                    app:layout_constraintEnd_toStartOf="@id/startTime_ET"
+                    app:layout_constraintBottom_toBottomOf="@+id/start_time_ET"
+                    app:layout_constraintEnd_toStartOf="@id/start_time_ET"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
+                    app:layout_constraintTop_toTopOf="@+id/start_time_ET" />
 
                 <Spinner
                     android:id="@+id/endDaySelectionSpinner"
@@ -190,17 +186,18 @@
                     app:layout_constraintTop_toTopOf="@+id/endTime_ET" />
 
                 <EditText
-                    android:id="@+id/startTime_ET"
+                    android:id="@+id/start_time_ET"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
                     android:layout_marginEnd="8dp"
                     android:ems="10"
-                    android:hint="Start"
+                    android:hint="@string/start"
                     android:inputType="time"
                     app:layout_constraintEnd_toStartOf="@+id/addScheduleButton"
                     app:layout_constraintStart_toEndOf="@id/startDaySelectionSpinner"
-                    app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner" />
+                    app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner"
+                    android:autofillHints="" />
 
                 <EditText
                     android:id="@+id/endTime_ET"
@@ -209,20 +206,21 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="8dp"
                     android:ems="10"
-                    android:hint="End"
+                    android:hint="@string/end"
                     android:inputType="time"
                     app:layout_constraintEnd_toStartOf="@id/addScheduleButton"
                     app:layout_constraintStart_toEndOf="@id/endDaySelectionSpinner"
-                    app:layout_constraintTop_toBottomOf="@+id/startTime_ET" />
+                    app:layout_constraintTop_toBottomOf="@+id/start_time_ET"
+                    android:autofillHints="" />
 
                 <Button
                     android:id="@+id/addScheduleButton"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:text="Add"
+                    android:text="@string/add"
                     app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/startTime_ET" />
+                    app:layout_constraintTop_toTopOf="@+id/start_time_ET" />
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/scheduleLayout"
@@ -234,7 +232,6 @@
                     tools:layout_editor_absoluteX="20dp">
 
                     <HorizontalScrollView
-                        android:id="@+id/scheduleScrollView"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="8dp"
@@ -245,14 +242,14 @@
                             android:id="@+id/scheduleInsideLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="50dp"
-                            android:orientation="horizontal"></LinearLayout>
+                            android:orientation="horizontal"/>
                     </HorizontalScrollView>
 
                     <Button
                         android:id="@+id/clearButton"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:text="Clear"
+                        android:text="@string/clear"
                         app:layout_constraintEnd_toEndOf="parent" />
                 </android.support.constraint.ConstraintLayout>
 

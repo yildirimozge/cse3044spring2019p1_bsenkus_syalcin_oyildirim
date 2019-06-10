@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.buraksergenozge.coursediary.Converter;
+import com.buraksergenozge.coursediary.Tools.Converter;
 import com.buraksergenozge.coursediary.DAO.AssignmentDAO;
 import com.buraksergenozge.coursediary.DAO.CourseDAO;
 import com.buraksergenozge.coursediary.DAO.CourseHourDAO;

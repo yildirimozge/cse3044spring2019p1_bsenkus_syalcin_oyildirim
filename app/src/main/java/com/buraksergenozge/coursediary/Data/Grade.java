@@ -3,12 +3,14 @@ package com.buraksergenozge.coursediary.Data;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = GradingSystem.class, parentColumns = "gradingSystemID", childColumns = "gradingSystem",
-        onDelete = CASCADE))
+        onDelete = CASCADE),
+        indices = {@Index("gradingSystem")})
 public class Grade {
     @PrimaryKey(autoGenerate = true)
     private long gradeID;
@@ -18,6 +20,12 @@ public class Grade {
     private String code;
     @ColumnInfo
     private float coefficient;
+
+    public Grade(GradingSystem gradingSystem, String code, float coefficient) {
+        this.gradingSystem = gradingSystem;
+        this.code = code;
+        this.coefficient = coefficient;
+    }
 
     public long getGradeID() {
         return gradeID;

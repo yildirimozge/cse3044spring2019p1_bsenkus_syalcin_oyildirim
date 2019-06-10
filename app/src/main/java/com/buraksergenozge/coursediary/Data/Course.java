@@ -4,21 +4,35 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Activities.MainScreen;
+import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
+import com.buraksergenozge.coursediary.Fragments.CourseFeed;
+import com.buraksergenozge.coursediary.Fragments.CourseFragment;
+import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.NoteCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.PhotoCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.SemesterFragment;
+import com.buraksergenozge.coursediary.R;
+import com.buraksergenozge.coursediary.Tools.ListAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(entity = Semester.class, parentColumns = "semesterID", childColumns = "semester", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Semester.class, parentColumns = "semesterID", childColumns = "semester", onDelete = CASCADE),
+        indices = {@Index("semester")})
 public class Course extends AppContent{
     @PrimaryKey(autoGenerate = true)
     private long courseID;
@@ -39,9 +53,9 @@ public class Course extends AppContent{
     @Ignore
     private List<CourseHour> courseHours = new ArrayList<>();
     @Ignore
-    private List<Assignment> assignments = new ArrayList<>();;
+    private List<Assignment> assignments = new ArrayList<>();
     @Ignore
-    private static DialogFragment creationDialog = new CourseCreationDialog();
+    private static String[] relatedFragmentTags = {SemesterFragment.tag, CourseFragment.tag, CourseFeed.tag, CourseHourFragment.tag, AssignmentFragment.tag};
 
     public Course(String name, Semester semester, int credit, float attendanceObligation, List<Calendar[]> schedule) {
         this.name = name;
@@ -126,7 +140,7 @@ public class Course extends AppContent{
         this.courseHours = courseHours;
     }
 
-    public void schedule(Context context) {
+    private void schedule(AppCompatActivity activity) {
         for (Calendar[] entry : schedule) {
             CourseHour courseHour;
             Calendar startTime = entry[0];
@@ -151,7 +165,7 @@ public class Course extends AppContent{
                 Calendar start = (Calendar) currentStart.clone();
                 Calendar end = (Calendar) currentEnd.clone();
                 courseHour = new CourseHour(this, start, end);
-                addCourseHour(context, courseHour);
+                courseHour.addOperation(activity);
                 currentStart.add(Calendar.DATE, 7);
                 currentEnd.add(Calendar.DATE, 7);
             }
@@ -166,36 +180,25 @@ public class Course extends AppContent{
         this.assignments = assignments;
     }
 
-    public static DialogFragment getCreationDialog() {
+    public static DialogFragment getCreationDialog(boolean isEditMode) {
+        CreationDialog creationDialog = new CourseCreationDialog();
+        creationDialog.isEditMode = isEditMode;
         return creationDialog;
     }
 
-    public static void setCreationDialog(DialogFragment creationDialog) {
-        Course.creationDialog = creationDialog;
-    }
-
-    public void addCourseHour(Context context, CourseHour courseHour) {
-        long courseHourID = CourseDiaryDB.getDBInstance(context).courseHourDAO().addCourseHour(courseHour);
-        courseHour.setCourseHourID(courseHourID);
-        courseHours.add(courseHour);
-
-    }
-
-    public void deleteCourseHour(Context context, CourseHour courseHour) {
-        courseHours.remove(courseHour);
-        CourseDiaryDB.getDBInstance(context).courseHourDAO().deleteCourseHour(courseHour);
-    }
-
-    public void addAssignment(Context context, Assignment assignment) {
-        long assignmentID = CourseDiaryDB.getDBInstance(context).assignmentDAO().addAssignment(assignment);
-        assignment.setAssignmentID(assignmentID);
-        assignments.add(assignment);
-
-    }
-
-    public void deleteAssignment(Context context, Assignment assignment) {
-        assignments.remove(assignment);
-        CourseDiaryDB.getDBInstance(context).assignmentDAO().deleteAssignment(assignment);
+    public float getAttendanceStatus() {
+        int numberOfCourseHours = 0;
+        int totalAttendance = 0;
+        for (CourseHour courseHour: courseHours) {
+            if (courseHour.getCancelled() == 0) {
+                numberOfCourseHours++;
+                if (courseHour.getAttendance() == 1)
+                    totalAttendance++;
+            }
+        }
+        if (numberOfCourseHours == 0 || totalAttendance == 0)
+            return 0;
+        return ((float) totalAttendance / numberOfCourseHours) * 100;
     }
 
     public void integrateWithDB(Context context) {
@@ -204,6 +207,62 @@ public class Course extends AppContent{
     }
 
     @Override
+    public int getSaveMessage() {
+        return R.string.course_saved;
+    }
+
+    @Override
+    public void addOperation(AppCompatActivity activity) {
+        this.courseID = CourseDiaryDB.getDBInstance(activity).courseDAO().addCourse(this);
+        semester.getCourses().add(this);
+        schedule(activity);
+    }
+
+    @Override
+    public int getDeleteMessage() {
+        return R.string.course_deleted;
+    }
+
+    @Override
+    public void deleteOperation(AppCompatActivity activity) {
+        semester.getCourses().remove(this);
+        ((MainScreen)activity).getVisibleFragment().appContent = semester;
+        CourseDiaryDB.getDBInstance(activity).courseDAO().deleteCourse(this);
+    }
+
+    @Override
+    public void updateOperation(AppCompatActivity activity) {
+        CourseDiaryDB.getDBInstance(activity).courseDAO().update(this);
+    }
+
+    @Override
+    public void showInfo(final AppCompatActivity activity) {
+        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void fillSpinners(CreationDialog creationDialog) {
+        boolean isChanged = creationDialog.selectSemesterOnSpinner(semester);
+        creationDialog.selectedSemester = (Semester)creationDialog.semesterSelectionSpinner.getSelectedItem();
+        if (creationDialog instanceof CourseCreationDialog)
+            return;
+        if (isChanged || creationDialog.courseSelectionSpinner.getAdapter() == null) {
+            ListAdapter<Course> adapter2 = new ListAdapter<>(creationDialog.getActivity(), creationDialog.selectedSemester.getCourses(), R.layout.list_item);
+            creationDialog.courseSelectionSpinner.setAdapter(adapter2);
+        }
+        creationDialog.selectCourseOnSpinner(this);
+        if (creationDialog instanceof NoteCreationDialog || creationDialog instanceof PhotoCreationDialog)
+            return;
+        creationDialog.selectedCourse = (Course) creationDialog.courseSelectionSpinner.getSelectedItem();
+    }
+
+    @Override
+    public String[] getRelatedFragmentTags() {
+        return relatedFragmentTags;
+    }
+
+    @Override
+    @NonNull
     public String toString() {
         return name;
     }

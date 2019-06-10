@@ -1,211 +1,191 @@
 package com.buraksergenozge.coursediary.Fragments;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.view.MenuItem;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.design.card.MaterialCardView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.Assignment;
-import com.buraksergenozge.coursediary.Data.Course;
+import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.Note;
+import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.User;
-import com.buraksergenozge.coursediary.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-import java.util.Collections;
+import java.util.Objects;
 
-public class CourseHourFragment extends ListFragment implements AdapterView.OnItemClickListener, View.OnClickListener {
-    private static final String ARG_PARAM1 = "courseHourID";
-    public CourseHour courseHour;/*
-    private LinearLayout courseHourListHeader, assignmentListHeader;
-    private ListView courseHourListView, assignmentListView;
-    private TextView emptyCourseHourList_TV, emptyAssignmentList_TV;*/
+public class CourseHourFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+    private RecyclerView noteRecyclerView, photoRecyclerView, audioRecyclerView;
+    private CheckBox cancelCheckBox, attendedCheckBox;
+    private MaterialCardView noteListHeader, photoListHeader, audioListHeader;
+    private TextView courseHourTitle_TV;
+    public static String tag = "courseHourFragment";
 
-    public CourseHourFragment() {
-    }
-
-    public static CourseHourFragment newInstance(long courseHourID) {
-        CourseHourFragment fragment = new CourseHourFragment();
-        Bundle args = new Bundle();
-        args.putLong(ARG_PARAM1, courseHourID);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public int getLayoutID() {
+        return R.layout.fragment_course_hour;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        layoutID = R.layout.fragment_course_hour;
+    public void open(AppContent appContent) {
+        if (appContent instanceof Note) {
+            childFragment = new NoteFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, NoteFragment.tag);
+        }
+        else if (appContent instanceof Photo) {
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+            Uri data = Uri.parse("file://" + ((Photo)appContent).getAbsolutePath());
+            intent.setDataAndType(data, "image/*");
+            startActivity(intent);
+        }
+        else if (appContent instanceof Audio) {
+            //TODO:Ses açma ekranı
+        }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            long courseHourID = getArguments().getLong(ARG_PARAM1);
-            courseHour = User.findCourseHourByID(courseHourID);
+    private void setVisibilities(boolean isNoteListEmpty, boolean isPhotoListEmpty, boolean isAudioListEmpty) {
+        if(noteRecyclerView != null && photoRecyclerView != null && audioRecyclerView != null) {
+            if (isNoteListEmpty)
+                noteRecyclerView.setVisibility(View.GONE);
+            else
+                noteRecyclerView.setVisibility(View.VISIBLE);
+            if (isPhotoListEmpty)
+                photoRecyclerView.setVisibility(View.GONE);
+            else
+                photoRecyclerView.setVisibility(View.VISIBLE);
+            if (isAudioListEmpty)
+                audioRecyclerView.setVisibility(View.GONE);
+            else
+                audioRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        /*TextView courseHourTitle_TV = getView().findViewById(R.id.courseTitle_TV);
-        courseHourTitle_TV.setText(course.getName());
-        courseHourListHeader = getView().findViewById(R.id.courseHourListHeader);
-        courseHourListHeader.setOnClickListener(this);
-        courseHourListView = getView().findViewById(R.id.courseHourListView);
-        courseHourListView.setOnItemClickListener(this);
-        registerForContextMenu(courseHourListView);
-        assignmentListHeader = getView().findViewById(R.id.assignmentListHeader);
-        assignmentListHeader.setOnClickListener(this);
-        assignmentListView = getView().findViewById(R.id.assignmentListView);
-        assignmentListView.setOnItemClickListener(this);
-        registerForContextMenu(assignmentListView);
-        emptyCourseHourList_TV = getView().findViewById(R.id.emptyCourseHourList_TV);
-        emptyAssignmentList_TV = getView().findViewById(R.id.emptyAssignmentList_TV);
-        updateView();
-        contextObject = course;*/
-    }/*
-
-    public void setVisibilities(boolean isCourseHourListEmpty, boolean isAssignmentListEmpty) {
-        if(assignmentListView != null && courseHourListView != null && emptyCourseHourList_TV != null && emptyAssignmentList_TV != null) {
-            if (isCourseHourListEmpty) {
-                courseHourListView.setVisibility(View.GONE);
-                emptyCourseHourList_TV.setVisibility(View.VISIBLE);
-            }
-            else {
-                courseHourListView.setVisibility(View.VISIBLE);
-                emptyCourseHourList_TV.setVisibility(View.GONE);
-            }
-            if (isAssignmentListEmpty) {
-                assignmentListView.setVisibility(View.GONE);
-                emptyAssignmentList_TV.setVisibility(View.VISIBLE);
-            }
-            else {
-                assignmentListView.setVisibility(View.VISIBLE);
-                emptyAssignmentList_TV.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    public boolean updateCourseHourList() {
-        Collections.sort(course.getCourseHours());
-        ListAdapter<CourseHour> adapter = new ListAdapter<>(getActivity(), course.getCourseHours());
-        courseHourListView.setAdapter(adapter);
-        ((BaseAdapter)courseHourListView.getAdapter()).notifyDataSetChanged();
-        return course.getCourseHours().isEmpty();
-    }
-
-    public boolean updateAssignmentList() {
-        ListAdapter<Assignment> adapter = new ListAdapter<>(getActivity(), course.getAssignments());
-        assignmentListView.setAdapter(adapter);
-        ((BaseAdapter)assignmentListView.getAdapter()).notifyDataSetChanged();
-        return course.getAssignments().isEmpty();
-    }*/
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        /*if (adapterView == courseHourListView) {
-            long courseHourID = ((CourseHour)adapterView.getItemAtPosition(i)).getCourseHourID();
-            FragmentManager fragManager;
-            try {
-                fragManager = getActivity().getSupportFragmentManager();
-            }catch (NullPointerException ex) {
-                ex.printStackTrace();
-                return;
-            }/*
-            FragmentTransaction fragTransaction = fragManager.beginTransaction();
-            fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            SemesterFragment semesterFragment = SemesterFragment.newInstance(semesterID);
-            fragTransaction.replace(R.id.mainArchiveLayout, semesterFragment,"semesterFragment");
-            fragTransaction.addToBackStack(null);
-            fragTransaction.commit();
-        }
-        else if (adapterView == assignmentListView) {
-            long assignmentID = ((Assignment)adapterView.getItemAtPosition(i)).getAssignmentID();
-            FragmentManager fragManager;
-            try {
-                fragManager = getActivity().getSupportFragmentManager();
-            }catch (NullPointerException ex) {
-                ex.printStackTrace();
-                return;
-            }
-            FragmentTransaction fragTransaction = fragManager.beginTransaction();
-            fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            SemesterFragment semesterFragment = SemesterFragment.newInstance(semesterID);
-            fragTransaction.replace(R.id.mainArchiveLayout, semesterFragment,"semesterFragment");
-            fragTransaction.addToBackStack(null);
-            fragTransaction.commit();
-        }*/
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        /*AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Object object = contextMenuSelectedListView.getAdapter().getItem(info.position);
-        switch (item.getItemId()) {
-            case R.id.floating_delete:
-                if (contextMenuSelectedListView == assignmentListView) {
-                    new AlertDialog.Builder(getContext()).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            course.deleteAssignment(getContext(), (Assignment) object);
-                            ((MainScreen)getActivity()).onAppContentOperation("courseFragment", getString(R.string.assignment_deleted));
-                        }}).setNegativeButton(R.string.no, null).show();
-                }
-                else if (contextMenuSelectedListView == courseHourListView) {
-                    new AlertDialog.Builder(getContext()).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            course.deleteCourseHour(getContext(), (CourseHour) object);
-                            ((MainScreen)getActivity()).onAppContentOperation("courseFragment", getString(R.string.course_hour_deleted));
-                        }}).setNegativeButton(R.string.no, null).show();
-                }
-                return true;
-            case R.id.floating_info:
-                if (contextMenuSelectedListView == assignmentListView) {
-                    Toast.makeText(getContext(), object.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
-                }
-                else if (contextMenuSelectedListView == courseHourListView) {
-                    Toast.makeText(getContext(), object.toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }*/return super.onContextItemSelected(item);
+    public void initializeViews() {
+        courseHourTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.course_hour_title_TV);
+        noteListHeader = getView().findViewById(R.id.notes_cardview);
+        noteListHeader.setOnClickListener(this);
+        photoListHeader = getView().findViewById(R.id.photos_cardview);
+        photoListHeader.setOnClickListener(this);
+        audioListHeader = getView().findViewById(R.id.audios_cardview);
+        audioListHeader.setOnClickListener(this);
+        noteRecyclerView = getView().findViewById(R.id.notes_recyclerview);
+        noteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(noteRecyclerView);
+        photoRecyclerView = getView().findViewById(R.id.photos_recyclerview);
+        photoRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+        registerForContextMenu(photoRecyclerView);
+        audioRecyclerView = getView().findViewById(R.id.audios_recyclerview);
+        audioRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(audioRecyclerView);
+        ImageView noteAddIcon = getView().findViewById(R.id.note_add_button);
+        noteAddIcon.setOnClickListener(this);
+        ImageView photoAddIcon = getView().findViewById(R.id.photo_add_button);
+        photoAddIcon.setOnClickListener(this);
+        ImageView audioAddIcon = getView().findViewById(R.id.audio_add_button);
+        audioAddIcon.setOnClickListener(this);
+        cancelCheckBox = getView().findViewById(R.id.cancelCheckBox);
+        cancelCheckBox.setOnCheckedChangeListener(this);
+        attendedCheckBox = getView().findViewById(R.id.attendCheckBox);
+        attendedCheckBox.setOnCheckedChangeListener(this);
     }
 
     @Override
     public void updateView() {
-        /*boolean isCourseHourListEmpty = updateCourseHourList();
-        boolean isAssignmentListEmpty = updateAssignmentList();
-        setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);*/
+        courseHourTitle_TV.setText(appContent.toString());
+        boolean isNoteListEmpty = updateRecyclerView(noteRecyclerView, ((CourseHour)appContent).getNotes());
+        boolean isPhotoListEmpty = updateRecyclerView(photoRecyclerView, ((CourseHour)appContent).getPhotos());
+        boolean isAudioListEmpty = updateRecyclerView(audioRecyclerView, ((CourseHour)appContent).getAudios());
+        setVisibilities(isNoteListEmpty, isPhotoListEmpty, isAudioListEmpty);
+        if (((CourseHour)appContent).getCancelled() == 1)
+            cancelCheckBox.setChecked(true);
+        else
+            cancelCheckBox.setChecked(false);
+        if (((CourseHour)appContent).getAttendance() == 1)
+            attendedCheckBox.setChecked(true);
+        else
+            attendedCheckBox.setChecked(false);
+        if (noteRecyclerView.getAdapter() != null) {
+            if (noteRecyclerView.getAdapter().getItemCount() > 3) {
+                ViewGroup.LayoutParams params = noteRecyclerView.getLayoutParams();
+                params.height = 390;
+                noteRecyclerView.setLayoutParams(params);
+                noteRecyclerView.requestLayout();
+            }
+        }
+        if (photoRecyclerView.getAdapter() != null) {
+            if (photoRecyclerView.getAdapter().getItemCount() > 15) {
+                ViewGroup.LayoutParams params = photoRecyclerView.getLayoutParams();
+                params.height = 390;
+                photoRecyclerView.setLayoutParams(params);
+                photoRecyclerView.requestLayout();
+            }
+        }
+        ((TextView)noteListHeader.findViewById(R.id.notes_TV)).setText(getResources().getString(R.string.notes, ((CourseHour)appContent).getNotes().size()));
+        ((TextView)photoListHeader.findViewById(R.id.photos_TV)).setText(getResources().getString(R.string.photos, ((CourseHour)appContent).getPhotos().size()));
+        ((TextView)audioListHeader.findViewById(R.id.audios_TV)).setText(getResources().getString(R.string.audios, ((CourseHour)appContent).getAudios().size()));
     }
 
     @Override
     public void onClick(View view) {
-        /*switch (view.getId()) {
-            case R.id.courseHourListHeader:
-                if (courseHourListView.getVisibility() == View.VISIBLE)
-                    courseHourListView.setVisibility(View.GONE);
+        switch (view.getId()) {
+            case R.id.notes_cardview:
+                if (noteRecyclerView.getVisibility() == View.VISIBLE)
+                    noteRecyclerView.setVisibility(View.GONE);
                 else
-                    courseHourListView.setVisibility(View.VISIBLE);
+                    noteRecyclerView.setVisibility(View.VISIBLE);
                 break;
-            case R.id.assignmentListHeader:
-                if (assignmentListView.getVisibility() == View.VISIBLE)
-                    assignmentListView.setVisibility(View.GONE);
+            case R.id.photos_cardview:
+                if (photoRecyclerView.getVisibility() == View.VISIBLE)
+                    photoRecyclerView.setVisibility(View.GONE);
                 else
-                    assignmentListView.setVisibility(View.VISIBLE);
+                    photoRecyclerView.setVisibility(View.VISIBLE);
                 break;
-        }*/
+            case R.id.audios_cardview:
+                if (audioRecyclerView.getVisibility() == View.VISIBLE)
+                    audioRecyclerView.setVisibility(View.GONE);
+                else
+                    audioRecyclerView.setVisibility(View.VISIBLE);
+                break;
+            case R.id.note_add_button:
+                Note.openCreationDialog((MainScreen) Objects.requireNonNull(getActivity()), Note.getCreationDialog(false));
+                MainScreen.activeDialog = "";
+                break;
+            case R.id.photo_add_button:
+                Photo.takePhoto((AppCompatActivity) getActivity());
+                MainScreen.activeDialog = "";
+                break;
+            case R.id.audio_add_button:
+                // TODO: Audio.openCreationDialog((MainScreen)getActivity(), Audio.getCreationDialog());
+                MainScreen.activeDialog = "";
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if (compoundButton == cancelCheckBox) {
+            attendedCheckBox.setEnabled(!b); // If cancel checkbox is checked, deactivate attended checkbox
+            ((CourseHour)appContent).cancel(getContext(), b);
+        }
+        else if (compoundButton == attendedCheckBox) {
+            if (b && ((CourseHour)appContent).getAttendance() == 0)
+                User.setAttendance(getContext(), ((CourseHour)appContent), 1);
+            else if (!b && ((CourseHour)appContent).getAttendance() == 1)
+                User.setAttendance(getContext(), ((CourseHour)appContent), 0);
+        }
     }
 }

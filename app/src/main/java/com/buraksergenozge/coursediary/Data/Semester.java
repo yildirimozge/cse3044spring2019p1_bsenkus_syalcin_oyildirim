@@ -5,9 +5,19 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
+import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
+import com.buraksergenozge.coursediary.Fragments.CourseFeed;
+import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.SemesterCreationDialog;
+import com.buraksergenozge.coursediary.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +39,7 @@ public class Semester extends AppContent {
     @ColumnInfo
     private float gpa;
     @Ignore
-    private static DialogFragment creationDialog = new SemesterCreationDialog();
+    private static String[] relatedFragmentTags = {ArchiveFragment.tag, CourseFeed.tag, CourseHourFragment.tag, AssignmentFragment.tag};
 
     public Semester(String name, Calendar startDate, Calendar endDate) {
         this.name = name;
@@ -85,7 +95,7 @@ public class Semester extends AppContent {
         this.gpa = gpa;
     }
 
-    public void updateGPA() {
+    void updateGPA() {
         float point = 0;
         int totalCredit = 0;
         for (Course course: courses) {
@@ -98,32 +108,10 @@ public class Semester extends AppContent {
             gpa = point / totalCredit;
     }
 
-    public static DialogFragment getCreationDialog() {
+    public static DialogFragment getCreationDialog(boolean isEditMode) {
+        CreationDialog creationDialog = new SemesterCreationDialog();
+        creationDialog.isEditMode = isEditMode;
         return creationDialog;
-    }
-
-    public String getStartDateString() {
-        return startDate.get(Calendar.YEAR) + "." + (startDate.get(Calendar.MONTH) + 1) + "." + startDate.get(Calendar.DAY_OF_MONTH);
-    }
-
-    public String getEndDateString() {
-        return endDate.get(Calendar.YEAR) + "." + (endDate.get(Calendar.MONTH) + 1) + "." + endDate.get(Calendar.DAY_OF_MONTH);
-    }
-
-    public void addCourse(Context context, Course course) {
-        long courseID = CourseDiaryDB.getDBInstance(context).courseDAO().addCourse(course);
-        course.setCourseID(courseID);
-        courses.add(course);
-
-    }
-
-    public void deleteCourse(Context context, Course course) {
-        courses.remove(course);
-        CourseDiaryDB.getDBInstance(context).courseDAO().deleteCourse(course);
-    }
-
-    public void update(Context context) {
-        CourseDiaryDB.getDBInstance(context).semesterDAO().update(this);
     }
 
     public List<Course> integrateWithDB(Context context) {
@@ -141,6 +129,60 @@ public class Semester extends AppContent {
         return TimeUnit.MILLISECONDS.toDays(Math.abs(difference));
     }
 
+    public boolean getCourseHoursEmpty() {
+        for (Course course: courses) {
+            if (course.getCourseHours().size() > 0)
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int getSaveMessage() {
+        return R.string.semester_saved;
+    }
+
+    @Override
+    public void addOperation(AppCompatActivity activity) {
+        this.semesterID = CourseDiaryDB.getDBInstance(activity).semesterDAO().addSemester(this);
+        User.getSemesters().add(this);
+    }
+
+    @Override
+    public int getDeleteMessage() {
+        return R.string.semester_deleted;
+    }
+
+    @Override
+    public void deleteOperation(AppCompatActivity activity) {
+        User.getSemesters().remove(this);
+        CourseDiaryDB.getDBInstance(activity).semesterDAO().deleteSemester(this);
+    }
+
+    @Override
+    public void updateOperation(AppCompatActivity activity) {
+        CourseDiaryDB.getDBInstance(activity).semesterDAO().update(this);
+    }
+
+    @Override
+    public void showInfo(final AppCompatActivity activity) {
+        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void fillSpinners(CreationDialog creationDialog) {
+        creationDialog.selectSemesterOnSpinner(this);
+        if (!(creationDialog instanceof CourseCreationDialog))
+            return;
+        creationDialog.selectedSemester = (Semester)creationDialog.semesterSelectionSpinner.getSelectedItem();
+    }
+
+    @Override
+    public String[] getRelatedFragmentTags() {
+        return relatedFragmentTags;
+    }
+
+    @NonNull
     public String toString() {
         return name;
     }

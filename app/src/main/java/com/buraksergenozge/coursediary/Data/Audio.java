@@ -1,10 +1,13 @@
 package com.buraksergenozge.coursediary.Data;
 
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 
 import java.util.Calendar;
 
-public class Audio {
+public class Audio extends AppContent{
     private CourseHour courseHour;
     private MediaStore.Audio record;
     private Calendar createDate;
@@ -37,5 +40,45 @@ public class Audio {
 
     public void setCreateDate(Calendar createDate) {
         this.createDate = createDate;
+    }
+
+    @Override
+    public int getSaveMessage() {
+        return 0;
+    }
+
+    @Override
+    public void addOperation(AppCompatActivity activity) {
+
+    }
+
+    @Override
+    public int getDeleteMessage() {
+        return 0;
+    }
+
+    @Override
+    public void deleteOperation(AppCompatActivity activity) {
+
+    }
+
+    @Override
+    public void updateOperation(AppCompatActivity activity) {
+
+    }
+
+    @Override
+    public void fillSpinners(CreationDialog creationDialog) {
+
+    }
+
+    @Override
+    public void showInfo(AppCompatActivity activity) {
+
+    }
+
+    @Override
+    public String[] getRelatedFragmentTags() {
+        return new String[0];
     }
 }
