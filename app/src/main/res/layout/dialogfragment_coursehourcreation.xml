@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    android:theme="@style/AppTheme">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/courseHourCreationAppBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:padding="0dp"
+            app:title="New Course Hour">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/new_course_hour"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:typeface="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/courseHourCreationCloseIcon"
+                    android:layout_width="35dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_close_white_36dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/courseHourCreationAppBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/startTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBaseline_toBaselineOf="@id/start_date_ET"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <EditText
+                    android:id="@+id/start_date_ET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:textColor="@color/darkTextColor"
+                    app:layout_constraintBottom_toBottomOf="@id/start_time_ET"
+                    app:layout_constraintEnd_toStartOf="@id/start_time_ET"
+                    app:layout_constraintStart_toEndOf="@+id/startTextView"
+                    app:layout_constraintTop_toTopOf="@id/start_time_ET"
+                    android:autofillHints="" />
+
+                <EditText
+                    android:id="@+id/start_time_ET"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:autofillHints="" />
+
+                <TextView
+                    android:id="@+id/endTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBaseline_toBaselineOf="@id/end_date_ET"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <EditText
+                    android:id="@+id/end_date_ET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:textColor="@color/darkTextColor"
+                    app:layout_constraintEnd_toStartOf="@id/end_time_ET"
+                    app:layout_constraintStart_toEndOf="@+id/endTextView"
+                    app:layout_constraintTop_toTopOf="@id/end_time_ET"
+                    app:layout_constraintBottom_toBottomOf="@id/end_time_ET"
+                    android:autofillHints="" />
+
+                <EditText
+                    android:id="@+id/end_time_ET"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:ems="10"
+                    android:inputType="time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/start_time_ET"
+                    android:autofillHints="" />
+
+                <TextView
+                    android:id="@+id/courseHourCreationSemesterSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/semester"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/courseHourCreationSemesterSelectionSpinner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/courseHourCreationSemesterSelectionSpinner" />
+
+                <Spinner
+                    android:id="@+id/courseHourCreationSemesterSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/courseHourCreationSemesterSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/end_time_ET" />
+
+                <TextView
+                    android:id="@+id/courseHourCreationCourseSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/course"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/courseHourCreationCourseSelectionSpinner"
+                    app:layout_constraintEnd_toEndOf="@+id/courseHourCreationSemesterSelection_TV"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/courseHourCreationCourseSelectionSpinner" />
+
+                <Spinner
+                    android:id="@+id/courseHourCreationCourseSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/courseHourCreationCourseSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/courseHourCreationSemesterSelectionSpinner" />
+
+                <Button
+                    android:id="@+id/courseHourCreateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:text="@string/create"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/courseHourCreationCourseSelectionSpinner" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
