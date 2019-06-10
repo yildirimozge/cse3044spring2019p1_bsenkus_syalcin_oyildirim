@@ -95,6 +95,11 @@ public class Note extends AppContent {
     }
 
     @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
+    @Override
     public int getSaveMessage() {
         return R.string.note_saved;
     }

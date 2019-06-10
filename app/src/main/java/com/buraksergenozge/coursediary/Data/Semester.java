@@ -114,6 +114,11 @@ public class Semester extends AppContent {
         return creationDialog;
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public List<Course> integrateWithDB(Context context) {
         courses = CourseDiaryDB.getDBInstance(context).semesterDAO().getAllCoursesOfSemester(this);
         return courses;

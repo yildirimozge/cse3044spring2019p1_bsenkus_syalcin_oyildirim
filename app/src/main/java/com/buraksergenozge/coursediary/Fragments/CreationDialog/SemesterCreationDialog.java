@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
@@ -32,9 +33,9 @@ public class SemesterCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.semesterCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_semester));
         nameEditText = Objects.requireNonNull(getView()).findViewById(R.id.semesterNameEditText);
         createButton = getView().findViewById(R.id.semesterCreateButton);
         createButton.setOnClickListener(this);

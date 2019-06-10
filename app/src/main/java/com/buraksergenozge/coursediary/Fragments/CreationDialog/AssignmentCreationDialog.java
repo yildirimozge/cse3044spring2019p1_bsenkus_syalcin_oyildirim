@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
@@ -35,9 +36,9 @@ public class AssignmentCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.assignmentCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_assignment));
         deadline = Calendar.getInstance();
         assignmentTitle_ET = Objects.requireNonNull(getView()).findViewById(R.id.assignmentTitle_ET);
         createButton = getView().findViewById(R.id.assignmentCreateButton);

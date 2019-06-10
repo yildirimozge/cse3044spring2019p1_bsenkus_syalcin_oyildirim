@@ -85,6 +85,11 @@ public class Assignment extends AppContent {
         return creationDialog;
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public long getRemainingTimeInMillis() {
         Calendar now = Calendar.getInstance();
         if (deadline.getTimeInMillis() - now.getTimeInMillis() < 0)

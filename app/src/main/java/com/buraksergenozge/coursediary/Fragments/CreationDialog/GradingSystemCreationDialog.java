@@ -35,9 +35,9 @@ public class GradingSystemCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.gradingSystemCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_grading_system));
         createButton = Objects.requireNonNull(getView()).findViewById(R.id.gradingSystemCreateButton);
         createButton.setOnClickListener(this);
         name_ET = getView().findViewById(R.id.gradingSystemNameEditText);

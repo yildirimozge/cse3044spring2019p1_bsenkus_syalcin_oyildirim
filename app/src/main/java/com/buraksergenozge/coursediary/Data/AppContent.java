@@ -18,6 +18,8 @@ public abstract class AppContent {
 
     public abstract void deleteOperation(AppCompatActivity activity);
 
+    public abstract void edit(AppCompatActivity activity);
+
     public abstract void updateOperation(AppCompatActivity activity);
 
     public abstract void showInfo(AppCompatActivity activity);

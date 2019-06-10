@@ -7,59 +7,15 @@
     android:padding="0dp"
     android:theme="@style/AppTheme">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/gradingSystemCreationAppBarLayout"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <android.support.v7.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:padding="0dp">
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/new_grading_system"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp"
-                    android:typeface="normal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/gradingSystemCreationCloseIcon"
-                    android:layout_width="35dp"
-                    android:layout_height="0dp"
-                    android:contentDescription="@string/close"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_close_white_36dp" />
-
-            </android.support.constraint.ConstraintLayout>
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+    <include
+        layout="@layout/creation_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/gradingSystemCreationAppBarLayout"
+        app:layout_constraintTop_toBottomOf="@id/creationAppBarLayout"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout

@@ -24,7 +24,6 @@ import java.util.Objects;
 
 public abstract class CreationDialog extends DialogFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     OnFragmentInteractionListener mListener;
-    int closeIconID;
     public Spinner semesterSelectionSpinner, courseSelectionSpinner, courseHourSelectionSpinner;
     public Semester selectedSemester = null;
     public Course selectedCourse = null;
@@ -125,7 +124,7 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == closeIconID)
+        if (view.getId() == R.id.creationCloseIcon)
             this.dismiss();
     }
 

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -36,9 +37,9 @@ public class CourseHourCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.courseHourCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_course_hour));
         createButton = getView().findViewById(R.id.courseHourCreateButton);
         createButton.setOnClickListener(this);
         semesterSelectionSpinner = getView().findViewById(R.id.courseHourCreationSemesterSelectionSpinner);

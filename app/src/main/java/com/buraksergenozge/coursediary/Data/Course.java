@@ -186,6 +186,11 @@ public class Course extends AppContent{
         return creationDialog;
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public float getAttendanceStatus() {
         int numberOfCourseHours = 0;
         int totalAttendance = 0;

@@ -3,6 +3,7 @@ package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
@@ -25,9 +26,9 @@ public class PhotoCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.photoCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_photo));
         Button createButton = getView().findViewById(R.id.photoCreateButton);
         createButton.setOnClickListener(this);
         semesterSelectionSpinner = getView().findViewById(R.id.photoCreationSemesterSelectionSpinner);

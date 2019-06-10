@@ -71,6 +71,11 @@ public class GradingSystem extends AppContent {
         return creationDialog;
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public void integrateWithDB(Context context) {
         gradeList = CourseDiaryDB.getDBInstance(context).gradingSystemDAO().getAllGradesOfGradingSystem(this);
     }

@@ -2,6 +2,7 @@ package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.TimePickerDialog;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,9 +48,9 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     protected void initializeViews() {
-        closeIconID = R.id.courseCreationCloseIcon;
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(closeIconID);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_course));
         courseName_ET = Objects.requireNonNull(getView()).findViewById(R.id.courseName_ET);
         creditET = getView().findViewById(R.id.credit_ET);
         startTime = (Calendar) Calendar.getInstance().clone();
@@ -67,6 +68,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         eMinute = sMinute;
         endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
         startDaySelectionSpinner = getView().findViewById(R.id.startDaySelectionSpinner);
+        startDaySelectionSpinner.setOnItemSelectedListener(this);
         endDaySelectionSpinner = getView().findViewById(R.id.endDaySelectionSpinner);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.days)); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -198,6 +200,13 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        super.onItemSelected(adapterView, view, i, l);
+        if (adapterView == startDaySelectionSpinner)
+            endDaySelectionSpinner.setSelection(i);
     }
 
     private boolean checkInputValidity() {

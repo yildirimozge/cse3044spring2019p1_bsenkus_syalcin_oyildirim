@@ -142,6 +142,11 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         return creationDialog;
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public void integrateWithDB(Context context) {
         notes = CourseDiaryDB.getDBInstance(context).noteDAO().getAllNotesOfCourseHour(this);
         photos = new ArrayList<>();

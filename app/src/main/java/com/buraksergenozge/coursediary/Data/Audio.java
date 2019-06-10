@@ -1,6 +1,7 @@
 package com.buraksergenozge.coursediary.Data;
 
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
@@ -60,6 +61,17 @@ public class Audio extends AppContent{
     @Override
     public void deleteOperation(AppCompatActivity activity) {
 
+    }
+
+    public static DialogFragment getCreationDialog(boolean isEditMode) {
+        //CreationDialog creationDialog = new AssignmentCreationDialog();
+        //creationDialog.isEditMode = isEditMode;
+        return null;
+    }
+
+    @Override
+    public void edit(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(true));
     }
 
     @Override

@@ -95,22 +95,13 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                 return true;
             case R.id.action_edit:
                 if (activeAppContent != null) {
-                    if (activeAppContent instanceof Semester)
-                        AppContent.openCreationDialog(this, Semester.getCreationDialog(true));
-                    else if (activeAppContent instanceof Course)
-                            AppContent.openCreationDialog(this, Course.getCreationDialog(true));
-                    else if (activeAppContent instanceof Assignment)
-                        AppContent.openCreationDialog(this, Assignment.getCreationDialog(true));
-                    else if (activeAppContent instanceof CourseHour)
-                        AppContent.openCreationDialog(this, CourseHour.getCreationDialog(true));
-                    else if (activeAppContent instanceof Note)
-                        AppContent.openCreationDialog(this, Note.getCreationDialog(true));
+                    activeAppContent.edit(this);
                     activeDialog = "";
                 }
                 return true;
             case R.id.action_info:
                 if (activeAppContent != null)
-                    Toast.makeText(this, activeAppContent.toString() + " bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
+                    activeAppContent.showInfo(this);
                 else
                     Toast.makeText(this, "USER bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
 

@@ -69,6 +69,11 @@ public class Photo extends AppContent{
         return new PhotoCreationDialog();
     }
 
+    @Override
+    public void edit(AppCompatActivity activity) {
+        //AppContent.openCreationDialog(activity, getCreationDialog(true));
+    }
+
     public static void takePhoto(AppCompatActivity activity) {
         if (User.getCourseHoursEmpty()) {
             Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
