@@ -84,7 +84,7 @@
     <string name="new_note">New Note</string>
     <string name="note_enter">Type your note here</string>
     <string name="invalid_note_title">Invalid note title!</string>
-    <string name="no_course_hours">You have to add at least one course hour!</string>
+    <string name="no_course_hours">You have to create at least one course hour!</string>
     <string name="new_course_hour">New Course Hour</string>
     <string name="save">Save</string>
     <string name="grading_system">Grading System</string>
@@ -120,4 +120,15 @@
     <string name="photo_saved">Photo saved.</string>
     <string name="course_hour_saved">Course hour saved.</string>
     <string name="missing_course_hour">Please select a course hour!</string>
+    <string name="end_date_before">End date cannot be before start date!</string>
+    <string name="date_format">%02d-%02d-%04d</string>
+    <string name="clock_format">%02d:%02d</string>
+    <string name="credit_format">%d</string>
+    <string name="no_semester">You have to create at least one semester!</string>
+    <string name="no_course">You have to create at least one course!</string>
+    <string name="invalid_coefficient">Invalid coefficient!</string>
+    <string name="invalid_code">Invalid code!</string>
+    <string name="no_grade">Add at least one grade!</string>
+    <string name="invalid_name">Invalid name</string>
+    <string name="select_grade">Select Grade</string>
 </resources>

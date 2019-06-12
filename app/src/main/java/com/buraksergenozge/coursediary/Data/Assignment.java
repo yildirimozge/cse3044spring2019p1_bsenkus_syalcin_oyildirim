@@ -79,15 +79,15 @@ public class Assignment extends AppContent {
         this.deadline = deadline;
     }
 
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new AssignmentCreationDialog();
-        creationDialog.isEditMode = isEditMode;
+        creationDialog.mode = mode;
         return creationDialog;
     }
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
     public long getRemainingTimeInMillis() {
@@ -126,8 +126,8 @@ public class Assignment extends AppContent {
     }
 
     @Override
-    public void showInfo(final AppCompatActivity activity) {
-        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+    public void showInfo(AppCompatActivity activity) {
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override

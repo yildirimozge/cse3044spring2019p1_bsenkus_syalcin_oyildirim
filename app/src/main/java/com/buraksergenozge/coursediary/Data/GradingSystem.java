@@ -65,15 +65,15 @@ public class GradingSystem extends AppContent {
         CourseDiaryDB.getDBInstance(context).gradeDAO().deleteGrade(grade);
     }
 
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new GradingSystemCreationDialog();
-        creationDialog.isEditMode = isEditMode;
+        creationDialog.mode = mode;
         return creationDialog;
     }
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
     public void integrateWithDB(Context context) {
@@ -88,6 +88,10 @@ public class GradingSystem extends AppContent {
     @Override
     public void addOperation(AppCompatActivity activity) {
         this.gradingSystemID = CourseDiaryDB.getDBInstance(activity).gradingSystemDAO().addGradingSystem(this);
+        for (Grade grade: gradeList) {
+            long gradeID = CourseDiaryDB.getDBInstance(activity).gradeDAO().addGrade(grade);
+            grade.setGradeID(gradeID);
+        }
         User.getGradingSystems().add(this);
     }
 
@@ -104,18 +108,20 @@ public class GradingSystem extends AppContent {
 
     @Override
     public void updateOperation(AppCompatActivity activity) {
+        CourseDiaryDB.getDBInstance(activity).gradingSystemDAO().deleteAllGradesOfGradingSystem(this);
         CourseDiaryDB.getDBInstance(activity).gradingSystemDAO().update(this);
-        MainScreen.integrateData(activity);
+        for (Grade grade: gradeList) {
+            CourseDiaryDB.getDBInstance(activity).gradeDAO().addGrade(grade);
+        }
     }
 
     @Override
     public void showInfo(AppCompatActivity activity) {
-        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override
     public void fillSpinners(CreationDialog creationDialog) {
-
     }
 
     @Override

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,6 +59,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     private boolean hasMenu;
     private int menuID;
     public static AppContent activeAppContent;
+    public static AppContent contextMenuAppContent;
     public static final int CAMERA_REQUEST = 1888;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private static final int READ_PERMISSION_CODE = 200;
@@ -104,7 +103,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     activeAppContent.showInfo(this);
                 else
                     Toast.makeText(this, "USER bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -114,7 +112,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     @Override
     public void onBackPressed() {
         getVisibleFragment().onBackPressed();
-            super.onBackPressed();
+        super.onBackPressed();
     }
 
     @Override
@@ -148,19 +146,19 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         if(activeDialog.equals("creationDialog")) {
             switch (i) {
                 case 0:
-                    AppContent.openCreationDialog(this, Semester.getCreationDialog(false));
+                    AppContent.openCreationDialog(this, Semester.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
                 case 1:
-                    AppContent.openCreationDialog(this, Course.getCreationDialog(false));
+                    AppContent.openCreationDialog(this, Course.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
                 case 2:
-                    AppContent.openCreationDialog(this, Assignment.getCreationDialog(false));
+                    AppContent.openCreationDialog(this, Assignment.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
                 case 3:
-                    AppContent.openCreationDialog(this, Note.getCreationDialog(false));
+                    AppContent.openCreationDialog(this, Note.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
                 case 4:
@@ -172,15 +170,24 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     activeDialog = "";
                     break;
                 case 6:
-                    AppContent.openCreationDialog(this, GradingSystem.getCreationDialog(false));
+                    AppContent.openCreationDialog(this, GradingSystem.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
             }
+        }
+        else if (activeDialog.equals("gradeDialog")) {
+            ((Course)activeAppContent).setGrade(((Course)activeAppContent).getGradingSystem().getGradeList().get(i));
+            activeAppContent.updateOperation(this);
+            updateViewsOfAppContent(activeAppContent);
+            activeDialog = "";
         }
     }
 
     public static void integrateData(Context context) {
         User.integrateWithDB(context);
+        for (GradingSystem gradingSystem : User.getGradingSystems()) {
+            gradingSystem.integrateWithDB(context);
+        }
         for (Semester semester: User.getSemesters()) {
             semester.integrateWithDB(context);
             for (Course course : semester.getCourses()) {
@@ -188,9 +195,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                 for (CourseHour courseHour: course.getCourseHours())
                     courseHour.integrateWithDB(context);
             }
-        }
-        for (GradingSystem gradingSystem : User.getGradingSystems()) {
-            gradingSystem.integrateWithDB(context);
         }
     }
 
@@ -247,30 +251,18 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            if (activeAppContent instanceof CourseHour) {
-                CourseHour courseHour = ((CourseHour)activeAppContent);
-                File newLocation = new File(courseHour.getContentDirectory(), Photo.currentPhotoName);
-                File photoFile = new File(Photo.getCurrentPhotoPath());
-                photoFile.renameTo(newLocation);
-                Photo photo = new Photo(courseHour, newLocation.getAbsolutePath());
-                photo.addOperation(this);
-                if (activeArchiveFragmentTag.equals(CourseHourFragment.tag)) {
-                    CourseHourFragment fragment = (CourseHourFragment) getSupportFragmentManager().findFragmentByTag(activeArchiveFragmentTag);
-                    if (fragment != null)
-                        fragment.updateView();
-                }
-                if (activeCourseFeedFragmentTag.equals(CourseHourFragment.tag)) {
-                    CourseHourFragment fragment = (CourseHourFragment) getSupportFragmentManager().findFragmentByTag(activeCourseFeedFragmentTag);
-                    if (fragment != null)
-                        fragment.updateView();
-                }
+            if (!(activeAppContent instanceof CourseHour || activeAppContent instanceof Note)) {
+                AppContent.openCreationDialog(this, Photo.getCreationDialog(CreationDialog.CREATE_MODE));
             }
             else {
-                //Photo.getCreationDialog(this);
-                Bitmap bitmap = BitmapFactory.decodeFile(Photo.getCurrentPhotoPath());
-                System.out.println();
-                System.out.println();
-                //imageView.setImageBitmap(photo);
+                Photo photo;
+                if (activeAppContent instanceof CourseHour)
+                    photo = new Photo((CourseHour) activeAppContent, Photo.getSavePhotoPath());
+                else
+                    photo = new Photo(((Note) activeAppContent).getCourseHour(), Photo.getSavePhotoPath());
+                photo.addOperation(this);
+                updateViewsOfAppContent(photo);
+                MainScreen.showSnackbarMessage(getWindow().getDecorView(), getString(photo.getSaveMessage()));
             }
         }
     }
@@ -360,9 +352,9 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
             case R.id.floating_delete:
                 new AlertDialog.Builder(this).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        activeAppContent.deleteOperation(MainScreen.this);
-                        updateViewsOfAppContent(activeAppContent);
-                        showSnackbarMessage(getWindow().getDecorView(), getString(activeAppContent.getDeleteMessage()));
+                        contextMenuAppContent.deleteOperation(MainScreen.this);
+                        updateViewsOfAppContent(contextMenuAppContent);
+                        showSnackbarMessage(getWindow().getDecorView(), getString(contextMenuAppContent.getDeleteMessage()));
                     }}).setNegativeButton(R.string.no, null).show();
                 return true;
             case R.id.floating_info:

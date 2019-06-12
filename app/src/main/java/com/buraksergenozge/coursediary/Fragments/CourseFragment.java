@@ -1,5 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,11 +8,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
 import com.buraksergenozge.coursediary.R;
@@ -71,6 +75,8 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
     public void initializeViews() {
         courseTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.courseTitle_TV);
         grade_TV = getView().findViewById(R.id.grade_TV);
+        grade_TV.setOnClickListener(this);
+        getView().findViewById(R.id.gradeTitle_TV).setOnClickListener(this);
         attendance_TV = getView().findViewById(R.id.attendance_TV);
         LinearLayout courseHourListHeader = getView().findViewById(R.id.courseHourListHeader);
         courseHourListHeader.setOnClickListener(this);
@@ -126,6 +132,18 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
                 else
                     User.setAttendance(getContext(), courseHour, 0);
                 updateView();
+                break;
+            case R.id.gradeTitle_TV:
+            case R.id.grade_TV:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.select_grade);
+                String[] gradeCodes = new String[((Course)appContent).getGradingSystem().getGradeList().size()];
+                for (int i = 0; i < ((Course)appContent).getGradingSystem().getGradeList().size(); i++) {
+                    gradeCodes[i] = (((Course)appContent).getGradingSystem().getGradeList().get(i)).getCode();
+                }
+                builder.setItems(gradeCodes, (MainScreen)getActivity());
+                MainScreen.activeDialog = "gradeDialog";
+                builder.show();
                 break;
         }
     }

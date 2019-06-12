@@ -129,7 +129,6 @@ public class Course extends AppContent{
 
     public void setGrade(Grade grade) {
         this.grade = grade;
-        semester.updateGPA();
     }
 
     public List<CourseHour> getCourseHours() {
@@ -180,15 +179,15 @@ public class Course extends AppContent{
         this.assignments = assignments;
     }
 
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new CourseCreationDialog();
-        creationDialog.isEditMode = isEditMode;
+        creationDialog.mode = mode;
         return creationDialog;
     }
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
     public float getAttendanceStatus() {
@@ -209,6 +208,7 @@ public class Course extends AppContent{
     public void integrateWithDB(Context context) {
         courseHours = CourseDiaryDB.getDBInstance(context).courseDAO().getAllCourseHoursOfCourse(this);
         assignments = CourseDiaryDB.getDBInstance(context).courseDAO().getAllAssignmentsOfCourse(this);
+        gradingSystem.integrateWithDB(context);
     }
 
     @Override
@@ -242,7 +242,7 @@ public class Course extends AppContent{
 
     @Override
     public void showInfo(final AppCompatActivity activity) {
-        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override

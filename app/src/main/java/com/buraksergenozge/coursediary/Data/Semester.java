@@ -88,6 +88,18 @@ public class Semester extends AppContent {
     }
 
     public float getGpa() {
+        float point = 0;
+        int totalCredit = 0;
+        for (Course course: courses) {
+            if (course.getGrade() != null) {
+                point += course.getCredit() * course.getGrade().getCoefficient();
+                totalCredit += course.getCredit();
+            }
+        }
+        if (totalCredit == 0)
+            gpa = 0.0f;
+        else
+            gpa = point / totalCredit;
         return gpa;
     }
 
@@ -95,33 +107,19 @@ public class Semester extends AppContent {
         this.gpa = gpa;
     }
 
-    void updateGPA() {
-        float point = 0;
-        int totalCredit = 0;
-        for (Course course: courses) {
-            point = course.getCredit() * course.getGrade().getCoefficient();
-            totalCredit += course.getCredit();
-        }
-        if (totalCredit == 0)
-            gpa = 0.0f;
-        else
-            gpa = point / totalCredit;
-    }
-
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new SemesterCreationDialog();
-        creationDialog.isEditMode = isEditMode;
+        creationDialog.mode = mode;
         return creationDialog;
     }
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
-    public List<Course> integrateWithDB(Context context) {
+    public void integrateWithDB(Context context) {
         courses = CourseDiaryDB.getDBInstance(context).semesterDAO().getAllCoursesOfSemester(this);
-        return courses;
     }
 
     public long getNumberOfDaysRemaining() {
@@ -171,7 +169,7 @@ public class Semester extends AppContent {
 
     @Override
     public void showInfo(final AppCompatActivity activity) {
-        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override

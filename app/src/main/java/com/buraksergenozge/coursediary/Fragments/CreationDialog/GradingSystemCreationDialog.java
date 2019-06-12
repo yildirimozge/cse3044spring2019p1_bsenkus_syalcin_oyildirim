@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
 import com.buraksergenozge.coursediary.R;
@@ -22,11 +23,10 @@ import java.util.Objects;
 public class GradingSystemCreationDialog extends CreationDialog {
     private String name;
     private EditText name_ET, gradeCode_ET, gradeCoefficient_ET;
-    private Button createButton, addGradeButton;
+    private Button createButton, addGradeButton, clearButton;
     private List<Grade> grades = new ArrayList<>();
     private List<String> codes = new ArrayList<>();
     private List<Float> coefficients = new ArrayList<>();
-    private AppContent appContent = null;
 
     @Override
     protected int getLayoutID() {
@@ -43,6 +43,8 @@ public class GradingSystemCreationDialog extends CreationDialog {
         name_ET = getView().findViewById(R.id.gradingSystemNameEditText);
         addGradeButton = getView().findViewById(R.id.addGradeButton);
         addGradeButton.setOnClickListener(this);
+        clearButton = getView().findViewById(R.id.gradesClearButton);
+        clearButton.setOnClickListener(this);
         gradeCode_ET = getView().findViewById(R.id.grade_code_ET);
         gradeCoefficient_ET = getView().findViewById(R.id.grade_coefficient_ET);
     }
@@ -54,8 +56,36 @@ public class GradingSystemCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
         name_ET.setText(((GradingSystem) appContent).getName());
         createButton.setText(getString(R.string.save));
+        Objects.requireNonNull(getView()).findViewById(R.id.gradesLayout).setVisibility(View.VISIBLE);
+        LinearLayout layout = getView().findViewById(R.id.gradesInsideLayout);
+        for (Grade grade: ((GradingSystem)appContent).getGradeList()) {
+            codes.add(grade.getCode());
+            coefficients.add(grade.getCoefficient());
+            TextView tv = new TextView(getContext());
+            tv.setText(grade.getCode() + "\n" + grade.getCoefficient());
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(tv);
+        }
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
+        name_ET.setText(((GradingSystem) appContent).getName());
+        name_ET.setEnabled(false);
+        createButton.setVisibility(View.GONE);
+        Objects.requireNonNull(getView()).findViewById(R.id.gradesLayout).setVisibility(View.VISIBLE);
+        LinearLayout layout = getView().findViewById(R.id.gradesInsideLayout);
+        for (Grade grade: grades) {
+            TextView tv = new TextView(getContext());
+            tv.setText(grade.getCode() + "\n" + grade.getCoefficient());
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(tv);
+        }
     }
 
     @Override
@@ -64,8 +94,12 @@ public class GradingSystemCreationDialog extends CreationDialog {
         switch (view.getId()) {
             case R.id.gradingSystemCreateButton:
                 if (checkInputValidity()) {
-                    if (isEditMode) {
+                    if (mode == EDIT_MODE) {
                         ((GradingSystem)appContent).setName(name);
+                        for (int i = 0; i < codes.size(); i++) {
+                            grades.add(new Grade((GradingSystem) appContent, codes.get(i), coefficients.get(i))) ;
+                        }
+                        ((GradingSystem) appContent).setGradeList(grades);
                         appContent.updateOperation((MainScreen) getActivity());
                     }
                     else {
@@ -77,19 +111,18 @@ public class GradingSystemCreationDialog extends CreationDialog {
                         appContent.addOperation((MainScreen) getActivity());
                     }
                     this.dismiss();
-                    mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.addGradeButton:
                 String code = gradeCode_ET.getText().toString().trim();
                 if (code.length() == 0) {
-                    Toast.makeText(getContext(), "INVALID CODE", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.invalid_code), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String coefficientString = gradeCoefficient_ET.getText().toString().trim();
                 if (!RegexChecker.check(coefficientString, RegexChecker.floatPattern)) {
-                    Toast.makeText(getContext(), "INVALID COEFFICIENT", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.invalid_coefficient), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 codes.add(code);
@@ -103,7 +136,8 @@ public class GradingSystemCreationDialog extends CreationDialog {
                 layout.addView(tv);
                 break;
             case R.id.gradesClearButton:
-                grades.clear();
+                codes.clear();
+                coefficients.clear();
                 layout = Objects.requireNonNull(getView()).findViewById(R.id.gradesInsideLayout);
                 if(layout.getChildCount() > 0)
                     layout.removeAllViews();
@@ -117,11 +151,11 @@ public class GradingSystemCreationDialog extends CreationDialog {
     private boolean checkInputValidity() {
         name = name_ET.getText().toString().trim();
         if (name.length() == 0) {
-            Toast.makeText(getContext(), "INVALID NAME", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.invalid_name), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (grades.size() < 1) {
-            Toast.makeText(getContext(), "ADD AT LEAST ONE GRADE", Toast.LENGTH_SHORT).show();
+        if (codes.size() < 1) {
+            Toast.makeText(getContext(), getString(R.string.no_grade), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

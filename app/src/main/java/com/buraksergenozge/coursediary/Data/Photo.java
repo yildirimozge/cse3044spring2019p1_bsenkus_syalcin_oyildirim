@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -29,16 +28,16 @@ import java.util.Calendar;
 
 public class Photo extends AppContent{
     private CourseHour courseHour;
-    private String absolutePath;
-    private static String currentPhotoPath = "";
+    private File file;
+    private static String savePhotoPath = "";
     public static String currentPhotoName = "";
     @Ignore
     private static String[] relatedFragmentTags = {CourseHourFragment.tag};
 
 
-    public Photo(CourseHour courseHour, String absolutePath) {
+    public Photo(CourseHour courseHour, String filePath) {
         this.courseHour = courseHour;
-        this.absolutePath = absolutePath;
+        this.file = new File(filePath);
     }
 
     public CourseHour getCourseHour() {
@@ -49,24 +48,28 @@ public class Photo extends AppContent{
         this.courseHour = courseHour;
     }
 
-    public static String getCurrentPhotoPath() {
-        return currentPhotoPath;
+    public static String getSavePhotoPath() {
+        return savePhotoPath;
     }
 
-    public static void setCurrentPhotoPath(String currentPhotoPath) {
-        Photo.currentPhotoPath = currentPhotoPath;
+    public static void setSavePhotoPath(String savePhotoPath) {
+        Photo.savePhotoPath = savePhotoPath;
     }
 
-    public String getAbsolutePath() {
-        return absolutePath;
+    public File getFile() {
+        return file;
     }
 
-    public void setAbsolutePath(String absolutePath) {
-        this.absolutePath = absolutePath;
+    public void setFilePath(String filePath) {
+        file = new File(filePath);
     }
 
-    public static DialogFragment getCreationDialog() {
-        return new PhotoCreationDialog();
+    public static CreationDialog getCreationDialog(int mode) {
+        CreationDialog creationDialog = new PhotoCreationDialog();
+        creationDialog.mode = mode;
+        if (mode == 0)
+            creationDialog.setAppContent(new Photo(null, savePhotoPath));
+        return creationDialog;
     }
 
     @Override
@@ -75,17 +78,42 @@ public class Photo extends AppContent{
     }
 
     public static void takePhoto(AppCompatActivity activity) {
-        if (User.getCourseHoursEmpty()) {
-            Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
-            return;
+        if (MainScreen.activeAppContent == null) {
+            if (User.getCourseHoursEmpty()) {
+                Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        else if (MainScreen.activeAppContent instanceof Semester) {
+            if (((Semester)MainScreen.activeAppContent).getCourseHoursEmpty()) {
+                Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        else if (MainScreen.activeAppContent instanceof Course) {
+            if (((Course)MainScreen.activeAppContent).getCourseHours().isEmpty()) {
+                Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        else if (MainScreen.activeAppContent instanceof Assignment) {
+            if (((Assignment)MainScreen.activeAppContent).getCourse().getCourseHours().isEmpty()) {
+                Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
         if (((MainScreen)activity).checkPermissions()) {
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(activity.getPackageManager()) != null) {
                 File photoFile;
-                photoFile = createPhotoFile(activity);
+                if (MainScreen.activeAppContent instanceof CourseHour)
+                    photoFile = createPhotoFile((CourseHour) MainScreen.activeAppContent);
+                else if (MainScreen.activeAppContent instanceof Note)
+                    photoFile = createPhotoFile(((Note) MainScreen.activeAppContent).getCourseHour());
+                else
+                    photoFile = createPhotoFile(null);
                 if (photoFile != null) {
-                    currentPhotoPath = photoFile.getAbsolutePath();
+                    savePhotoPath = photoFile.getAbsolutePath();
                     Uri photoURI = FileProvider.getUriForFile(activity, "com.buraksergenozge.coursediary.fileprovider", photoFile);
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                     activity.startActivityForResult(cameraIntent, MainScreen.CAMERA_REQUEST);
@@ -94,10 +122,14 @@ public class Photo extends AppContent{
         }
     }
 
-    private static File createPhotoFile(AppCompatActivity activity) {
+    private static File createPhotoFile(CourseHour courseHour) {
         String name = StringManager.getDateString(Calendar.getInstance(), "yyyyMMdd_HHmmss");
         currentPhotoName = name.concat(".jpg");
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CourseDiary");
+        File storageDir;
+        if (courseHour != null)
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ("CourseDiary/" + courseHour.getCourseHourID()));
+        else
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CourseDiary");
         if (!storageDir.exists())
             storageDir.mkdir();
         File image = null;
@@ -117,7 +149,7 @@ public class Photo extends AppContent{
     @Override
     public void addOperation(AppCompatActivity activity) {
         courseHour.getPhotos().add(this);
-        MainScreen.integrateData(activity);
+        //MainScreen.integrateData(activity);
     }
 
     @Override
@@ -128,7 +160,6 @@ public class Photo extends AppContent{
     @Override
     public void deleteOperation(AppCompatActivity activity) {
         courseHour.getPhotos().remove(this);
-        File file = new File(absolutePath);
         file.delete();
         MainScreen.activeAppContent = courseHour;
     }
@@ -139,7 +170,7 @@ public class Photo extends AppContent{
 
     @Override
     public void showInfo(AppCompatActivity activity) {
-        Toast.makeText(activity, toString(), Toast.LENGTH_SHORT).show();
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override
@@ -172,6 +203,6 @@ public class Photo extends AppContent{
     //@RecentlyNonNull
     @Override
     public String toString() {
-        return "courseHour=" + courseHour + ", absolutePath=" + absolutePath;
+        return "courseHour=" + courseHour + ", absolutePath=" + file.getAbsolutePath();
     }
 }

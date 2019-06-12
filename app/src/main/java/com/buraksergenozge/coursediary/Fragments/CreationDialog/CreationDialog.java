@@ -5,20 +5,27 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Tools.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -28,7 +35,19 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
     public Semester selectedSemester = null;
     public Course selectedCourse = null;
     public  CourseHour selectedCourseHour = null;
-    public boolean isEditMode = false;
+    public int mode = 0; // 0 for creation, 1 for edit, 2 for info
+    public static final int CREATE_MODE = 0;
+    public static final int EDIT_MODE = 1;
+    public static final int INFO_MODE = 2;
+    protected AppContent appContent = null;
+
+    public AppContent getAppContent() {
+        return appContent;
+    }
+
+    public void setAppContent(AppContent appContent) {
+        this.appContent = appContent;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -60,10 +79,16 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             Objects.requireNonNull(dialog.getWindow()).setLayout(width, height);
         }
+        if (!checkCreationStatus()) {
+            dismiss();
+            return;
+        }
         initializeViews();
         prepareSpinners();
-        if(isEditMode)
+        if (mode == EDIT_MODE)
             initializeEditMode();
+        else if (mode == INFO_MODE)
+            initializeInfoMode();
     }
 
     protected abstract int getLayoutID();
@@ -73,6 +98,8 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
     protected abstract void initializeViews();
 
     protected abstract void initializeEditMode();
+
+    protected abstract void initializeInfoMode();
 
     public boolean selectSemesterOnSpinner(Semester semester) {
         Semester currentSelected = (Semester) semesterSelectionSpinner.getSelectedItem();
@@ -122,10 +149,60 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
         }
     }
 
+    public boolean checkCreationStatus() { // Checks whether content that currently is being created can be created or not.
+        if (MainScreen.activeAppContent == null) {
+            if (this instanceof NoteCreationDialog) {
+                if (User.getCourseHoursEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            else if (this instanceof CourseCreationDialog) {
+                if (User.getSemesters().isEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_semester), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            else if (this instanceof AssignmentCreationDialog || this instanceof CourseHourCreationDialog) {
+                if (User.getCoursesEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_course), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        }
+        else if (MainScreen.activeAppContent instanceof Semester) {
+            if (this instanceof NoteCreationDialog) {
+                if (((Semester)MainScreen.activeAppContent).getCourseHoursEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            else if (this instanceof AssignmentCreationDialog || this instanceof CourseHourCreationDialog) {
+                if (((Semester)MainScreen.activeAppContent).getCourses().isEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_course), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        }
+        else if (MainScreen.activeAppContent instanceof Course) {
+            if (this instanceof NoteCreationDialog) {
+                if (((Course)MainScreen.activeAppContent).getCourseHours().isEmpty()) {
+                    Toast.makeText(getActivity(), Objects.requireNonNull(getActivity()).getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.creationCloseIcon)
+        if (view.getId() == R.id.creationCloseIcon) {
+            if (this instanceof PhotoCreationDialog) {
+                ((Photo)appContent).getFile().delete();
+            }
             this.dismiss();
+        }
     }
 
     @Override
@@ -174,5 +251,16 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag);
+            ft.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Log.d("ABSDIALOGFRAG", "Exception", e);
+        }
     }
 }

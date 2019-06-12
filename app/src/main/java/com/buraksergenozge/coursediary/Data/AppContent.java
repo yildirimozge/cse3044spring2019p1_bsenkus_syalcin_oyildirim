@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 
 public abstract class AppContent {
-    public static void openCreationDialog(AppCompatActivity activity, DialogFragment dialog) {
+    public static void openCreationDialog(AppCompatActivity activity, CreationDialog dialog) {
         dialog.show(activity.getSupportFragmentManager(), "tag");
     }
 

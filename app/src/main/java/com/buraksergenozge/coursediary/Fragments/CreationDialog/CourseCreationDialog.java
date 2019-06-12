@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.GradingSystem;
+import com.buraksergenozge.coursediary.Fragments.BaseFragment;
 import com.buraksergenozge.coursediary.Tools.RegexChecker;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -32,14 +34,14 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
     private String courseName;
     private int credit, sHour, sMinute, eHour, eMinute;
     private float attendanceObligation;
+    private GradingSystem selectedGradingSystem;
     private EditText courseName_ET, creditET, startTime_ET, endTime_ET;
     private TextView attendanceObligationValueTV;
     private SeekBar attendanceObligationSeekBar;
-    private Spinner startDaySelectionSpinner, endDaySelectionSpinner;
+    private Spinner gradingSystemSelectionSpinner, startDaySelectionSpinner, endDaySelectionSpinner;
     private Calendar startTime, endTime;
     private List<Calendar[]> schedule;
     private Button createButton;
-    private AppContent appContent = null;
 
     @Override
     protected int getLayoutID() {
@@ -62,13 +64,15 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         Calendar calendar = Calendar.getInstance();
         sHour = calendar.get(Calendar.HOUR_OF_DAY);
         sMinute = calendar.get(Calendar.MINUTE);
-        startTime_ET.setText(String.format("%1$02d", sHour) + ":" + String.format("%1$02d", sMinute));
+        startTime_ET.setText(getResources().getString(R.string.clock_format, sHour, sMinute));
         calendar.roll(Calendar.HOUR_OF_DAY, 1);
         eHour = calendar.get(Calendar.HOUR_OF_DAY);
         eMinute = sMinute;
-        endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
+        endTime_ET.setText(getResources().getString(R.string.clock_format, eHour, eMinute));
         startDaySelectionSpinner = getView().findViewById(R.id.startDaySelectionSpinner);
         startDaySelectionSpinner.setOnItemSelectedListener(this);
+        gradingSystemSelectionSpinner = getView().findViewById(R.id.gradingSystemSelectionSpinner);
+        gradingSystemSelectionSpinner.setOnItemSelectedListener(this);
         endDaySelectionSpinner = getView().findViewById(R.id.endDaySelectionSpinner);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.days)); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -99,17 +103,71 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
             ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), User.getSemesters(), R.layout.list_item);
             semesterSelectionSpinner.setAdapter(adapter);
         }
+        ListAdapter<GradingSystem> adapter2 = new ListAdapter<>(getActivity(), User.getGradingSystems(), R.layout.list_item);
+        gradingSystemSelectionSpinner.setAdapter(adapter2);
     }
 
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
         courseName_ET.setText(((Course) appContent).getName());
-        creditET.setText(((Course) appContent).getCredit() + "");
+        creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
         attendanceObligationSeekBar.setProgress((int)(((Course) appContent).getAttendanceObligation() * 100));
         createButton.setText(getString(R.string.save));
+        schedule = ((Course)appContent).getSchedule();
+        Objects.requireNonNull(getView()).findViewById(R.id.scheduleLayout).setVisibility(View.VISIBLE);
+        LinearLayout layout = getView().findViewById(R.id.scheduleInsideLayout);
+        for (Calendar[] calendars: schedule) {
+            TextView tv = new TextView(getContext());
+            tv.setText(calendars[0].get(Calendar.DAY_OF_WEEK) + "\n" + calendars[0].get(Calendar.HOUR_OF_DAY) + ":" + calendars[0].get(Calendar.MINUTE) + " - "+ calendars[1].get(Calendar.HOUR_OF_DAY) + ":" + calendars[1].get(Calendar.MINUTE));
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(tv);
+        }
+        // Setting grading system spinner
+        if (((Course)appContent).getGradingSystem() != null) {
+            GradingSystem currentSelected = (GradingSystem) gradingSystemSelectionSpinner.getSelectedItem();
+            if (currentSelected == null || currentSelected.getGradingSystemID() != ((Course)appContent).getGradingSystem().getGradingSystemID()) {
+                int count = gradingSystemSelectionSpinner.getAdapter().getCount();
+                for (int i = 0; i < count; i++) {
+                    currentSelected = (GradingSystem) gradingSystemSelectionSpinner.getItemAtPosition(i);
+                    if (((Course)appContent).getGradingSystem().getGradingSystemID() == currentSelected.getGradingSystemID()) {
+                        gradingSystemSelectionSpinner.setSelection(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
+        courseName_ET.setText(((Course) appContent).getName());
+        courseName_ET.setEnabled(false);
+        creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
+        creditET.setEnabled(false);
+        attendanceObligationSeekBar.setProgress((int)(((Course) appContent).getAttendanceObligation() * 100));
+        attendanceObligationSeekBar.setEnabled(false);
+        createButton.setVisibility(View.GONE);
+        getView().findViewById(R.id.addScheduleButton).setVisibility(View.GONE);
+        getView().findViewById(R.id.clearButton).setVisibility(View.GONE);
         semesterSelectionSpinner.setEnabled(false);
-        //TODO:Schedule düzenlemesi yapılacak
+        gradingSystemSelectionSpinner.setEnabled(false);
+        startDaySelectionSpinner.setVisibility(View.GONE);
+        endDaySelectionSpinner.setVisibility(View.GONE);
+        startTime_ET.setVisibility(View.GONE);
+        endTime_ET.setVisibility(View.GONE);
+        schedule = ((Course)appContent).getSchedule();
+        Objects.requireNonNull(getView()).findViewById(R.id.scheduleLayout).setVisibility(View.VISIBLE);
+        LinearLayout layout = getView().findViewById(R.id.scheduleInsideLayout);
+        for (Calendar[] calendars: schedule) {
+            TextView tv = new TextView(getContext());
+            tv.setText(calendars[0].get(Calendar.DAY_OF_WEEK) + "\n" + calendars[0].get(Calendar.HOUR_OF_DAY) + ":" + calendars[0].get(Calendar.MINUTE) + " - "+ calendars[1].get(Calendar.HOUR_OF_DAY) + ":" + calendars[1].get(Calendar.MINUTE));
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(tv);
+        }
     }
 
     @Override
@@ -118,30 +176,45 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         switch (view.getId()) {
             case R.id.courseCreateButton:
                 if(checkInputValidity()) {
-                    if (isEditMode) {
+                    if (mode == EDIT_MODE) {
                         ((Course)appContent).setName(courseName);
                         ((Course)appContent).setCredit(credit);
                         ((Course)appContent).setAttendanceObligation(attendanceObligation);
-                        //TODO: Burada semester ve schedule değişimi kontrol edilecek.
+                        if (((Course)appContent).getGradingSystem() == null) {
+                            if (selectedGradingSystem != null)
+                                ((Course)appContent).setGradingSystem(selectedGradingSystem);
+                        }
+                        else {
+                            if (selectedGradingSystem != null && ((Course)appContent).getGradingSystem().getGradingSystemID() != selectedGradingSystem.getGradingSystemID())
+                                ((Course)appContent).setGradingSystem(selectedGradingSystem);
+                        }
+                        if (((Course)appContent).getSemester().getSemesterID() != selectedSemester.getSemesterID()) {
+                            ((Semester)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getCourses().remove(appContent);
+                            ((Course)appContent).setSemester(selectedSemester);
+                            selectedSemester.getCourses().add((Course) appContent);
+                        }
+                        //TODO: Burada schedule değişimi kontrol edilecek.
                         appContent.updateOperation((MainScreen) getActivity());
                     }
                     else {
                         appContent = new Course(courseName, selectedSemester, credit, attendanceObligation, schedule);
+                        if (selectedGradingSystem != null)
+                            ((Course)appContent).setGradingSystem(selectedGradingSystem);
                         appContent.addOperation((MainScreen) getActivity());
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.start_time_ET:
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                startTime_ET.setText(String.format("%1$02d", hourOfDay) + ":" + String.format("%1$02d", minute));
+                                startTime_ET.setText(getResources().getString(R.string.clock_format, hourOfDay, minute));
                                 eHour = (hourOfDay + 1) % 24;
                                 eMinute = minute;
-                                endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
+                                endTime_ET.setText(getResources().getString(R.string.clock_format, eHour, eMinute));
                             }
                         }, sHour, sMinute, true).show();
                 break;
@@ -149,7 +222,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                endTime_ET.setText(String.format("%1$02d", hourOfDay) + ":" + String.format("%1$02d", minute));
+                                endTime_ET.setText(getResources().getString(R.string.clock_format, hourOfDay, minute));
                             }
                         }, eHour, eMinute, true).show();
                 break;
@@ -207,6 +280,8 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         super.onItemSelected(adapterView, view, i, l);
         if (adapterView == startDaySelectionSpinner)
             endDaySelectionSpinner.setSelection(i);
+        else if (adapterView == gradingSystemSelectionSpinner)
+            selectedGradingSystem = (GradingSystem) gradingSystemSelectionSpinner.getAdapter().getItem(i);
     }
 
     private boolean checkInputValidity() {

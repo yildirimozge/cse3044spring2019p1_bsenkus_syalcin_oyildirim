@@ -96,7 +96,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
             listItemAdditional_TV.setVisibility(View.GONE);
         }
         else if (viewModel instanceof Photo) {
-            Bitmap myBitmap = BitmapFactory.decodeFile(((Photo)viewModel).getAbsolutePath());
+            Bitmap myBitmap = BitmapFactory.decodeFile(((Photo)viewModel).getFile().getAbsolutePath());
             thumbnail_IV.setImageBitmap(myBitmap);
         }
     }
@@ -113,6 +113,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
     @Override
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         Objects.requireNonNull(activity).getMenuInflater().inflate(R.menu.menu_floating, contextMenu);
-        MainScreen.activeAppContent = appContent;
+        MainScreen.contextMenuAppContent = appContent;
     }
 }

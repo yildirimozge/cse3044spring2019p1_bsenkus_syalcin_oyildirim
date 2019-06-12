@@ -103,4 +103,15 @@
     <string name="photo_saved">Fotoğraf kaydedildi.</string>
     <string name="course_hour_saved">Ders saati kaydedildi.</string>
     <string name="missing_course_hour">Lütfen bir ders saati seçin!</string>
+    <string name="end_date_before">Bitiş tarihi başlangıç tarihinden önce olamaz!</string>
+    <string name="date_format">%02d-%02d-%04d</string>
+    <string name="clock_format">%02d:%02d</string>
+    <string name="credit_format">%d</string>
+    <string name="no_course">En az bir ders oluşturmalısınız!</string>
+    <string name="no_semester">En az bir dönem oluşturmalısınız!</string>
+    <string name="invalid_code">Geçersiz kod!</string>
+    <string name="invalid_coefficient">Geçersiz katsayı!</string>
+    <string name="invalid_name">Geçersiz isim!</string>
+    <string name="no_grade">En az bir puan eklemelisiniz!</string>
+    <string name="select_grade">Puan Seçin</string>
 </resources>

@@ -21,8 +21,8 @@ import java.util.Objects;
 public abstract class BaseFragment extends Fragment {
     public AppContent appContent;
     static AppContent transferAppContent;
-    BaseFragment parentFragment;
-    BaseFragment childFragment;
+    public BaseFragment parentFragment;
+    public BaseFragment childFragment;
 
     protected abstract int getLayoutID();
 
@@ -74,10 +74,9 @@ public abstract class BaseFragment extends Fragment {
         return list.isEmpty();
     }
 
-    public boolean onBackPressed() {
+    public void onBackPressed() {
         if (parentFragment != null)
             parentFragment.childFragment = null;
         parentFragment = null;
-        return true;
     }
 }

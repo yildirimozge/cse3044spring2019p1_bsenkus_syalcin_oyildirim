@@ -1,5 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -8,6 +9,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
@@ -18,6 +20,8 @@ import java.io.File;
 import java.util.Objects;
 
 public class PhotoCreationDialog extends CreationDialog {
+    private Button createButton;
+    private ImageView image;
 
     @Override
     protected int getLayoutID() {
@@ -29,7 +33,10 @@ public class PhotoCreationDialog extends CreationDialog {
         ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
         ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_photo));
-        Button createButton = getView().findViewById(R.id.photoCreateButton);
+        image = getView().findViewById(R.id.photoCreation_IV);
+        image.setVisibility(View.VISIBLE);
+        image.setImageBitmap(BitmapFactory.decodeFile(((Photo)appContent).getFile().getAbsolutePath()));
+        createButton = getView().findViewById(R.id.photoCreateButton);
         createButton.setOnClickListener(this);
         semesterSelectionSpinner = getView().findViewById(R.id.photoCreationSemesterSelectionSpinner);
         semesterSelectionSpinner.setOnItemSelectedListener(this);
@@ -46,10 +53,22 @@ public class PhotoCreationDialog extends CreationDialog {
         else {
             ListAdapter<Semester> adapter = new ListAdapter<>(getActivity(), User.getSemesters(), R.layout.list_item);
             semesterSelectionSpinner.setAdapter(adapter);
-        }    }
+        }
+    }
 
     @Override
     protected void initializeEditMode() {
+        appContent = MainScreen.activeAppContent;
+        createButton.setText(getString(R.string.save));
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        createButton.setVisibility(View.GONE);
+        semesterSelectionSpinner.setEnabled(false);
+        courseSelectionSpinner.setEnabled(false);
+        courseHourSelectionSpinner.setEnabled(false);
     }
 
     @Override
@@ -57,21 +76,26 @@ public class PhotoCreationDialog extends CreationDialog {
         super.onClick(view);
         switch (view.getId()) {
             case R.id.photoCreateButton:
-                AppContent appContent = null;
                 if (checkInputValidity()) {
-                    if (isEditMode)
-                        Toast.makeText(getActivity(), "EDIT MODE", Toast.LENGTH_SHORT).show();
+                    if (mode == EDIT_MODE) {
+                        if (((Photo)appContent).getCourseHour().getCourseHourID() != selectedCourseHour.getCourseHourID()) {
+                            ((CourseHour)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getPhotos().remove(appContent);
+                            selectedCourseHour.getPhotos().add((Photo) appContent);
+                            ((Photo)appContent).setCourseHour(selectedCourseHour);
+                        }
+                        appContent.updateOperation((MainScreen) getActivity());
+                    }
                     else {
                         File newLocation = new File(selectedCourseHour.getContentDirectory(), Photo.currentPhotoName);
-                        File path = new File(Photo.getCurrentPhotoPath());
-                        path.renameTo(newLocation);
-                        appContent = new Photo(selectedCourseHour, newLocation.getAbsolutePath());
+                        ((Photo)appContent).getFile().renameTo(newLocation); // Move file to related course hour's directory
+                        ((Photo)appContent).setFilePath(newLocation.getAbsolutePath()); // Update file's path
+                        ((Photo)appContent).setCourseHour(selectedCourseHour); // Update photo's course hour
                         appContent.addOperation((MainScreen) getActivity());
                     }
                     this.dismiss();
                     if (appContent != null) {
                         mListener.updateViewsOfAppContent(appContent);
-                        MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
+                        MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                     }
                 }
                 break;

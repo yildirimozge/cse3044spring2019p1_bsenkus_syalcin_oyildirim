@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
+import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Tools.ListAdapter;
@@ -27,7 +28,6 @@ public class AssignmentCreationDialog extends CreationDialog {
     private EditText assignmentTitle_ET, deadlineEditText;
     private int year, month, day;
     private Button createButton;
-    private AppContent appContent = null;
 
     @Override
     protected int getLayoutID() {
@@ -52,7 +52,7 @@ public class AssignmentCreationDialog extends CreationDialog {
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
         deadlineEditText = getView().findViewById(R.id.assignment_creation_start_date_ET);
-        deadlineEditText.setText(day + "-" + (month + 1) + "-" + year);
+        deadlineEditText.setText(getResources().getString(R.string.date_format, day, (month + 1), year));
         deadlineEditText.setOnClickListener(this);
     }
 
@@ -69,9 +69,21 @@ public class AssignmentCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
         assignmentTitle_ET.setText(((Assignment) appContent).getTitle());
-        deadlineEditText.setText(((Assignment) appContent).getDeadline().get(Calendar.DAY_OF_MONTH) + "-" + (((Assignment) appContent).getDeadline().get(Calendar.MONTH) + 1) + "-" + ((Assignment) appContent).getDeadline().get(Calendar.YEAR));
+        deadlineEditText.setText(getResources().getString(R.string.date_format, ((Assignment) appContent).getDeadline().get(Calendar.DAY_OF_MONTH), (((Assignment) appContent).getDeadline().get(Calendar.MONTH) + 1), ((Assignment) appContent).getDeadline().get(Calendar.YEAR)));
         createButton.setText(getString(R.string.save));
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
+        assignmentTitle_ET.setText(((Assignment) appContent).getTitle());
+        assignmentTitle_ET.setEnabled(false);
+        deadlineEditText.setText(getResources().getString(R.string.date_format, ((Assignment) appContent).getDeadline().get(Calendar.DAY_OF_MONTH), (((Assignment) appContent).getDeadline().get(Calendar.MONTH) + 1), ((Assignment) appContent).getDeadline().get(Calendar.YEAR)));
+        deadlineEditText.setEnabled(false);
+        createButton.setVisibility(View.GONE);
         semesterSelectionSpinner.setEnabled(false);
         courseSelectionSpinner.setEnabled(false);
     }
@@ -82,9 +94,14 @@ public class AssignmentCreationDialog extends CreationDialog {
         switch (view.getId()) {
             case R.id.assignmentCreateButton:
                 if (checkInputValidity()) {
-                    if (isEditMode) {
+                    if (mode == EDIT_MODE) {
                         ((Assignment)appContent).setTitle(title);
                         ((Assignment) appContent).setDeadline(deadline);
+                        if (((Assignment)appContent).getCourse().getCourseID() != selectedCourse.getCourseID()) {
+                            ((Course)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getAssignments().remove(appContent);
+                            ((Assignment)appContent).setCourse(selectedCourse);
+                            selectedCourse.getAssignments().add((Assignment) appContent);
+                        }
                         appContent.updateOperation((MainScreen) getActivity());
                     }
                     else {
@@ -93,14 +110,14 @@ public class AssignmentCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.assignment_creation_start_date_ET:
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        deadlineEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        deadlineEditText.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), year));
                     }
                 }, year, month, day).show();
                 break;

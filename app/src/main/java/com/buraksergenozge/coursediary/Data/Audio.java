@@ -63,7 +63,7 @@ public class Audio extends AppContent{
 
     }
 
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         //CreationDialog creationDialog = new AssignmentCreationDialog();
         //creationDialog.isEditMode = isEditMode;
         return null;
@@ -71,7 +71,7 @@ public class Audio extends AppContent{
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class Audio extends AppContent{
 
     @Override
     public void showInfo(AppCompatActivity activity) {
-
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 
     @Override

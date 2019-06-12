@@ -57,7 +57,7 @@ public class SemesterFragment extends BaseFragment {
     public void updateView() {
         semesterTitleTV.setText(((Semester)appContent).getName());
         daysToEnd.setText(((Semester)appContent).getNumberOfDaysRemaining() + "");
-        gpa_TV.setText(((Semester)appContent).getGpa() + "");
+        gpa_TV.setText(String.format("%.2f", ((Semester)appContent).getGpa()));
         boolean isEmpty = updateRecyclerView(courseRecyclerView, ((Semester)appContent).getCourses());
         setVisibilities(isEmpty);
     }

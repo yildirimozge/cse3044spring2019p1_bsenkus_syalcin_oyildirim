@@ -120,6 +120,26 @@
                     app:layout_constraintStart_toEndOf="@+id/courseCreationSemesterSelection_TV"
                     app:layout_constraintTop_toBottomOf="@+id/attendanceObligationSeekBar" />
 
+                <TextView
+                    android:id="@+id/gradingSystemSelection_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/grading_system"
+                    android:textAlignment="textStart"
+                    app:layout_constraintBottom_toBottomOf="@+id/gradingSystemSelectionSpinner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/gradingSystemSelectionSpinner" />
+
+                <Spinner
+                    android:id="@+id/gradingSystemSelectionSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/gradingSystemSelection_TV"
+                    app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner" />
+
                 <Spinner
                     android:id="@+id/startDaySelectionSpinner"
                     android:layout_width="0dp"
@@ -151,7 +171,7 @@
                     android:inputType="time"
                     app:layout_constraintEnd_toStartOf="@+id/addScheduleButton"
                     app:layout_constraintStart_toEndOf="@id/startDaySelectionSpinner"
-                    app:layout_constraintTop_toBottomOf="@+id/courseCreationSemesterSelectionSpinner"
+                    app:layout_constraintTop_toBottomOf="@+id/gradingSystemSelectionSpinner"
                     android:autofillHints="" />
 
                 <EditText

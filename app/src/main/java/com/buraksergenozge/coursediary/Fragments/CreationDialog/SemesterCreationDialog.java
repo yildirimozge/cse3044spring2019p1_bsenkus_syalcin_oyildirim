@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.RegexChecker;
@@ -24,7 +25,6 @@ public class SemesterCreationDialog extends CreationDialog {
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
     private Calendar startDate, endDate;
     private Button createButton;
-    private AppContent appContent = null;
 
     @Override
     protected int getLayoutID() {
@@ -49,10 +49,10 @@ public class SemesterCreationDialog extends CreationDialog {
         startDate = Calendar.getInstance();
         endDate = Calendar.getInstance();
         startDateEditText = getView().findViewById(R.id.startDateView);
-        startDateEditText.setText(sDay + "-" + (sMonth + 1) + "-" + sYear);
+        startDateEditText.setText(getResources().getString(R.string.date_format, sDay, (sMonth + 1), sYear));
         startDateEditText.setOnClickListener(this);
         endDateEditText = getView().findViewById(R.id.endDateView);
-        endDateEditText.setText(sDay + "-" + (sMonth + 1) + "-" + sYear);
+        endDateEditText.setText(getResources().getString(R.string.date_format, eDay, (eMonth + 1), eYear));
         endDateEditText.setOnClickListener(this);
     }
 
@@ -63,10 +63,24 @@ public class SemesterCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
         nameEditText.setText(((Semester)appContent).getName());
-        startDateEditText.setText(((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH) + "-" + (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1) + "-" + ((Semester)appContent).getStartDate().get(Calendar.YEAR));
-        endDateEditText.setText(((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH) + "-" + (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1) + "-" + ((Semester)appContent).getEndDate().get(Calendar.YEAR));
+        startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
+        endDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getEndDate().get(Calendar.YEAR)));
         createButton.setText(getString(R.string.save));
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
+        nameEditText.setText(((Semester)appContent).getName());
+        nameEditText.setEnabled(false);
+        startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
+        startDateEditText.setEnabled(false);
+        endDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getEndDate().get(Calendar.YEAR)));
+        endDateEditText.setEnabled(false);
+        createButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -75,7 +89,7 @@ public class SemesterCreationDialog extends CreationDialog {
         switch (view.getId()) {
             case R.id.semesterCreateButton:
                 if (checkInputValidity()) {
-                    if (isEditMode) {
+                    if (mode == EDIT_MODE) {
                         ((Semester)appContent).setName(semesterName);
                         ((Semester)appContent).setStartDate(startDate);
                         ((Semester)appContent).setEndDate(endDate);
@@ -85,16 +99,16 @@ public class SemesterCreationDialog extends CreationDialog {
                         appContent = new Semester(semesterName, startDate, endDate);
                         appContent.addOperation((MainScreen)getActivity());
                     }
-                    mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
                     this.dismiss();
+                    mListener.updateViewsOfAppContent(appContent);
+                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.startDateView:
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        startDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        startDateEditText.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), year));
                     }
                 }, sYear, sMonth, sDay).show();
                 break;
@@ -102,7 +116,7 @@ public class SemesterCreationDialog extends CreationDialog {
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        endDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        endDateEditText.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), year));
                     }
                 }, eYear, eMonth, eDay).show();
                 break;
@@ -143,6 +157,10 @@ public class SemesterCreationDialog extends CreationDialog {
             return false;
         }
         endDate.set(eYear, eMonth - 1, eDay, 23, 59);
+        if (startDate.after(endDate)) {
+            Toast.makeText(getContext(), getString(R.string.end_date_before), Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 }

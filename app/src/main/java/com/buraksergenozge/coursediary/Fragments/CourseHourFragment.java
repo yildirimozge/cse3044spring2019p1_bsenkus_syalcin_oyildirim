@@ -21,6 +21,7 @@ import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.User;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
         }
         else if (appContent instanceof Photo) {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-            Uri data = Uri.parse("file://" + ((Photo)appContent).getAbsolutePath());
+            Uri data = Uri.parse("file://" + ((Photo)appContent).getFile().getAbsolutePath());
             intent.setDataAndType(data, "image/*");
             startActivity(intent);
         }
@@ -161,7 +162,7 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
                     audioRecyclerView.setVisibility(View.VISIBLE);
                 break;
             case R.id.note_add_button:
-                Note.openCreationDialog((MainScreen) Objects.requireNonNull(getActivity()), Note.getCreationDialog(false));
+                Note.openCreationDialog((MainScreen) Objects.requireNonNull(getActivity()), Note.getCreationDialog(CreationDialog.CREATE_MODE));
                 MainScreen.activeDialog = "";
                 break;
             case R.id.photo_add_button:

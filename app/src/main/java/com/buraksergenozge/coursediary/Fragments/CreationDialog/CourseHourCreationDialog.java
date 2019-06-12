@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
@@ -28,7 +29,6 @@ public class CourseHourCreationDialog extends CreationDialog {
     private int sYear, sMonth, sDay, sHour, sMinute, eYear, eMonth, eDay, eHour, eMinute;
     private EditText startDay_ET, endDay_ET, startTime_ET, endTime_ET;
     private Button createButton;
-    private AppContent appContent = null;
 
     @Override
     protected int getLayoutID() {
@@ -67,11 +67,27 @@ public class CourseHourCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(appContent.toString());
         startDay_ET.setText(((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getStartDate().get(Calendar.YEAR));
         endDay_ET.setText(((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getEndDate().get(Calendar.YEAR));
         startTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
         endTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
         createButton.setText(getString(R.string.save));
+    }
+
+    @Override
+    protected void initializeInfoMode() {
+        appContent = MainScreen.activeAppContent;
+        ((TextView)getView().findViewById(R.id.creationTitle)).setText(appContent.toString());
+        startDay_ET.setText(((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getStartDate().get(Calendar.YEAR));
+        startDay_ET.setEnabled(false);
+        endDay_ET.setText(((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getEndDate().get(Calendar.YEAR));
+        endDay_ET.setEnabled(false);
+        startTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
+        startTime_ET.setEnabled(false);
+        endTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
+        endTime_ET.setEnabled(false);
+        createButton.setVisibility(View.GONE);
         semesterSelectionSpinner.setEnabled(false);
         courseSelectionSpinner.setEnabled(false);
     }
@@ -130,9 +146,14 @@ public class CourseHourCreationDialog extends CreationDialog {
         switch (view.getId()) {
             case R.id.courseHourCreateButton:
                 if (checkInputValidity()) {
-                    if (isEditMode) {
+                    if (mode == EDIT_MODE) {
                         ((CourseHour)appContent).setEndDate(endDate);
                         ((CourseHour)appContent).setStartDate(startDate);
+                        if (((CourseHour)appContent).getCourse().getCourseID() != selectedCourse.getCourseID()) {
+                            ((Course)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getCourseHours().remove(appContent);
+                            ((CourseHour)appContent).setCourse(selectedCourse);
+                            selectedCourse.getCourseHours().add((CourseHour) appContent);
+                        }
                         appContent.updateOperation((MainScreen) getActivity());
                     }
                     else {
@@ -141,7 +162,7 @@ public class CourseHourCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.start_date_ET:

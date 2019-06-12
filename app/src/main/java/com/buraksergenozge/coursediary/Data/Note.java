@@ -88,15 +88,15 @@ public class Note extends AppContent {
         this.createDate = createDate;
     }
 
-    public static DialogFragment getCreationDialog(boolean isEditMode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new NoteCreationDialog();
-        creationDialog.isEditMode = isEditMode;
+        creationDialog.mode = mode;
         return creationDialog;
     }
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(true));
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
     @Override
@@ -156,6 +156,6 @@ public class Note extends AppContent {
 
     @Override
     public void showInfo(final AppCompatActivity activity) {
-        Toast.makeText(activity, toString() + " BİLGİSİ GÖSTERİLECEK", Toast.LENGTH_SHORT).show();
+        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
 }
