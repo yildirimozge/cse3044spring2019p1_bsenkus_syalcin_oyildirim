@@ -16,9 +16,9 @@ import com.buraksergenozge.coursediary.R;
 import java.util.List;
 
 public class RecyclerAdapter<T> extends RecyclerView.Adapter {
-    private List<T> items;
-    private MainScreen activity;
-    private BaseFragment fragment;
+    private final List<T> items;
+    private final MainScreen activity;
+    private final BaseFragment fragment;
 
     public RecyclerAdapter(BaseFragment fragment, List<T> items, MainScreen activity) {
         this.fragment = fragment;
@@ -38,7 +38,7 @@ public class RecyclerAdapter<T> extends RecyclerView.Adapter {
         ((ItemViewHolder) viewHolder).bindData(items.get(i));
         ((ItemViewHolder) viewHolder).setItemClickListener(new ItemClickListener() {
             @Override
-            public void onClick(View view, int position) {
+            public void onClick(int position) {
                 fragment.open((AppContent) items.get(position));
             }
         });

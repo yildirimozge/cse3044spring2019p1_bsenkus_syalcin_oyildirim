@@ -1,16 +1,17 @@
 package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -25,8 +26,8 @@ import java.util.Objects;
 public class AssignmentCreationDialog extends CreationDialog {
     private String title = "";
     private Calendar deadline;
-    private EditText assignmentTitle_ET, deadlineEditText;
-    private int year, month, day;
+    private EditText assignmentTitle_ET, deadlineEditText, assignmentEndTime_ET;
+    private int year, month, day, hour, minute;
     private Button createButton;
 
     @Override
@@ -51,8 +52,13 @@ public class AssignmentCreationDialog extends CreationDialog {
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
-        deadlineEditText = getView().findViewById(R.id.assignment_creation_start_date_ET);
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        assignmentEndTime_ET = getView().findViewById(R.id.assignment_end_time_ET);
+        assignmentEndTime_ET.setOnClickListener(this);
+        deadlineEditText = getView().findViewById(R.id.assignment_creation_deadline_ET);
         deadlineEditText.setText(getResources().getString(R.string.date_format, day, (month + 1), year));
+        assignmentEndTime_ET.setText(getResources().getString(R.string.clock_format, hour, minute));
         deadlineEditText.setOnClickListener(this);
     }
 
@@ -69,20 +75,23 @@ public class AssignmentCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
         assignmentTitle_ET.setText(((Assignment) appContent).getTitle());
         deadlineEditText.setText(getResources().getString(R.string.date_format, ((Assignment) appContent).getDeadline().get(Calendar.DAY_OF_MONTH), (((Assignment) appContent).getDeadline().get(Calendar.MONTH) + 1), ((Assignment) appContent).getDeadline().get(Calendar.YEAR)));
+        assignmentEndTime_ET.setText(getResources().getString(R.string.clock_format, ((Assignment) appContent).getDeadline().get(Calendar.HOUR_OF_DAY), ((Assignment) appContent).getDeadline().get(Calendar.MINUTE)));
         createButton.setText(getString(R.string.save));
     }
 
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Assignment)appContent).getTitle());
         assignmentTitle_ET.setText(((Assignment) appContent).getTitle());
         assignmentTitle_ET.setEnabled(false);
         deadlineEditText.setText(getResources().getString(R.string.date_format, ((Assignment) appContent).getDeadline().get(Calendar.DAY_OF_MONTH), (((Assignment) appContent).getDeadline().get(Calendar.MONTH) + 1), ((Assignment) appContent).getDeadline().get(Calendar.YEAR)));
         deadlineEditText.setEnabled(false);
+        assignmentEndTime_ET.setText(getResources().getString(R.string.clock_format, ((Assignment) appContent).getDeadline().get(Calendar.HOUR_OF_DAY), ((Assignment) appContent).getDeadline().get(Calendar.MINUTE)));
+        assignmentEndTime_ET.setEnabled(false);
         createButton.setVisibility(View.GONE);
         semesterSelectionSpinner.setEnabled(false);
         courseSelectionSpinner.setEnabled(false);
@@ -98,7 +107,7 @@ public class AssignmentCreationDialog extends CreationDialog {
                         ((Assignment)appContent).setTitle(title);
                         ((Assignment) appContent).setDeadline(deadline);
                         if (((Assignment)appContent).getCourse().getCourseID() != selectedCourse.getCourseID()) {
-                            ((Course)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getAssignments().remove(appContent);
+                            ((Course)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getAssignments().remove(appContent);
                             ((Assignment)appContent).setCourse(selectedCourse);
                             selectedCourse.getAssignments().add((Assignment) appContent);
                         }
@@ -110,16 +119,24 @@ public class AssignmentCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
-            case R.id.assignment_creation_start_date_ET:
+            case R.id.assignment_creation_deadline_ET:
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         deadlineEditText.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), year));
                     }
                 }, year, month, day).show();
+                break;
+            case R.id.assignment_end_time_ET:
+                new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        assignmentEndTime_ET.setText(getResources().getString(R.string.clock_format, hourOfDay, minute));
+                    }
+                }, hour, minute, true).show();
                 break;
             default:
                 break;
@@ -141,7 +158,15 @@ public class AssignmentCreationDialog extends CreationDialog {
         day = Integer.parseInt(tokens[0]);
         month = Integer.parseInt(tokens[1]);
         year = Integer.parseInt(tokens[2]);
-        deadline.set(year, month - 1, day, 23, 59);
+        String timeString = assignmentEndTime_ET.getText().toString().trim();
+        if (!RegexChecker.check(timeString, RegexChecker.clockPattern)) {
+            Toast.makeText(getContext(), getString(R.string.invalid_end_time), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        tokens = timeString.split(":");
+        hour = Integer.parseInt(tokens[0]);
+        minute = Integer.parseInt(tokens[1]);
+        deadline.set(year, month - 1, day, hour, minute);
         if (!deadline.after(Calendar.getInstance())) {
             Toast.makeText(getContext(), getString(R.string.deadline_past), Toast.LENGTH_SHORT).show();
             return false;

@@ -17,9 +17,9 @@ import com.buraksergenozge.coursediary.R;
 import java.util.List;
 
 public class ListAdapter<T> extends BaseAdapter {
-    private Context context; //context
-    private List<T> items; //data source of the list adapter
-    private int listItemTypeID;
+    private final Context context; //context
+    private final List<T> items; //data source of the list adapter
+    private final int listItemTypeID;
 
     public ListAdapter(Context context, List<T> items, int listItemTypeID) {
         this.context = context;

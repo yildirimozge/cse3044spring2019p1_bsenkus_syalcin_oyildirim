@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class NoteFragment extends BaseFragment {
     private TextView noteTitle_TV, noteCreateDate_TV, noteText_TV;
-    public static String tag = "noteFragment";
+    public static final String tag = "noteFragment";
 
     @Override
     public int getLayoutID() {

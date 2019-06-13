@@ -8,8 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
-import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -58,7 +56,7 @@ public class NoteCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
         noteTitle_ET.setText(((Note) appContent).getTitle());
         noteText_ET.setText(((Note) appContent).getText());
         createButton.setText(getString(R.string.save));
@@ -67,7 +65,7 @@ public class NoteCreationDialog extends CreationDialog {
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
         noteTitle_ET.setText(((Note) appContent).getTitle());
         noteTitle_ET.setEnabled(false);
         noteText_ET.setText(((Note) appContent).getText());
@@ -88,7 +86,7 @@ public class NoteCreationDialog extends CreationDialog {
                         ((Note)appContent).setTitle(title);
                         ((Note)appContent).setText(text);
                         if (((Note)appContent).getCourseHour().getCourseHourID() != selectedCourseHour.getCourseHourID()) {
-                            ((CourseHour)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getNotes().remove(appContent);
+                            ((CourseHour)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getNotes().remove(appContent);
                             ((Note)appContent).setCourseHour(selectedCourseHour);
                             selectedCourseHour.getNotes().add((Note) appContent);
                         }
@@ -100,7 +98,7 @@ public class NoteCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             default:

@@ -40,7 +40,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <TextView
                     android:id="@+id/credit_TV"
@@ -64,7 +65,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/credit_TV"
                     app:layout_constraintTop_toBottomOf="@id/courseName_ET"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <TextView
                     android:id="@+id/attendanceObligation_TV"
@@ -81,7 +83,6 @@
                     android:id="@+id/attendanceObligationValue_TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="70%"
                     android:textAlignment="textEnd"
                     app:layout_constraintBottom_toBottomOf="@id/attendanceObligationSeekBar"
                     app:layout_constraintEnd_toStartOf="@id/attendanceObligationSeekBar"
@@ -155,10 +156,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
-                    app:layout_constraintEnd_toStartOf="@+id/endTime_ET"
+                    app:layout_constraintBottom_toBottomOf="@+id/end_time_ET"
+                    app:layout_constraintEnd_toStartOf="@+id/end_time_ET"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/endTime_ET" />
+                    app:layout_constraintTop_toTopOf="@+id/end_time_ET" />
 
                 <EditText
                     android:id="@+id/start_time_ET"
@@ -172,10 +173,11 @@
                     app:layout_constraintEnd_toStartOf="@+id/addScheduleButton"
                     app:layout_constraintStart_toEndOf="@id/startDaySelectionSpinner"
                     app:layout_constraintTop_toBottomOf="@+id/gradingSystemSelectionSpinner"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <EditText
-                    android:id="@+id/endTime_ET"
+                    android:id="@+id/end_time_ET"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
@@ -186,14 +188,15 @@
                     app:layout_constraintEnd_toStartOf="@id/addScheduleButton"
                     app:layout_constraintStart_toEndOf="@id/endDaySelectionSpinner"
                     app:layout_constraintTop_toBottomOf="@+id/start_time_ET"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <Button
                     android:id="@+id/addScheduleButton"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="@string/add"
-                    app:layout_constraintBottom_toBottomOf="@+id/endTime_ET"
+                    app:layout_constraintBottom_toBottomOf="@+id/end_time_ET"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/start_time_ET" />
 
@@ -203,7 +206,7 @@
                     android:layout_height="60dp"
                     android:layout_marginTop="10dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/endTime_ET"
+                    app:layout_constraintTop_toBottomOf="@id/end_time_ET"
                     tools:layout_editor_absoluteX="20dp">
 
                     <HorizontalScrollView

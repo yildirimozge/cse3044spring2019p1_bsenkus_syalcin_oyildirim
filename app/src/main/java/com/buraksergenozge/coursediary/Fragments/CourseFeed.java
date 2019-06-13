@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class CourseFeed extends BaseFragment implements View.OnClickListener {
     private RecyclerView assignmentRecyclerView, courseHourRecyclerView;
-    public static String tag = "courseFeedFragment";
+    public static final String tag = "courseFeedFragment";
 
     @Override
     public int getLayoutID() {

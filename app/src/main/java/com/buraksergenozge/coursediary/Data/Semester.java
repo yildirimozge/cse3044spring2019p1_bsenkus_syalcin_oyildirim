@@ -6,17 +6,14 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
-import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
-import com.buraksergenozge.coursediary.Fragments.CourseFeed;
-import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
+import com.buraksergenozge.coursediary.Fragments.CourseFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.SemesterCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.SemesterFragment;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class Semester extends AppContent {
     @ColumnInfo
     private float gpa;
     @Ignore
-    private static String[] relatedFragmentTags = {ArchiveFragment.tag, CourseFeed.tag, CourseHourFragment.tag, AssignmentFragment.tag};
+    private static final String[] relatedFragmentTags = {ArchiveFragment.tag, SemesterFragment.tag, CourseFragment.tag};
 
     public Semester(String name, Calendar startDate, Calendar endDate) {
         this.name = name;
@@ -81,10 +78,6 @@ public class Semester extends AppContent {
 
     public List<Course> getCourses() {
         return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
     }
 
     public float getGpa() {

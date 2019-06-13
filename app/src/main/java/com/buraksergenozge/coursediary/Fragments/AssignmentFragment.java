@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class AssignmentFragment extends BaseFragment {
     private TextView title_TV, course_TV, timeRemaining_TV, deadline_TV;
-    public static String tag = "assignmentFragment";
+    public static final String tag = "assignmentFragment";
 
     @Override
     public int getLayoutID() {

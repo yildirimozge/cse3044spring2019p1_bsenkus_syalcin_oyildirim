@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -79,7 +78,7 @@ public class PhotoCreationDialog extends CreationDialog {
                 if (checkInputValidity()) {
                     if (mode == EDIT_MODE) {
                         if (((Photo)appContent).getCourseHour().getCourseHourID() != selectedCourseHour.getCourseHourID()) {
-                            ((CourseHour)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getPhotos().remove(appContent);
+                            ((CourseHour)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getPhotos().remove(appContent);
                             selectedCourseHour.getPhotos().add((Photo) appContent);
                             ((Photo)appContent).setCourseHour(selectedCourseHour);
                         }
@@ -95,7 +94,7 @@ public class PhotoCreationDialog extends CreationDialog {
                     this.dismiss();
                     if (appContent != null) {
                         mListener.updateViewsOfAppContent(appContent);
-                        MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                        MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                     }
                 }
                 break;

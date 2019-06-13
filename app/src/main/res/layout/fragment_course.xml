@@ -65,7 +65,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="80%"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintBaseline_toBaselineOf="@id/courseTitle_TV"
@@ -125,7 +124,8 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.2" />
+                        android:layout_weight="0.2"
+                        android:contentDescription="TODO" />
 
                 </LinearLayout>
 
@@ -181,7 +181,8 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.2" />
+                        android:layout_weight="0.2"
+                        android:contentDescription="TODO" />
                 </LinearLayout>
 
                 <View

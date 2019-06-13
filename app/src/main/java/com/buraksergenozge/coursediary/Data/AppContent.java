@@ -1,6 +1,5 @@
 package com.buraksergenozge.coursediary.Data;
 
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;

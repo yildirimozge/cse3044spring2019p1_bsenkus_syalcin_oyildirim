@@ -9,9 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
@@ -54,7 +52,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
     @Ignore
     private List<Audio> audios = new ArrayList<>();
     @Ignore
-    private static String[] relatedFragmentTags = {CourseFragment.tag, CourseFeed.tag, CourseHourFragment.tag};
+    private static final String[] relatedFragmentTags = {CourseFragment.tag, CourseFeed.tag, CourseHourFragment.tag};
 
     public CourseHour(Course course, Calendar startDate, Calendar endDate) {
         this.course = course;
@@ -136,7 +134,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         this.audios = audios;
     }
 
-    public static CreationDialog getCreationDialog(int mode) {
+    private static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new CourseHourCreationDialog();
         creationDialog.mode = mode;
         return creationDialog;
@@ -153,9 +151,8 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         File contentDir = new File(getContentDirectory());
         if (contentDir.exists()) {
             for (File photo: contentDir.listFiles()) {
-                if (photo.getAbsolutePath().endsWith(".jpg")){
+                if (photo.getAbsolutePath().endsWith(".jpg"))
                     photos.add(new Photo(this, photo.getAbsolutePath()));
-                }
             }
         }
         else
@@ -184,8 +181,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        course.getCourseHours().remove(this);
-        ((MainScreen)activity).getVisibleFragment().appContent = course;
+        ((Course)((MainScreen)activity).getVisibleFragment().appContent).getCourseHours().remove(this);
         CourseDiaryDB.getDBInstance(activity).courseHourDAO().deleteCourseHour(this);
     }
 

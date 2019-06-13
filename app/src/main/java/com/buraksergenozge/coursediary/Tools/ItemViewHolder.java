@@ -25,12 +25,15 @@ import com.buraksergenozge.coursediary.R;
 import java.util.Objects;
 
 public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, View.OnClickListener {
-    private MainScreen activity;
-    private ImageView listItem_IV, thumbnail_IV;
-    private TextView listItem_TV, listItemSideText, listItemAdditional_TV;
-    private CheckBox listItemCheckBox;
+    private final MainScreen activity;
+    private final ImageView listItem_IV;
+    private final ImageView thumbnail_IV;
+    private final TextView listItem_TV;
+    private final TextView listItemSideText;
+    private final TextView listItemAdditional_TV;
+    private final CheckBox listItemCheckBox;
     private ItemClickListener itemClickListener;
-    private MaterialCardView materialCardView;
+    private final MaterialCardView materialCardView;
     public AppContent appContent;
 
     ItemViewHolder(final View itemView, MainScreen activity) {
@@ -107,7 +110,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
 
     @Override
     public void onClick(View view) {
-        itemClickListener.onClick(view, getAdapterPosition());
+        itemClickListener.onClick(getAdapterPosition());
     }
 
     @Override

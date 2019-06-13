@@ -22,7 +22,7 @@ public abstract class BaseFragment extends Fragment {
     public AppContent appContent;
     static AppContent transferAppContent;
     public BaseFragment parentFragment;
-    public BaseFragment childFragment;
+    BaseFragment childFragment;
 
     protected abstract int getLayoutID();
 
@@ -38,15 +38,10 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        initializeViews();
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         MainScreen.activeAppContent = appContent;
+        initializeViews();
         updateView();
         MainScreen.updateActiveFragmentTag(getTag());
         ((MainScreen) Objects.requireNonNull(getContext())).supportInvalidateOptionsMenu();

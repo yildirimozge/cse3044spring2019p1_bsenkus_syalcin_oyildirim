@@ -10,8 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
-import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.RegexChecker;
@@ -63,7 +61,7 @@ public class SemesterCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
         nameEditText.setText(((Semester)appContent).getName());
         startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
         endDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getEndDate().get(Calendar.YEAR)));
@@ -73,7 +71,7 @@ public class SemesterCreationDialog extends CreationDialog {
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
         nameEditText.setText(((Semester)appContent).getName());
         nameEditText.setEnabled(false);
         startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
@@ -101,7 +99,7 @@ public class SemesterCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.startDateView:

@@ -25,7 +25,6 @@ import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Tools.ListAdapter;
 import com.buraksergenozge.coursediary.R;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -39,7 +38,7 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
     public static final int INFO_MODE = 2;
-    protected AppContent appContent = null;
+    AppContent appContent = null;
 
     public AppContent getAppContent() {
         return appContent;
@@ -149,7 +148,7 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
         }
     }
 
-    public boolean checkCreationStatus() { // Checks whether content that currently is being created can be created or not.
+    private boolean checkCreationStatus() { // Checks whether content that currently is being created can be created or not.
         if (MainScreen.activeAppContent == null) {
             if (this instanceof NoteCreationDialog) {
                 if (User.getCourseHoursEmpty()) {

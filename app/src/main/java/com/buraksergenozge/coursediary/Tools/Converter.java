@@ -26,25 +26,6 @@ public class Converter {
     }
 
     @TypeConverter
-    public static List<Semester> stringToSemesterList(String semesterString) {
-        List<Semester> semesters = new ArrayList<>();
-        String[] semesterIDs = semesterString.split(";");
-        for (String id: semesterIDs) {
-            semesters.add(CourseDiaryDB.getDBInstance(null).semesterDAO().find(Long.parseLong(id)));
-        }
-        return semesters;
-    }
-
-    @TypeConverter
-    public static String semesterListToString(List<Semester> semesters) {
-        String semesterString = "";
-        for (Semester semester: semesters) {
-            semesterString += semester.getSemesterID() + ";";
-        }
-        return semesterString.substring(0,semesterString.length()-1);
-    }
-
-    @TypeConverter
     public static Course longToCourse(long courseID) {
         return CourseDiaryDB.getDBInstance(null).courseDAO().find(courseID);
     }

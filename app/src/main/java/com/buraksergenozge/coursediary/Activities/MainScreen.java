@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -37,15 +38,14 @@ import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Fragments.ArchiveFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
-import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
 import com.buraksergenozge.coursediary.Fragments.BaseFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
+import com.buraksergenozge.coursediary.Fragments.SettingsFragment;
 import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
 import com.buraksergenozge.coursediary.Tools.PagerAdapter;
 import com.buraksergenozge.coursediary.R;
 
-import java.io.File;
 import java.util.Objects;
 
 public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
@@ -56,8 +56,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     private static String activeCourseFeedFragmentTag = CourseFeed.tag;
     public static int activeTabID = R.id.mainCourseFeedLayout;
     private static int startControl = 2;
-    private boolean hasMenu;
-    private int menuID;
     public static AppContent activeAppContent;
     public static AppContent contextMenuAppContent;
     public static final int CAMERA_REQUEST = 1888;
@@ -73,8 +71,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        hasMenu = true;
-        menuID = R.menu.menu_main;
 
         FloatingActionButton addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(this);
@@ -91,6 +87,8 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                DialogFragment fragment = new SettingsFragment();
+                fragment.show(getSupportFragmentManager(), "settingsFragment");
                 return true;
             case R.id.action_edit:
                 if (activeAppContent != null) {
@@ -176,14 +174,17 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
             }
         }
         else if (activeDialog.equals("gradeDialog")) {
-            ((Course)activeAppContent).setGrade(((Course)activeAppContent).getGradingSystem().getGradeList().get(i));
+            if (i == ((Course)activeAppContent).getGradingSystem().getGradeList().size())
+                ((Course)activeAppContent).setGrade(null);
+            else
+                ((Course)activeAppContent).setGrade(((Course)activeAppContent).getGradingSystem().getGradeList().get(i));
             activeAppContent.updateOperation(this);
             updateViewsOfAppContent(activeAppContent);
             activeDialog = "";
         }
     }
 
-    public static void integrateData(Context context) {
+    private static void integrateData(Context context) {
         User.integrateWithDB(context);
         for (GradingSystem gradingSystem : User.getGradingSystems()) {
             gradingSystem.integrateWithDB(context);
@@ -332,18 +333,13 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        if(hasMenu) {
-            getMenuInflater().inflate(menuID, menu);
-            MenuItem editItem = menu.findItem(R.id.action_edit);
-            if (MainScreen.activeArchiveFragmentTag == null || MainScreen.activeArchiveFragmentTag.equals("archiveFragment")) {
-                editItem.setVisible(false);
-            }
-            else {
-                editItem.setVisible(true);
-            }
-            return true;
-        }
-        return false;
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem editItem = menu.findItem(R.id.action_edit);
+        if (MainScreen.activeArchiveFragmentTag == null || MainScreen.activeArchiveFragmentTag.equals(ArchiveFragment.tag))
+            editItem.setVisible(false);
+        else
+            editItem.setVisible(true);
+        return true;
     }
 
     @Override

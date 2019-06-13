@@ -6,9 +6,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
@@ -39,7 +37,7 @@ public class Note extends AppContent {
     @ColumnInfo
     private Calendar createDate;
     @Ignore
-    private static String[] relatedFragmentTags = {CourseHourFragment.tag, NoteFragment.tag};
+    private static final String[] relatedFragmentTags = {CourseHourFragment.tag, NoteFragment.tag};
 
     public Note(CourseHour courseHour, String title, String text) {
         this.courseHour = courseHour;
@@ -117,8 +115,7 @@ public class Note extends AppContent {
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        courseHour.getNotes().remove(this);
-        ((MainScreen)activity).getVisibleFragment().appContent = courseHour;
+        ((CourseHour)((MainScreen)activity).getVisibleFragment().appContent).getNotes().remove(this);
         CourseDiaryDB.getDBInstance(activity).noteDAO().deleteNote(this);
     }
 

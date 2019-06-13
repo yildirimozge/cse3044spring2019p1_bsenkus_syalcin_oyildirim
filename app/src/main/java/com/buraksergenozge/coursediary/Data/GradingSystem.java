@@ -6,11 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.GradingSystemCreationDialog;
 import com.buraksergenozge.coursediary.R;
@@ -52,17 +49,6 @@ public class GradingSystem extends AppContent {
 
     public void setGradeList(List<Grade> gradeList) {
         this.gradeList = gradeList;
-    }
-
-    public void addGrade(Context context, Grade grade) {
-        long gradeID = CourseDiaryDB.getDBInstance(context).gradeDAO().addGrade(grade);
-        grade.setGradeID(gradeID);
-        gradeList.add(grade);
-    }
-
-    public void deleteGrade(Context context, Grade grade) {
-        gradeList.remove(grade);
-        CourseDiaryDB.getDBInstance(context).gradeDAO().deleteGrade(grade);
     }
 
     public static CreationDialog getCreationDialog(int mode) {

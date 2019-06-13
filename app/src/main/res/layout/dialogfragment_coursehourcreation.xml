@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
@@ -28,7 +29,7 @@
                 android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/startTextView"
+                    android:id="@+id/assignment_creation_deadline_TV"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/start"
@@ -47,9 +48,10 @@
                     android:textColor="@color/darkTextColor"
                     app:layout_constraintBottom_toBottomOf="@id/start_time_ET"
                     app:layout_constraintEnd_toStartOf="@id/start_time_ET"
-                    app:layout_constraintStart_toEndOf="@+id/startTextView"
+                    app:layout_constraintStart_toEndOf="@+id/assignment_creation_deadline_TV"
                     app:layout_constraintTop_toTopOf="@id/start_time_ET"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <EditText
                     android:id="@+id/start_time_ET"
@@ -59,7 +61,8 @@
                     android:inputType="time"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <TextView
                     android:id="@+id/endTextView"
@@ -83,7 +86,8 @@
                     app:layout_constraintStart_toEndOf="@+id/endTextView"
                     app:layout_constraintTop_toTopOf="@id/end_time_ET"
                     app:layout_constraintBottom_toBottomOf="@id/end_time_ET"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <EditText
                     android:id="@+id/end_time_ET"
@@ -94,7 +98,8 @@
                     android:inputType="time"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/start_time_ET"
-                    android:autofillHints="" />
+                    android:autofillHints=""
+                    tools:targetApi="o" />
 
                 <TextView
                     android:id="@+id/courseHourCreationSemesterSelection_TV"

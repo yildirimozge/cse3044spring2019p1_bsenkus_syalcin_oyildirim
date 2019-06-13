@@ -15,18 +15,17 @@ import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
-import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
 import com.buraksergenozge.coursediary.R;
 
-import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.Objects;
 
 public class CourseFragment extends BaseFragment implements View.OnClickListener {
     private RecyclerView assignmentRecyclerView, courseHourRecyclerView;
     private TextView courseTitle_TV, grade_TV, attendance_TV;
-    public static String tag = "courseFragment";
+    public static final String tag = "courseFragment";
 
     @Override
     public int getLayoutID() {
@@ -63,8 +62,7 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void updateBar() {
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        attendance_TV.setText(decimalFormat.format(((Course)appContent).getAttendanceStatus()) + "%");
+        attendance_TV.setText(getResources().getString(R.string.progress_holder, ((Course)appContent).getAttendanceStatus()));
         if (((Course)appContent).getGrade() != null)
             grade_TV.setText(((Course)appContent).getGrade().getCode());
         else
@@ -93,6 +91,8 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void updateView() {
         courseTitle_TV.setText(((Course)appContent).getName());
+        Collections.sort(((Course)appContent).getCourseHours());
+        Collections.sort(((Course)appContent).getAssignments());
         boolean isCourseHourListEmpty = updateRecyclerView(courseHourRecyclerView, ((Course)appContent).getCourseHours());
         boolean isAssignmentListEmpty = updateRecyclerView(assignmentRecyclerView, ((Course)appContent).getAssignments());
         setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);
@@ -135,12 +135,17 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.gradeTitle_TV:
             case R.id.grade_TV:
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                if (((Course)appContent).getGradingSystem() == null) {
+                    Toast.makeText(getContext(), getString(R.string.set_grading_system_warning), Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
                 builder.setTitle(R.string.select_grade);
-                String[] gradeCodes = new String[((Course)appContent).getGradingSystem().getGradeList().size()];
+                String[] gradeCodes = new String[((Course)appContent).getGradingSystem().getGradeList().size() + 1];
                 for (int i = 0; i < ((Course)appContent).getGradingSystem().getGradeList().size(); i++) {
                     gradeCodes[i] = (((Course)appContent).getGradingSystem().getGradeList().get(i)).getCode();
                 }
+                gradeCodes[gradeCodes.length - 1] = "-";
                 builder.setItems(gradeCodes, (MainScreen)getActivity());
                 MainScreen.activeDialog = "gradeDialog";
                 builder.show();

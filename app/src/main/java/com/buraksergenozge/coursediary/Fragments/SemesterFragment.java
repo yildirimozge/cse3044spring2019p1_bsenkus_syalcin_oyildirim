@@ -14,7 +14,7 @@ import java.util.Objects;
 public class SemesterFragment extends BaseFragment {
     private RecyclerView courseRecyclerView;
     private TextView daysToEnd, gpa_TV, semesterTitleTV, emptySemesterTV;
-    public static String tag = "semesterFragment";
+    public static final String tag = "semesterFragment";
 
     @Override
     public int getLayoutID() {
@@ -56,8 +56,8 @@ public class SemesterFragment extends BaseFragment {
     @Override
     public void updateView() {
         semesterTitleTV.setText(((Semester)appContent).getName());
-        daysToEnd.setText(((Semester)appContent).getNumberOfDaysRemaining() + "");
-        gpa_TV.setText(String.format("%.2f", ((Semester)appContent).getGpa()));
+        daysToEnd.setText(getResources().getString(R.string.int_holder, ((Semester) appContent).getNumberOfDaysRemaining()));
+        gpa_TV.setText(getResources().getString(R.string.float_holder, ((Semester) appContent).getGpa()));
         boolean isEmpty = updateRecyclerView(courseRecyclerView, ((Semester)appContent).getCourses());
         setVisibilities(isEmpty);
     }

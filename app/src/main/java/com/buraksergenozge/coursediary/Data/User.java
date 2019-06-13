@@ -53,6 +53,14 @@ public class User {
         return courseHours;
     }
 
+    public static GradingSystem findGradingSystemByID(long gradingSystemID) {
+        for (GradingSystem gradingSystem: gradingSystems) {
+            if (gradingSystem.getGradingSystemID() == gradingSystemID)
+                return gradingSystem;
+        }
+        return null;
+    }
+
     public static void setAttendance(Context context, CourseHour courseHour, int attendance) {
         courseHour.setAttendance(attendance);
         CourseDiaryDB.getDBInstance(context).courseHourDAO().update(courseHour);

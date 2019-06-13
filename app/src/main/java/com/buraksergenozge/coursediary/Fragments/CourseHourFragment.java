@@ -31,7 +31,7 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
     private CheckBox cancelCheckBox, attendedCheckBox;
     private MaterialCardView noteListHeader, photoListHeader, audioListHeader;
     private TextView courseHourTitle_TV;
-    public static String tag = "courseHourFragment";
+    public static final String tag = "courseHourFragment";
 
     @Override
     public int getLayoutID() {

@@ -15,9 +15,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
-import com.buraksergenozge.coursediary.Fragments.BaseFragment;
 import com.buraksergenozge.coursediary.Tools.RegexChecker;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -59,7 +57,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         endTime = (Calendar) startTime.clone();
         startTime_ET = getView().findViewById(R.id.start_time_ET);
         startTime_ET.setOnClickListener(this);
-        endTime_ET = getView().findViewById(R.id.endTime_ET);
+        endTime_ET = getView().findViewById(R.id.end_time_ET);
         endTime_ET.setOnClickListener(this);
         Calendar calendar = Calendar.getInstance();
         sHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -83,7 +81,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
         attendanceObligationValueTV = getView().findViewById(R.id.attendanceObligationValue_TV);
         attendanceObligationSeekBar = getView().findViewById(R.id.attendanceObligationSeekBar);
         attendanceObligationSeekBar.setOnSeekBarChangeListener(this);
-        attendanceObligationValueTV.setText(attendanceObligationSeekBar.getProgress() + "%");
+        attendanceObligationValueTV.setText(getResources().getString(R.string.int_progress_holder, attendanceObligationSeekBar.getProgress()));
         semesterSelectionSpinner = getView().findViewById(R.id.courseCreationSemesterSelectionSpinner);
         semesterSelectionSpinner.setOnItemSelectedListener(this);
         schedule = new ArrayList<>();
@@ -110,7 +108,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
         courseName_ET.setText(((Course) appContent).getName());
         creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
         attendanceObligationSeekBar.setProgress((int)(((Course) appContent).getAttendanceObligation() * 100));
@@ -143,7 +141,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
         courseName_ET.setText(((Course) appContent).getName());
         courseName_ET.setEnabled(false);
         creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
@@ -189,7 +187,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
                                 ((Course)appContent).setGradingSystem(selectedGradingSystem);
                         }
                         if (((Course)appContent).getSemester().getSemesterID() != selectedSemester.getSemesterID()) {
-                            ((Semester)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getCourses().remove(appContent);
+                            ((Semester)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getCourses().remove(appContent);
                             ((Course)appContent).setSemester(selectedSemester);
                             selectedSemester.getCourses().add((Course) appContent);
                         }
@@ -204,7 +202,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.start_time_ET:
@@ -218,7 +216,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
                             }
                         }, sHour, sMinute, true).show();
                 break;
-            case R.id.endTime_ET:
+            case R.id.end_time_ET:
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -310,7 +308,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        attendanceObligationValueTV.setText(i + "%");
+        attendanceObligationValueTV.setText(getResources().getString(R.string.progress_holder, i));
     }
 
     @Override

@@ -9,8 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
-import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
 import com.buraksergenozge.coursediary.R;
@@ -24,9 +22,9 @@ public class GradingSystemCreationDialog extends CreationDialog {
     private String name;
     private EditText name_ET, gradeCode_ET, gradeCoefficient_ET;
     private Button createButton, addGradeButton, clearButton;
-    private List<Grade> grades = new ArrayList<>();
-    private List<String> codes = new ArrayList<>();
-    private List<Float> coefficients = new ArrayList<>();
+    private final List<Grade> grades = new ArrayList<>();
+    private final List<String> codes = new ArrayList<>();
+    private final List<Float> coefficients = new ArrayList<>();
 
     @Override
     protected int getLayoutID() {
@@ -56,7 +54,7 @@ public class GradingSystemCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
         name_ET.setText(((GradingSystem) appContent).getName());
         createButton.setText(getString(R.string.save));
         Objects.requireNonNull(getView()).findViewById(R.id.gradesLayout).setVisibility(View.VISIBLE);
@@ -74,7 +72,7 @@ public class GradingSystemCreationDialog extends CreationDialog {
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((GradingSystem)appContent).getName());
         name_ET.setText(((GradingSystem) appContent).getName());
         name_ET.setEnabled(false);
         createButton.setVisibility(View.GONE);
@@ -111,7 +109,7 @@ public class GradingSystemCreationDialog extends CreationDialog {
                         appContent.addOperation((MainScreen) getActivity());
                     }
                     this.dismiss();
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.addGradeButton:

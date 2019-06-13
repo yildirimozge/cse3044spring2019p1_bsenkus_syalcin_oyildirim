@@ -14,7 +14,7 @@ import java.util.Objects;
 public class ArchiveFragment extends BaseFragment {
     private RecyclerView semesterRecyclerView;
     private TextView emptyArchiveTV;
-    public static String tag = "archiveFragment";
+    public static final String tag = "archiveFragment";
 
     @Override
     public int getLayoutID() {

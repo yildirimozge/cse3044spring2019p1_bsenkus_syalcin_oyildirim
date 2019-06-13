@@ -35,7 +35,4 @@ public abstract class CourseDiaryDB extends RoomDatabase {
         return INSTANCE;
     }
 
-    public  static  void destroyInstance(){
-        INSTANCE = null;
-    }
 }

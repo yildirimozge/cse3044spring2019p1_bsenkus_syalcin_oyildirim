@@ -8,9 +8,9 @@ import com.buraksergenozge.coursediary.Fragments.MainArchive;
 import com.buraksergenozge.coursediary.Fragments.MainCourseFeed;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
-    private MainCourseFeed mainCourseFeed;
-    private MainArchive mainArchive;
-    private int noOfTabs;
+    private final MainCourseFeed mainCourseFeed;
+    private final MainArchive mainArchive;
+    private final int noOfTabs;
     public PagerAdapter(FragmentManager fm, int noOfTabs) {
         super(fm);
         mainCourseFeed = new MainCourseFeed();

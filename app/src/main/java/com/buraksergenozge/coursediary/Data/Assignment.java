@@ -7,9 +7,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
@@ -29,7 +27,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Course.class, parentColumns = "courseID", childColumns = "course", onDelete = CASCADE),
         indices = {@Index("course")})
-public class Assignment extends AppContent {
+public class Assignment extends AppContent implements Comparable<Assignment> {
     @PrimaryKey(autoGenerate = true)
     private long assignmentID;
     @ColumnInfo
@@ -39,7 +37,7 @@ public class Assignment extends AppContent {
     @ColumnInfo
     private Calendar deadline;
     @Ignore
-    private static String[] relatedFragmentTags = {AssignmentFragment.tag, CourseFragment.tag, CourseFeed.tag};
+    private static final String[] relatedFragmentTags = {AssignmentFragment.tag, CourseFragment.tag, CourseFeed.tag};
 
     public Assignment(String title, Course course, Calendar deadline) {
         this.title = title;
@@ -115,8 +113,7 @@ public class Assignment extends AppContent {
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        course.getAssignments().remove(this);
-        ((MainScreen)activity).getVisibleFragment().appContent = course;
+        ((Course)((MainScreen)activity).getVisibleFragment().appContent).getAssignments().remove(this);
         CourseDiaryDB.getDBInstance(activity).assignmentDAO().deleteAssignment(this);
     }
 
@@ -155,5 +152,10 @@ public class Assignment extends AppContent {
     @NonNull
     public String toString() {
         return title;
+    }
+
+    @Override
+    public int compareTo(Assignment assignment) {
+        return (int)(deadline.getTimeInMillis() - assignment.deadline.getTimeInMillis());
     }
 }

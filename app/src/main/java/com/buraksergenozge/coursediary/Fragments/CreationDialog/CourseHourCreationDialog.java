@@ -12,7 +12,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -67,25 +66,25 @@ public class CourseHourCreationDialog extends CreationDialog {
     @Override
     protected void initializeEditMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(appContent.toString());
-        startDay_ET.setText(((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getStartDate().get(Calendar.YEAR));
-        endDay_ET.setText(((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getEndDate().get(Calendar.YEAR));
-        startTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
-        endTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(appContent.toString());
+        startDay_ET.setText(getResources().getString(R.string.date_format, ((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH), ((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1, ((CourseHour) appContent).getStartDate().get(Calendar.YEAR)));
+        endDay_ET.setText(getResources().getString(R.string.date_format, ((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH), ((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1, ((CourseHour) appContent).getEndDate().get(Calendar.YEAR)));
+        startTime_ET.setText(getResources().getString(R.string.clock_format, ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY), ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
+        endTime_ET.setText(getResources().getString(R.string.clock_format, ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY), ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
         createButton.setText(getString(R.string.save));
     }
 
     @Override
     protected void initializeInfoMode() {
         appContent = MainScreen.activeAppContent;
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(appContent.toString());
-        startDay_ET.setText(((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getStartDate().get(Calendar.YEAR));
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(appContent.toString());
+        startDay_ET.setText(getResources().getString(R.string.date_format, ((CourseHour) appContent).getStartDate().get(Calendar.DAY_OF_MONTH), ((CourseHour) appContent).getStartDate().get(Calendar.MONTH) + 1, ((CourseHour) appContent).getStartDate().get(Calendar.YEAR)));
         startDay_ET.setEnabled(false);
-        endDay_ET.setText(((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH) + "-" + (((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1)+ "-" + ((CourseHour) appContent).getEndDate().get(Calendar.YEAR));
+        endDay_ET.setText(getResources().getString(R.string.date_format, ((CourseHour) appContent).getEndDate().get(Calendar.DAY_OF_MONTH), ((CourseHour) appContent).getEndDate().get(Calendar.MONTH) + 1, ((CourseHour) appContent).getEndDate().get(Calendar.YEAR)));
         endDay_ET.setEnabled(false);
-        startTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
+        startTime_ET.setText(getResources().getString(R.string.clock_format, ((CourseHour) appContent).getStartDate().get(Calendar.HOUR_OF_DAY), ((CourseHour) appContent).getStartDate().get(Calendar.MINUTE)));
         startTime_ET.setEnabled(false);
-        endTime_ET.setText(String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%1$02d", ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
+        endTime_ET.setText(getResources().getString(R.string.clock_format, ((CourseHour) appContent).getEndDate().get(Calendar.HOUR_OF_DAY), ((CourseHour) appContent).getEndDate().get(Calendar.MINUTE)));
         endTime_ET.setEnabled(false);
         createButton.setVisibility(View.GONE);
         semesterSelectionSpinner.setEnabled(false);
@@ -150,7 +149,7 @@ public class CourseHourCreationDialog extends CreationDialog {
                         ((CourseHour)appContent).setEndDate(endDate);
                         ((CourseHour)appContent).setStartDate(startDate);
                         if (((CourseHour)appContent).getCourse().getCourseID() != selectedCourse.getCourseID()) {
-                            ((Course)((MainScreen)getActivity()).getVisibleFragment().parentFragment.appContent).getCourseHours().remove(appContent);
+                            ((Course)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getCourseHours().remove(appContent);
                             ((CourseHour)appContent).setCourse(selectedCourse);
                             selectedCourse.getCourseHours().add((CourseHour) appContent);
                         }
@@ -162,14 +161,14 @@ public class CourseHourCreationDialog extends CreationDialog {
                     }
                     this.dismiss();
                     mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(getActivity().getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.start_date_ET:
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        startDay_ET.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        startDay_ET.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), dayOfMonth));
                     }
                 }, sYear, sMonth, sDay).show();
                 break;
@@ -177,7 +176,7 @@ public class CourseHourCreationDialog extends CreationDialog {
                 new DatePickerDialog(Objects.requireNonNull(getContext()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        startDay_ET.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        startDay_ET.setText(getResources().getString(R.string.date_format, dayOfMonth, (monthOfYear + 1), dayOfMonth));
                     }
                 }, eYear, eMonth, eDay).show();
                 break;
@@ -185,10 +184,10 @@ public class CourseHourCreationDialog extends CreationDialog {
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        startTime_ET.setText(String.format("%1$02d", hourOfDay) + ":" + String.format("%1$02d", minute));
+                        startTime_ET.setText(getResources().getString(R.string.clock_format, hourOfDay, minute));
                         eHour = (hourOfDay + 1) % 24;
                         eMinute = minute;
-                        endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
+                        endTime_ET.setText(getResources().getString(R.string.clock_format, eHour, eMinute));
                     }
                 }, sHour, sMinute, true).show();
                 break;
@@ -196,7 +195,7 @@ public class CourseHourCreationDialog extends CreationDialog {
                 new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        endTime_ET.setText(String.format("%1$02d", eHour) + ":" + String.format("%1$02d", eMinute));
+                        endTime_ET.setText(getResources().getString(R.string.clock_format, hourOfDay, minute));
                     }
                 }, eHour, eMinute, true).show();
                 break;

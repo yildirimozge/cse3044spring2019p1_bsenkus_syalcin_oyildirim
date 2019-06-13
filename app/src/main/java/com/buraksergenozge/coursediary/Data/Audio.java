@@ -1,12 +1,12 @@
 package com.buraksergenozge.coursediary.Data;
 
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class Audio extends AppContent{
     private CourseHour courseHour;
@@ -63,7 +63,7 @@ public class Audio extends AppContent{
 
     }
 
-    public static CreationDialog getCreationDialog(int mode) {
+    private static CreationDialog getCreationDialog(int mode) {
         //CreationDialog creationDialog = new AssignmentCreationDialog();
         //creationDialog.isEditMode = isEditMode;
         return null;
@@ -71,7 +71,7 @@ public class Audio extends AppContent{
 
     @Override
     public void edit(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
+        AppContent.openCreationDialog(activity, Objects.requireNonNull(getCreationDialog(CreationDialog.EDIT_MODE)));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class Audio extends AppContent{
 
     @Override
     public void showInfo(AppCompatActivity activity) {
-        AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
+        AppContent.openCreationDialog(activity, Objects.requireNonNull(getCreationDialog(CreationDialog.INFO_MODE)));
     }
 
     @Override

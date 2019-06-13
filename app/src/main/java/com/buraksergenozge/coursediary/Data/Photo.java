@@ -32,7 +32,7 @@ public class Photo extends AppContent{
     private static String savePhotoPath = "";
     public static String currentPhotoName = "";
     @Ignore
-    private static String[] relatedFragmentTags = {CourseHourFragment.tag};
+    private static final String[] relatedFragmentTags = {CourseHourFragment.tag};
 
 
     public Photo(CourseHour courseHour, String filePath) {

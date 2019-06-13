@@ -8,9 +8,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
@@ -55,7 +53,7 @@ public class Course extends AppContent{
     @Ignore
     private List<Assignment> assignments = new ArrayList<>();
     @Ignore
-    private static String[] relatedFragmentTags = {SemesterFragment.tag, CourseFragment.tag, CourseFeed.tag, CourseHourFragment.tag, AssignmentFragment.tag};
+    private static final String[] relatedFragmentTags = {SemesterFragment.tag, CourseFragment.tag, CourseFeed.tag, CourseHourFragment.tag, AssignmentFragment.tag};
 
     public Course(String name, Semester semester, int credit, float attendanceObligation, List<Calendar[]> schedule) {
         this.name = name;
@@ -111,10 +109,6 @@ public class Course extends AppContent{
         return schedule;
     }
 
-    public void setSchedule(List<Calendar[]> schedule) {
-        this.schedule = schedule;
-    }
-
     public GradingSystem getGradingSystem() {
         return gradingSystem;
     }
@@ -133,10 +127,6 @@ public class Course extends AppContent{
 
     public List<CourseHour> getCourseHours() {
         return courseHours;
-    }
-
-    public void setCourseHours(List<CourseHour> courseHours) {
-        this.courseHours = courseHours;
     }
 
     private void schedule(AppCompatActivity activity) {
@@ -175,10 +165,6 @@ public class Course extends AppContent{
         return assignments;
     }
 
-    public void setAssignments(List<Assignment> assignments) {
-        this.assignments = assignments;
-    }
-
     public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new CourseCreationDialog();
         creationDialog.mode = mode;
@@ -208,7 +194,8 @@ public class Course extends AppContent{
     public void integrateWithDB(Context context) {
         courseHours = CourseDiaryDB.getDBInstance(context).courseDAO().getAllCourseHoursOfCourse(this);
         assignments = CourseDiaryDB.getDBInstance(context).courseDAO().getAllAssignmentsOfCourse(this);
-        gradingSystem.integrateWithDB(context);
+        if (gradingSystem != null)
+            gradingSystem = User.findGradingSystemByID(gradingSystem.getGradingSystemID());
     }
 
     @Override
@@ -230,8 +217,7 @@ public class Course extends AppContent{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        semester.getCourses().remove(this);
-        ((MainScreen)activity).getVisibleFragment().appContent = semester;
+        ((Semester)((MainScreen)activity).getVisibleFragment().appContent).getCourses().remove(this);
         CourseDiaryDB.getDBInstance(activity).courseDAO().deleteCourse(this);
     }
 
