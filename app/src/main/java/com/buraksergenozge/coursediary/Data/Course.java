@@ -186,7 +186,9 @@ public class Course extends AppContent{
                     totalAttendance++;
             }
         }
-        if (numberOfCourseHours == 0 || totalAttendance == 0)
+        if (numberOfCourseHours == 0)
+            return 100;
+        if (totalAttendance == 0)
             return 0;
         return ((float) totalAttendance / numberOfCourseHours) * 100;
     }

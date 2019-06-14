@@ -120,4 +120,8 @@
     <string name="progress_holder">%%%.2f</string>
     <string name="set_grading_system_warning">Dersin puanlama sistemi seçili değil!</string>
     <string name="int_progress_holder">%%%d</string>
+    <string name="permission_denied">Bazı izinler reddedildi.</string>
+    <string name="permission_grant">İzinler sağlandı.</string>
+    <string name="audio_delete">Ses silindi.</string>
+    <string name="audio_save">Ses kaydedildi.</string>
 </resources>

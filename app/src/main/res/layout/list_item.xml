@@ -16,7 +16,7 @@
             android:id="@+id/list_item_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_folder_outline_grey600_36dp"
+            android:src="@drawable/ic_insert_drive_file_gray_36dp"
             app:layout_constraintStart_toStartOf="parent"
             android:contentDescription="TODO" />
 

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Photo;
@@ -199,6 +200,9 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
         if (view.getId() == R.id.creationCloseIcon) {
             if (this instanceof PhotoCreationDialog) {
                 ((Photo)appContent).getFile().delete();
+            }
+            else if (this instanceof AudioCreationDialog) {
+                ((Audio)appContent).getFile().delete();
             }
             this.dismiss();
         }

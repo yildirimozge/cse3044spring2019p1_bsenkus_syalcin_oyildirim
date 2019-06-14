@@ -33,6 +33,6 @@
         android:layout_gravity="bottom|end"
         android:elevation="9dp"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_plus_white_48dp" />
+        android:src="@drawable/ic_add_light_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

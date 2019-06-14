@@ -103,7 +103,6 @@
         <item>@string/assignment</item>
         <item>@string/note</item>
         <item>@string/photo</item>
-        <item>@string/audio</item>
         <item>@string/grading_system</item>
     </string-array>
     <string-array name="days">
@@ -137,4 +136,8 @@
     <string name="progress_holder">%.2f%%</string>
     <string name="set_grading_system_warning">You have to set grading system for this course!</string>
     <string name="int_progress_holder">%d%%</string>
+    <string name="permission_grant">Permissions granted</string>
+    <string name="permission_denied">Some permissions denied</string>
+    <string name="audio_delete">Audio deleted.</string>
+    <string name="audio_save">Audio saved.</string>
 </resources>

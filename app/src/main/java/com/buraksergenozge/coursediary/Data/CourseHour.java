@@ -150,14 +150,15 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         photos = new ArrayList<>();
         File contentDir = new File(getContentDirectory());
         if (contentDir.exists()) {
-            for (File photo: contentDir.listFiles()) {
-                if (photo.getAbsolutePath().endsWith(".jpg"))
-                    photos.add(new Photo(this, photo.getAbsolutePath()));
+            for (File file: contentDir.listFiles()) {
+                if (file.getAbsolutePath().endsWith(".jpg"))
+                    photos.add(new Photo(this, file.getAbsolutePath()));
+                else if (file.getAbsolutePath().endsWith(".3gp"))
+                    audios.add(new Audio(this, file.getAbsolutePath()));
             }
         }
         else
             contentDir.mkdir();
-        //TODO: Sesleri al.
     }
 
     @Override

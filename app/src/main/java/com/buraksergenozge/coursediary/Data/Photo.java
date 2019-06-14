@@ -34,7 +34,6 @@ public class Photo extends AppContent{
     @Ignore
     private static final String[] relatedFragmentTags = {CourseHourFragment.tag};
 
-
     public Photo(CourseHour courseHour, String filePath) {
         this.courseHour = courseHour;
         this.file = new File(filePath);
@@ -74,7 +73,6 @@ public class Photo extends AppContent{
 
     @Override
     public void edit(AppCompatActivity activity) {
-        //AppContent.openCreationDialog(activity, getCreationDialog(true));
     }
 
     public static void takePhoto(AppCompatActivity activity) {
@@ -120,6 +118,8 @@ public class Photo extends AppContent{
                 }
             }
         }
+        else
+            ((MainScreen)activity).requestPermissions();
     }
 
     private static File createPhotoFile(CourseHour courseHour) {
@@ -130,8 +130,10 @@ public class Photo extends AppContent{
             storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ("CourseDiary/" + courseHour.getCourseHourID()));
         else
             storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CourseDiary");
-        if (!storageDir.exists())
-            storageDir.mkdir();
+        if (!storageDir.exists()) {
+            if (!storageDir.mkdirs())
+                return null;
+        }
         File image = null;
         try {
             image = File.createTempFile(name, ".jpg", storageDir);
@@ -149,7 +151,6 @@ public class Photo extends AppContent{
     @Override
     public void addOperation(AppCompatActivity activity) {
         courseHour.getPhotos().add(this);
-        //MainScreen.integrateData(activity);
     }
 
     @Override
@@ -159,9 +160,8 @@ public class Photo extends AppContent{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        courseHour.getPhotos().remove(this);
+        ((CourseHour)((MainScreen)activity).getVisibleFragment().appContent).getPhotos().remove(this);
         file.delete();
-        MainScreen.activeAppContent = courseHour;
     }
 
     @Override

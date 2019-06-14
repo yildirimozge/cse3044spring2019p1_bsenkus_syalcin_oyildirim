@@ -20,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
+import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
@@ -59,9 +61,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     public static AppContent activeAppContent;
     public static AppContent contextMenuAppContent;
     public static final int CAMERA_REQUEST = 1888;
-    private static final int CAMERA_PERMISSION_CODE = 100;
-    private static final int READ_PERMISSION_CODE = 200;
-    private static final int WRITE_PERMISSION_CODE = 300;
+    private static final int REQUEST_PERMISSION_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +86,31 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_record:
+                if (!Audio.isRecorderActive) {
+                    item.setIcon(R.drawable.ic_mic_red_24dp);
+                    Audio.record(this);
+                }
+                else {
+                    Audio.mediaRecorder.stop();
+                    item.setIcon(R.drawable.ic_mic_light_24dp);
+                    Audio.isRecorderActive = false;
+                    Log.i("burak", "BİTTİ");
+                    if (!(activeAppContent instanceof CourseHour || activeAppContent instanceof Note)) {
+                        AppContent.openCreationDialog(this, Audio.getCreationDialog(CreationDialog.CREATE_MODE));
+                    }
+                    else {
+                        Audio audio;
+                        if (activeAppContent instanceof CourseHour)
+                            audio = new Audio((CourseHour) activeAppContent, Audio.saveAudioPath);
+                        else
+                            audio = new Audio(((Note) activeAppContent).getCourseHour(), Audio.saveAudioPath);
+                        audio.addOperation(this);
+                        updateViewsOfAppContent(audio);
+                        MainScreen.showSnackbarMessage(getWindow().getDecorView(), getString(audio.getSaveMessage()));
+                    }
+                }
+                return true;
             case R.id.action_settings:
                 DialogFragment fragment = new SettingsFragment();
                 fragment.show(getSupportFragmentManager(), "settingsFragment");
@@ -164,10 +189,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     activeDialog = "";
                     break;
                 case 5:
-                   // Audio.openCreationDialog(this);
-                    activeDialog = "";
-                    break;
-                case 6:
                     AppContent.openCreationDialog(this, GradingSystem.getCreationDialog(CreationDialog.CREATE_MODE));
                     activeDialog = "";
                     break;
@@ -268,66 +289,43 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         }
     }
 
+    public void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
+            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE))
+                Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, MainScreen.REQUEST_PERMISSION_CODE);
+        }
+        else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
+                Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE))
+                Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, MainScreen.REQUEST_PERMISSION_CODE);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
+        if (requestCode == REQUEST_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this, "Camera permission granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permission_grant), Toast.LENGTH_SHORT).show();
             else
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
-        }
-        if (requestCode == READ_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this, "Read permission granted", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "Read permission denied", Toast.LENGTH_SHORT).show();
-        }
-        if (requestCode == WRITE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this, "Write permission granted", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "Write permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
         }
     }
 
     public boolean checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-                    Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
-                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
-                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE))
-                    Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
-                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MainScreen.CAMERA_PERMISSION_CODE);
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainScreen.READ_PERMISSION_CODE);
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MainScreen.WRITE_PERMISSION_CODE);
-                return false;
-            } else
-                return true;
-        }
-        else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
-                    Toast.makeText(this, "Camera is needed to capture images during course.", Toast.LENGTH_SHORT).show();
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    Toast.makeText(this, "It is required to save captured images.", Toast.LENGTH_SHORT).show();
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE))
-                    Toast.makeText(this, "It is required to get captured images from storage.", Toast.LENGTH_SHORT).show();
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MainScreen.CAMERA_PERMISSION_CODE);
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainScreen.READ_PERMISSION_CODE);
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MainScreen.WRITE_PERMISSION_CODE);
-                return false;
-            } else
-                return true;
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            return (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        else
+            return (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
     }
 
     @Override
@@ -335,10 +333,15 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem editItem = menu.findItem(R.id.action_edit);
+        MenuItem recordItem = menu.findItem(R.id.action_record);
         if (MainScreen.activeArchiveFragmentTag == null || MainScreen.activeArchiveFragmentTag.equals(ArchiveFragment.tag))
             editItem.setVisible(false);
         else
             editItem.setVisible(true);
+        if (Audio.isRecorderActive)
+            recordItem.setIcon(R.drawable.ic_mic_red_24dp);
+        else
+            recordItem.setIcon(R.drawable.ic_mic_light_24dp);
         return true;
     }
 

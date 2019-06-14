@@ -55,19 +55,19 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
     void bindData(final Object viewModel) {
         this.appContent = (AppContent) viewModel;
         if (viewModel instanceof Semester) {
-            listItem_IV.setImageResource(R.drawable.ic_calendar_month_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_date_range_gray_36dp);
             listItem_TV.setText(((Semester) viewModel).getName());
             listItemSideText.setVisibility(View.GONE);
             listItemAdditional_TV.setText("");
         }
         else if (viewModel instanceof Course) {
-            listItem_IV.setImageResource(R.drawable.ic_bag_personal_outline_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_class_gray_36dp);
             listItem_TV.setText(((Course) viewModel).getName());
             listItemSideText.setText(((Course)viewModel).getSemester().getName());
             listItemAdditional_TV.setText("");
         }
         else if (viewModel instanceof Assignment) {
-            listItem_IV.setImageResource(R.drawable.ic_notebook_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_assignment_gray_36dp);
             listItem_TV.setText(((Assignment) viewModel).getTitle());
             listItemSideText.setText(((Assignment)viewModel).getCourse().getName());
             listItemAdditional_TV.setText(StringManager.getTimeRepresentation(((Assignment) viewModel).getRemainingTimeInMillis(), activity.getResources()));
@@ -75,7 +75,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
                 listItemAdditional_TV.setTextColor(Color.rgb(255,0,0));
         }
         else if (viewModel instanceof CourseHour) {
-            listItem_IV.setImageResource(R.drawable.ic_timelapse_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_schedule_gray_36dp);
             listItem_TV.setText(viewModel.toString());
             listItemSideText.setText(((CourseHour)viewModel).getCourse().getName());
             if (((CourseHour) viewModel).getAttendance() == 1)
@@ -88,14 +88,15 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
                 listItemCheckBox.setEnabled(true);
         }
         else if (viewModel instanceof Note) {
-            listItem_IV.setImageResource(R.drawable.ic_note_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_note_gray_36dp);
             listItem_TV.setText(((Note) viewModel).getTitle());
             listItemSideText.setText(((Note)viewModel).getCourseHour().toString());
             listItemAdditional_TV.setVisibility(View.GONE);
         }
         else if (viewModel instanceof Audio) {
-            listItem_IV.setImageResource(R.drawable.ic_note_grey600_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_audiotrack_gray_36dp);
             listItem_TV.setText(viewModel.toString());
+            listItemSideText.setVisibility(View.GONE);
             listItemAdditional_TV.setVisibility(View.GONE);
         }
         else if (viewModel instanceof Photo) {
