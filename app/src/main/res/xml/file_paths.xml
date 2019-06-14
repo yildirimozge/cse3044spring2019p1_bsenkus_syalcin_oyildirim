@@ -3,5 +3,5 @@
     <external-path
         name="course_diary_images"
         path="Pictures"/>
-
+    <external-path name="external_files" path="."/>
 </paths>

@@ -8,8 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import androidx.annotation.RecentlyNonNull;
-
+import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.Objects;
@@ -24,11 +23,14 @@ public class MainCourseFeed extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FragmentManager fragManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-        FragmentTransaction fragTransaction = fragManager.beginTransaction();
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        CourseFeed courseFeed = new CourseFeed();
-        fragTransaction.replace(R.id.mainCourseFeedLayout, courseFeed, CourseFeed.tag);
-        fragTransaction.commit();
+        if (!MainScreen.mainCourseFeedReady) {
+            FragmentManager fragManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+            FragmentTransaction fragTransaction = fragManager.beginTransaction();
+            fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            CourseFeed courseFeed = new CourseFeed();
+            fragTransaction.replace(R.id.mainCourseFeedLayout, courseFeed, CourseFeed.tag);
+            fragTransaction.commit();
+            MainScreen.mainCourseFeedReady = true;
+        }
     }
 }

@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public abstract class BaseFragment extends Fragment {
     public AppContent appContent;
-    static AppContent transferAppContent;
+    public static AppContent transferAppContent;
     public BaseFragment parentFragment;
     BaseFragment childFragment;
 
@@ -40,7 +40,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        MainScreen.activeAppContent = appContent;
+        if (!(this instanceof CourseFeed || this instanceof ArchiveFragment))
+            MainScreen.activeAppContent = appContent;
         initializeViews();
         updateView();
         MainScreen.updateActiveFragmentTag(getTag());
@@ -70,8 +71,10 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void onBackPressed() {
-        if (parentFragment != null)
+        if (parentFragment != null) {
+            transferAppContent = parentFragment.appContent;
             parentFragment.childFragment = null;
+        }
         parentFragment = null;
     }
 }

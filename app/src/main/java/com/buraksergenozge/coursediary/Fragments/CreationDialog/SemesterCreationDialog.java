@@ -2,11 +2,8 @@ package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.DatePickerDialog;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
@@ -22,7 +19,6 @@ public class SemesterCreationDialog extends CreationDialog {
     private EditText nameEditText, startDateEditText, endDateEditText;
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
     private Calendar startDate, endDate;
-    private Button createButton;
 
     @Override
     protected int getLayoutID() {
@@ -31,9 +27,8 @@ public class SemesterCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
-        closeIcon.setOnClickListener(this);
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_semester));
+        super.initializeViews();
+        toolbarTitle_TV.setText(getString(R.string.new_semester));
         nameEditText = Objects.requireNonNull(getView()).findViewById(R.id.semesterNameEditText);
         createButton = getView().findViewById(R.id.semesterCreateButton);
         createButton.setOnClickListener(this);
@@ -60,25 +55,21 @@ public class SemesterCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeEditMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
+        super.initializeEditMode();
         nameEditText.setText(((Semester)appContent).getName());
         startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
         endDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getEndDate().get(Calendar.YEAR)));
-        createButton.setText(getString(R.string.save));
     }
 
     @Override
     protected void initializeInfoMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Semester)appContent).getName());
+        super.initializeInfoMode();
         nameEditText.setText(((Semester)appContent).getName());
         nameEditText.setEnabled(false);
         startDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getStartDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getStartDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getStartDate().get(Calendar.YEAR)));
         startDateEditText.setEnabled(false);
         endDateEditText.setText(getResources().getString(R.string.date_format, ((Semester)appContent).getEndDate().get(Calendar.DAY_OF_MONTH), (((Semester)appContent).getEndDate().get(Calendar.MONTH) + 1), ((Semester)appContent).getEndDate().get(Calendar.YEAR)));
         endDateEditText.setEnabled(false);
-        createButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -95,11 +86,9 @@ public class SemesterCreationDialog extends CreationDialog {
                     }
                     else {
                         appContent = new Semester(semesterName, startDate, endDate);
-                        appContent.addOperation((MainScreen)getActivity());
+                        appContent.create((MainScreen)getActivity());
                     }
                     this.dismiss();
-                    mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.startDateView:

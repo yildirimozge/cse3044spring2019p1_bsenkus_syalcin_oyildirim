@@ -16,7 +16,6 @@
     <string name="add_new">Yeni Ekle</string>
     <string name="semester">Dönem</string>
     <string name="assignment">Ödev</string>
-    <string name="audio">Ses</string>
     <string name="photo">Fotoğraf</string>
     <string name="course">Ders</string>
     <string name="empty_archive">Hiç dönem eklenmedi!</string>

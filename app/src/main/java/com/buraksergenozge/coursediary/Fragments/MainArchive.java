@@ -1,6 +1,7 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -8,8 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import androidx.annotation.RecentlyNonNull;
-
+import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.Objects;
@@ -17,18 +17,27 @@ import java.util.Objects;
 public class MainArchive extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_main_archive, container, false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        FragmentManager fragManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-        FragmentTransaction fragTransaction = fragManager.beginTransaction();
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ArchiveFragment archiveFragment = new ArchiveFragment();
-        fragTransaction.replace(R.id.mainArchiveLayout, archiveFragment, ArchiveFragment.tag);
-        fragTransaction.commit();
+        if (!MainScreen.mainArchiveReady) {
+            FragmentManager fragManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+            FragmentTransaction fragTransaction = fragManager.beginTransaction();
+            fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ArchiveFragment archiveFragment = new ArchiveFragment();
+            fragTransaction.replace(R.id.mainArchiveLayout, archiveFragment, ArchiveFragment.tag);
+            fragTransaction.commit();
+            MainScreen.mainArchiveReady = true;
+        }
     }
 }

@@ -43,7 +43,7 @@ public class Course extends AppContent{
     @ColumnInfo
     private float attendanceObligation;
     @ColumnInfo
-    private List<Calendar[]> schedule; // List of start and end hours of course
+    private final List<Calendar[]> schedule; // List of start and end hours of course
     @ColumnInfo
     private GradingSystem gradingSystem;
     @ColumnInfo

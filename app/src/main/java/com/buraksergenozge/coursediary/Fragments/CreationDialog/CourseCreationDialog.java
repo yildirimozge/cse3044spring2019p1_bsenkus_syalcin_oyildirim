@@ -6,7 +6,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -39,7 +38,6 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
     private Spinner gradingSystemSelectionSpinner, startDaySelectionSpinner, endDaySelectionSpinner;
     private Calendar startTime, endTime;
     private List<Calendar[]> schedule;
-    private Button createButton;
 
     @Override
     protected int getLayoutID() {
@@ -48,9 +46,8 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     protected void initializeViews() {
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
-        closeIcon.setOnClickListener(this);
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_course));
+        super.initializeViews();
+        toolbarTitle_TV.setText(getString(R.string.new_course));
         courseName_ET = Objects.requireNonNull(getView()).findViewById(R.id.courseName_ET);
         creditET = getView().findViewById(R.id.credit_ET);
         startTime = (Calendar) Calendar.getInstance().clone();
@@ -107,12 +104,10 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     protected void initializeEditMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
+        super.initializeEditMode();
         courseName_ET.setText(((Course) appContent).getName());
         creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
         attendanceObligationSeekBar.setProgress((int)(((Course) appContent).getAttendanceObligation() * 100));
-        createButton.setText(getString(R.string.save));
         schedule = ((Course)appContent).getSchedule();
         Objects.requireNonNull(getView()).findViewById(R.id.scheduleLayout).setVisibility(View.VISIBLE);
         LinearLayout layout = getView().findViewById(R.id.scheduleInsideLayout);
@@ -140,18 +135,15 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     protected void initializeInfoMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Course)appContent).getName());
+        super.initializeInfoMode();
         courseName_ET.setText(((Course) appContent).getName());
         courseName_ET.setEnabled(false);
         creditET.setText(getResources().getString(R.string.credit_format, ((Course) appContent).getCredit()));
         creditET.setEnabled(false);
         attendanceObligationSeekBar.setProgress((int)(((Course) appContent).getAttendanceObligation() * 100));
         attendanceObligationSeekBar.setEnabled(false);
-        createButton.setVisibility(View.GONE);
-        getView().findViewById(R.id.addScheduleButton).setVisibility(View.GONE);
+        Objects.requireNonNull(getView()).findViewById(R.id.addScheduleButton).setVisibility(View.GONE);
         getView().findViewById(R.id.clearButton).setVisibility(View.GONE);
-        semesterSelectionSpinner.setEnabled(false);
         gradingSystemSelectionSpinner.setEnabled(false);
         startDaySelectionSpinner.setVisibility(View.GONE);
         endDaySelectionSpinner.setVisibility(View.GONE);
@@ -198,11 +190,9 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
                         appContent = new Course(courseName, selectedSemester, credit, attendanceObligation, schedule);
                         if (selectedGradingSystem != null)
                             ((Course)appContent).setGradingSystem(selectedGradingSystem);
-                        appContent.addOperation((MainScreen) getActivity());
+                        appContent.create((MainScreen) getActivity());
                     }
                     this.dismiss();
-                    mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
                 }
                 break;
             case R.id.start_time_ET:

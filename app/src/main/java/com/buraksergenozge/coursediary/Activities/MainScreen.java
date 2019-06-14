@@ -62,6 +62,8 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     public static AppContent contextMenuAppContent;
     public static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_PERMISSION_CODE = 100;
+    public static boolean mainCourseFeedReady = false;
+    public static boolean mainArchiveReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +107,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                             audio = new Audio((CourseHour) activeAppContent, Audio.saveAudioPath);
                         else
                             audio = new Audio(((Note) activeAppContent).getCourseHour(), Audio.saveAudioPath);
-                        audio.addOperation(this);
-                        updateViewsOfAppContent(audio);
-                        MainScreen.showSnackbarMessage(getWindow().getDecorView(), getString(audio.getSaveMessage()));
+                        audio.create(this);
                     }
                 }
                 return true;
@@ -120,12 +120,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     activeAppContent.edit(this);
                     activeDialog = "";
                 }
-                return true;
-            case R.id.action_info:
-                if (activeAppContent != null)
-                    activeAppContent.showInfo(this);
-                else
-                    Toast.makeText(this, "USER bilgisi gösterilecek", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -282,9 +276,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     photo = new Photo((CourseHour) activeAppContent, Photo.getSavePhotoPath());
                 else
                     photo = new Photo(((Note) activeAppContent).getCourseHour(), Photo.getSavePhotoPath());
-                photo.addOperation(this);
-                updateViewsOfAppContent(photo);
-                MainScreen.showSnackbarMessage(getWindow().getDecorView(), getString(photo.getSaveMessage()));
+                photo.create(this);
             }
         }
     }
@@ -351,16 +343,20 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
             case R.id.floating_delete:
                 new AlertDialog.Builder(this).setMessage(getString(R.string.confirm_delete)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        contextMenuAppContent.deleteOperation(MainScreen.this);
-                        updateViewsOfAppContent(contextMenuAppContent);
-                        showSnackbarMessage(getWindow().getDecorView(), getString(contextMenuAppContent.getDeleteMessage()));
+                        contextMenuAppContent.remove(MainScreen.this);
                     }}).setNegativeButton(R.string.no, null).show();
                 return true;
             case R.id.floating_info:
-                activeAppContent.showInfo(this);
+                contextMenuAppContent.showInfo(this);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BaseFragment.transferAppContent = null;
     }
 }

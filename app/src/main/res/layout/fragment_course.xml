@@ -103,31 +103,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/assignmentListHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                <TextView
+                    android:id="@+id/assignmentListHeader_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/assignments"
+                    android:textSize="16sp"
                     android:layout_marginStart="10dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/assignment_add_button"/>
 
-                    <TextView
-                        android:id="@+id/assignmentListHeader_TV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:gravity="center_vertical"
-                        android:text="@string/assignments"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:contentDescription="TODO" />
-
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/assignment_add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/ic_add_box_gray_36dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="TODO" />
 
                 <View
                     android:id="@+id/line3"
@@ -160,30 +154,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/courseHourListHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                <TextView
+                    android:id="@+id/courseHourListHeader_TV"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/course_hours"
+                    android:textSize="16sp"
                     android:layout_marginStart="10dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/course_hour_add_button"/>
 
-                    <TextView
-                        android:id="@+id/courseHourListHeader_TV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:gravity="center_vertical"
-                        android:text="@string/course_hours"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:contentDescription="TODO" />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/course_hour_add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/ic_add_box_gray_36dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="TODO" />
 
                 <View
                     android:layout_width="match_parent"

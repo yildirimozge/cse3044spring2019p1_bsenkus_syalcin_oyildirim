@@ -1,7 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.design.card.MaterialCardView;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +23,8 @@ import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.R;
+import com.buraksergenozge.coursediary.Tools.GenericFileProvider;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class CourseHourFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -50,23 +49,18 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
         }
         else if (appContent instanceof Photo) {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-            Uri data = Uri.parse("file://" + ((Photo)appContent).getFile().getAbsolutePath());
+            String asd = Objects.requireNonNull(getContext()).getApplicationContext().getPackageName() + ".fileprovider";
+            Uri data = GenericFileProvider.getUriForFile(getContext(), asd, ((Photo)appContent).getFile());
             intent.setDataAndType(data, "image/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
         }
         else if (appContent instanceof Audio) {
-            if (Audio.mediaPlayer != null) {
-                Audio.mediaPlayer.stop();
-                Audio.mediaPlayer.release();
-                Audio.setUpMediaRecorder();
-            }
-            Audio.mediaPlayer = new MediaPlayer();
-            try {
-                Audio.mediaPlayer.setDataSource(((Audio)appContent).getFile().getAbsolutePath());
-                Audio.mediaPlayer.prepare();
-            }catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            String asd = Objects.requireNonNull(getContext()).getApplicationContext().getPackageName() + ".fileprovider";
+            Uri uri = GenericFileProvider.getUriForFile(getContext(), asd, ((Audio)appContent).getFile());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
         }
     }
 
@@ -184,19 +178,17 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
                 break;
             case R.id.audio_add_button:
                 if (!Audio.isRecorderActive) {
-                    ImageView audioAdd = getView().findViewById(R.id.audio_add_button);
+                    ImageView audioAdd = Objects.requireNonNull(getView()).findViewById(R.id.audio_add_button);
                     audioAdd.setImageResource(R.drawable.ic_mic_red_36dp);
                     Audio.record((AppCompatActivity) getActivity());
                 }
                 else {
                     Audio.isRecorderActive = false;
-                    ImageView audioAdd = getView().findViewById(R.id.audio_add_button);
+                    ImageView audioAdd = Objects.requireNonNull(getView()).findViewById(R.id.audio_add_button);
                     audioAdd.setImageResource(R.drawable.ic_mic_gray_36dp);
                     Audio.mediaRecorder.stop();
                     Audio audio = new Audio((CourseHour) appContent, Audio.saveAudioPath);
-                    audio.addOperation((AppCompatActivity) getActivity());
-                    ((MainScreen) getActivity()).updateViewsOfAppContent(audio);
-                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(audio.getSaveMessage()));
+                    audio.create((AppCompatActivity) getActivity());
                 }
                 MainScreen.activeDialog = "";
                 break;

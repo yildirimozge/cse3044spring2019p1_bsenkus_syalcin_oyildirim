@@ -134,7 +134,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         this.audios = audios;
     }
 
-    private static CreationDialog getCreationDialog(int mode) {
+    public static CreationDialog getCreationDialog(int mode) {
         CreationDialog creationDialog = new CourseHourCreationDialog();
         creationDialog.mode = mode;
         return creationDialog;
@@ -158,7 +158,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
             }
         }
         else
-            contentDir.mkdir();
+            contentDir.mkdirs();
     }
 
     @Override
@@ -172,7 +172,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
         course.getCourseHours().add(this);
         File contentDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ("Course Diary/" + courseHourID));
         if (!contentDir.exists())
-            contentDir.mkdir();
+            contentDir.mkdirs();
     }
 
     @Override

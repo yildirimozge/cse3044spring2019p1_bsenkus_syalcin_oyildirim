@@ -12,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Data.AppContent;
-import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Photo;
@@ -30,11 +32,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class CreationDialog extends DialogFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
-    OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
     public Spinner semesterSelectionSpinner, courseSelectionSpinner, courseHourSelectionSpinner;
     public Semester selectedSemester = null;
     public Course selectedCourse = null;
     public  CourseHour selectedCourseHour = null;
+    Button createButton;
+    TextView toolbarTitle_TV;
+    private ImageView closeIcon;
     public int mode = 0; // 0 for creation, 1 for edit, 2 for info
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
@@ -95,11 +100,29 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
 
     protected abstract void prepareSpinners();
 
-    protected abstract void initializeViews();
+    void initializeViews() {
+        toolbarTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.creationTitle);
+        closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
+        closeIcon.setOnClickListener(this);
+    }
 
-    protected abstract void initializeEditMode();
+    void initializeEditMode() {
+        appContent = MainScreen.activeAppContent;
+        toolbarTitle_TV.setText(appContent.toString());
+        createButton.setText(getString(R.string.save));
+    }
 
-    protected abstract void initializeInfoMode();
+    void initializeInfoMode() {
+        appContent = MainScreen.contextMenuAppContent;
+        toolbarTitle_TV.setText(appContent.toString());
+        if (semesterSelectionSpinner != null)
+            semesterSelectionSpinner.setEnabled(false);
+        if (courseSelectionSpinner != null)
+            courseSelectionSpinner.setEnabled(false);
+        if (courseHourSelectionSpinner != null)
+            courseHourSelectionSpinner.setEnabled(false);
+        createButton.setVisibility(View.GONE);
+    }
 
     public boolean selectSemesterOnSpinner(Semester semester) {
         Semester currentSelected = (Semester) semesterSelectionSpinner.getSelectedItem();
@@ -198,11 +221,8 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.creationCloseIcon) {
-            if (this instanceof PhotoCreationDialog) {
+            if (this instanceof PhotoCreationDialog && mode == CREATE_MODE) {
                 ((Photo)appContent).getFile().delete();
-            }
-            else if (this instanceof AudioCreationDialog) {
-                ((Audio)appContent).getFile().delete();
             }
             this.dismiss();
         }

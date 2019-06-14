@@ -9,8 +9,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-//import androidx.annotation.RecentlyNonNull;
-
 import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.AssignmentCreationDialog;
@@ -200,7 +198,6 @@ public class Photo extends AppContent{
         return relatedFragmentTags;
     }
 
-    //@RecentlyNonNull
     @Override
     public String toString() {
         return "courseHour=" + courseHour + ", absolutePath=" + file.getAbsolutePath();

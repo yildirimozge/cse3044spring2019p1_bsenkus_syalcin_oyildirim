@@ -14,7 +14,6 @@ import com.buraksergenozge.coursediary.Fragments.CreationDialog.AudioCreationDia
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseHourCreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
-import com.buraksergenozge.coursediary.Fragments.CreationDialog.PhotoCreationDialog;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.ListAdapter;
 import com.buraksergenozge.coursediary.Tools.StringManager;
@@ -22,12 +21,11 @@ import com.buraksergenozge.coursediary.Tools.StringManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Objects;
 
 public class Audio extends AppContent {
     private CourseHour courseHour;
     private File file;
-    public String name;
+    public final String name;
     public static String saveAudioPath = "";
     public static String currentAudioName;
     public static MediaRecorder mediaRecorder;
@@ -66,10 +64,7 @@ public class Audio extends AppContent {
 
     @Override
     public void addOperation(AppCompatActivity activity) {
-        if (((MainScreen)activity).getVisibleFragment() instanceof CourseHourFragment)
-            ((CourseHour)((CourseHourFragment)((MainScreen)activity).getVisibleFragment()).appContent).getAudios().add(this);
-        else
-            courseHour.getAudios().add(this);
+        courseHour.getAudios().add(this);
     }
 
     @Override
@@ -79,7 +74,7 @@ public class Audio extends AppContent {
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((CourseHour)((MainScreen)activity).getVisibleFragment().appContent).getAudios().remove(this);
+        courseHour.getAudios().remove(this);
         file.delete();
     }
 
@@ -148,7 +143,7 @@ public class Audio extends AppContent {
         return storageDir.getAbsolutePath().concat("/").concat(currentAudioName);
     }
 
-    public static void setUpMediaRecorder() {
+    private static void setUpMediaRecorder() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);

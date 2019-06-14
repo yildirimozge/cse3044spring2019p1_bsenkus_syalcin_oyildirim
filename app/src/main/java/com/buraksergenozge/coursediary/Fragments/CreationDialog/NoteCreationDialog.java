@@ -1,10 +1,7 @@
 package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.buraksergenozge.coursediary.Activities.MainScreen;
@@ -20,7 +17,6 @@ import java.util.Objects;
 public class NoteCreationDialog extends CreationDialog {
     private String title, text;
     private EditText noteTitle_ET, noteText_ET;
-    private Button createButton;
 
     @Override
     protected int getLayoutID() {
@@ -29,9 +25,8 @@ public class NoteCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeViews() {
-        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
-        closeIcon.setOnClickListener(this);
-        ((TextView)getView().findViewById(R.id.creationTitle)).setText(getString(R.string.new_note));
+        super.initializeViews();
+        toolbarTitle_TV.setText(getString(R.string.new_note));
         noteTitle_ET = Objects.requireNonNull(getView()).findViewById(R.id.noteNameEditText);
         noteText_ET = getView().findViewById(R.id.note_ET);
         createButton = getView().findViewById(R.id.noteCreateButton);
@@ -55,54 +50,41 @@ public class NoteCreationDialog extends CreationDialog {
 
     @Override
     protected void initializeEditMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
+        super.initializeEditMode();
         noteTitle_ET.setText(((Note) appContent).getTitle());
         noteText_ET.setText(((Note) appContent).getText());
-        createButton.setText(getString(R.string.save));
     }
 
     @Override
     protected void initializeInfoMode() {
-        appContent = MainScreen.activeAppContent;
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.creationTitle)).setText(((Note)appContent).getTitle());
+        super.initializeInfoMode();
         noteTitle_ET.setText(((Note) appContent).getTitle());
         noteTitle_ET.setEnabled(false);
         noteText_ET.setText(((Note) appContent).getText());
         noteText_ET.setEnabled(false);
-        createButton.setVisibility(View.GONE);
-        semesterSelectionSpinner.setEnabled(false);
-        courseSelectionSpinner.setEnabled(false);
-        courseHourSelectionSpinner.setEnabled(false);
     }
 
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        switch (view.getId()) {
-            case R.id.noteCreateButton:
-                if (checkInputValidity()) {
-                    if (mode == EDIT_MODE) {
-                        ((Note)appContent).setTitle(title);
-                        ((Note)appContent).setText(text);
-                        if (((Note)appContent).getCourseHour().getCourseHourID() != selectedCourseHour.getCourseHourID()) {
-                            ((CourseHour)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getNotes().remove(appContent);
-                            ((Note)appContent).setCourseHour(selectedCourseHour);
-                            selectedCourseHour.getNotes().add((Note) appContent);
-                        }
-                        appContent.updateOperation((MainScreen) getActivity());
+        if (view.getId() == R.id.noteCreateButton) {
+            if (checkInputValidity()) {
+                if (mode == EDIT_MODE) {
+                    ((Note)appContent).setTitle(title);
+                    ((Note)appContent).setText(text);
+                    if (((Note)appContent).getCourseHour().getCourseHourID() != selectedCourseHour.getCourseHourID()) {
+                        ((CourseHour)((MainScreen) Objects.requireNonNull(getActivity())).getVisibleFragment().parentFragment.appContent).getNotes().remove(appContent);
+                        ((Note)appContent).setCourseHour(selectedCourseHour);
+                        selectedCourseHour.getNotes().add((Note) appContent);
                     }
-                    else {
-                        appContent = new Note(selectedCourseHour, title, text);
-                        appContent.addOperation((MainScreen) getActivity());
-                    }
-                    this.dismiss();
-                    mListener.updateViewsOfAppContent(appContent);
-                    MainScreen.showSnackbarMessage(Objects.requireNonNull(getActivity()).getWindow().getDecorView(), getString(appContent.getSaveMessage()));
+                    appContent.updateOperation((MainScreen) getActivity());
                 }
-                break;
-            default:
-                break;
+                else {
+                    appContent = new Note(selectedCourseHour, title, text);
+                    appContent.create((MainScreen) getActivity());
+                }
+                this.dismiss();
+            }
         }
     }
 

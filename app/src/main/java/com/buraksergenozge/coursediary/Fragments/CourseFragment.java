@@ -1,12 +1,12 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +16,7 @@ import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.User;
+import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
 import com.buraksergenozge.coursediary.R;
 
@@ -30,6 +31,54 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
     @Override
     public int getLayoutID() {
         return R.layout.fragment_course;
+    }
+
+    private void updateBar() {
+        attendance_TV.setText(getResources().getString(R.string.progress_holder, ((Course)appContent).getAttendanceStatus()));
+        if (((Course)appContent).getGrade() != null)
+            grade_TV.setText(((Course)appContent).getGrade().getCode());
+        else
+            grade_TV.setText("-");
+    }
+
+    @Override
+    public void initializeViews() {
+        courseTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.courseTitle_TV);
+        grade_TV = getView().findViewById(R.id.grade_TV);
+        grade_TV.setOnClickListener(this);
+        getView().findViewById(R.id.gradeTitle_TV).setOnClickListener(this);
+        attendance_TV = getView().findViewById(R.id.attendance_TV);
+        getView().findViewById(R.id.course_hours_cardview).setOnClickListener(this);
+        assignmentRecyclerView = getView().findViewById(R.id.assignment_recyclerview);
+        assignmentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(assignmentRecyclerView);
+        courseHourRecyclerView = getView().findViewById(R.id.course_hour_recyclerview);
+        courseHourRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(courseHourRecyclerView);
+        getView().findViewById(R.id.assignments_cardview).setOnClickListener(this);
+        getView().findViewById(R.id.assignment_add_button).setOnClickListener(this);
+        getView().findViewById(R.id.course_hour_add_button).setOnClickListener(this);
+    }
+
+    @Override
+    public void updateView() {
+        courseTitle_TV.setText(((Course)appContent).getName());
+        Collections.sort(((Course)appContent).getCourseHours());
+        Collections.sort(((Course)appContent).getAssignments());
+        boolean isCourseHourListEmpty = updateRecyclerView(courseHourRecyclerView, ((Course)appContent).getCourseHours());
+        boolean isAssignmentListEmpty = updateRecyclerView(assignmentRecyclerView, ((Course)appContent).getAssignments());
+        setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);
+        updateBar();
+        if (assignmentRecyclerView.getAdapter() != null) {
+            if (assignmentRecyclerView.getAdapter().getItemCount() > 4) {
+                ViewGroup.LayoutParams params = assignmentRecyclerView.getLayoutParams();
+                params.height = 515;
+                assignmentRecyclerView.setLayoutParams(params);
+                assignmentRecyclerView.requestLayout();
+            }
+        }
+        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.assignmentListHeader_TV)).setText(getResources().getString(R.string.assignments, ((Course)appContent).getAssignments().size()));
+        ((TextView)getView().findViewById(R.id.courseHourListHeader_TV)).setText(getResources().getString(R.string.course_hours, ((Course)appContent).getCourseHours().size()));
     }
 
     private void setVisibilities(boolean isCourseHourListEmpty, boolean isAssignmentListEmpty) {
@@ -61,68 +110,26 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    private void updateBar() {
-        attendance_TV.setText(getResources().getString(R.string.progress_holder, ((Course)appContent).getAttendanceStatus()));
-        if (((Course)appContent).getGrade() != null)
-            grade_TV.setText(((Course)appContent).getGrade().getCode());
-        else
-            grade_TV.setText("-");
-    }
-
-    @Override
-    public void initializeViews() {
-        courseTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.courseTitle_TV);
-        grade_TV = getView().findViewById(R.id.grade_TV);
-        grade_TV.setOnClickListener(this);
-        getView().findViewById(R.id.gradeTitle_TV).setOnClickListener(this);
-        attendance_TV = getView().findViewById(R.id.attendance_TV);
-        LinearLayout courseHourListHeader = getView().findViewById(R.id.courseHourListHeader);
-        courseHourListHeader.setOnClickListener(this);
-        assignmentRecyclerView = getView().findViewById(R.id.assignment_recyclerview);
-        assignmentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        registerForContextMenu(assignmentRecyclerView);
-        courseHourRecyclerView = getView().findViewById(R.id.course_hour_recyclerview);
-        courseHourRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        registerForContextMenu(courseHourRecyclerView);
-        LinearLayout assignmentListHeader = getView().findViewById(R.id.assignmentListHeader);
-        assignmentListHeader.setOnClickListener(this);
-    }
-
-    @Override
-    public void updateView() {
-        courseTitle_TV.setText(((Course)appContent).getName());
-        Collections.sort(((Course)appContent).getCourseHours());
-        Collections.sort(((Course)appContent).getAssignments());
-        boolean isCourseHourListEmpty = updateRecyclerView(courseHourRecyclerView, ((Course)appContent).getCourseHours());
-        boolean isAssignmentListEmpty = updateRecyclerView(assignmentRecyclerView, ((Course)appContent).getAssignments());
-        setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);
-        updateBar();
-        if (assignmentRecyclerView.getAdapter() != null) {
-            if (assignmentRecyclerView.getAdapter().getItemCount() > 4) {
-                ViewGroup.LayoutParams params = assignmentRecyclerView.getLayoutParams();
-                params.height = 515;
-                assignmentRecyclerView.setLayoutParams(params);
-                assignmentRecyclerView.requestLayout();
-            }
-        }
-        ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.assignmentListHeader_TV)).setText(getResources().getString(R.string.assignments, ((Course)appContent).getAssignments().size()));
-        ((TextView)getView().findViewById(R.id.courseHourListHeader_TV)).setText(getResources().getString(R.string.course_hours, ((Course)appContent).getCourseHours().size()));
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.courseHourListHeader:
+            case R.id.course_hours_cardview:
                 if (courseHourRecyclerView.getVisibility() == View.VISIBLE)
                     courseHourRecyclerView.setVisibility(View.GONE);
                 else
                     courseHourRecyclerView.setVisibility(View.VISIBLE);
                 break;
-            case R.id.assignmentListHeader:
+            case R.id.assignments_cardview:
                 if (assignmentRecyclerView.getVisibility() == View.VISIBLE)
                     assignmentRecyclerView.setVisibility(View.GONE);
                 else
                     assignmentRecyclerView.setVisibility(View.VISIBLE);
+                break;
+            case R.id.assignment_add_button:
+                AppContent.openCreationDialog((AppCompatActivity) Objects.requireNonNull(getActivity()), Assignment.getCreationDialog(CreationDialog.CREATE_MODE));
+                break;
+            case R.id.course_hour_add_button:
+                AppContent.openCreationDialog((AppCompatActivity) Objects.requireNonNull(getActivity()), CourseHour.getCreationDialog(CreationDialog.CREATE_MODE));
                 break;
             case R.id.listItemCheckBox:
                 ItemViewHolder itemViewHolder = (ItemViewHolder)view.getTag();

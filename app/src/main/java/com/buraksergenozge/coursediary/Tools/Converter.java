@@ -121,13 +121,13 @@ public class Converter {
 
     @TypeConverter
     public static String scheduleToString(List<Calendar[]> schedule) {
-        String scheduleString = "";
+        StringBuilder scheduleString = new StringBuilder();
         for (Calendar[] entry: schedule) {
             Calendar startTime = entry[0];
             Calendar endTime = entry[1];
             String startClockString = startTime.get(Calendar.DAY_OF_WEEK) + "." + startTime.get(Calendar.HOUR_OF_DAY) + "." + startTime.get(Calendar.MINUTE);
             String endClockString = endTime.get(Calendar.DAY_OF_WEEK) + "." + endTime.get(Calendar.HOUR_OF_DAY) + "." + endTime.get(Calendar.MINUTE);
-            scheduleString += startClockString + "," + endClockString + ";";
+            scheduleString.append(startClockString).append(",").append(endClockString).append(";");
         }
         return scheduleString.substring(0,scheduleString.length()-1);
     }
