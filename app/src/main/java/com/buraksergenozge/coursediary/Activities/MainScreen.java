@@ -51,8 +51,7 @@ import com.buraksergenozge.coursediary.R;
 import java.util.Objects;
 
 public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
-        DialogInterface.OnClickListener, CreationDialog.OnFragmentInteractionListener {
-    private ViewPager viewPager;
+        DialogInterface.OnClickListener {
     public static String activeDialog;
     private static String activeArchiveFragmentTag = ArchiveFragment.tag;
     private static String activeCourseFeedFragmentTag = CourseFeed.tag;
@@ -78,7 +77,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         addButton.setOnClickListener(this);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.main_pager);
+        ViewPager viewPager = findViewById(R.id.main_pager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -90,8 +89,8 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         switch (item.getItemId()) {
             case R.id.action_record:
                 if (!Audio.isRecorderActive) {
-                    item.setIcon(R.drawable.ic_mic_red_24dp);
-                    Audio.record(this);
+                    if (Audio.record(this))
+                        item.setIcon(R.drawable.ic_mic_red_24dp);
                 }
                 else {
                     Audio.mediaRecorder.stop();
@@ -111,9 +110,12 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
                     }
                 }
                 return true;
+            case R.id.action_grading_systems:
+                getVisibleFragment().open(null);
+                return true;
             case R.id.action_settings:
                 DialogFragment fragment = new SettingsFragment();
-                fragment.show(getSupportFragmentManager(), "settingsFragment");
+                fragment.show(getSupportFragmentManager(), SettingsFragment.tag);
                 return true;
             case R.id.action_edit:
                 if (activeAppContent != null) {
@@ -216,7 +218,6 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        viewPager.setCurrentItem(tab.getPosition());
         if (tab.getPosition() == 0)
             activeTabID = R.id.mainCourseFeedLayout;
         else if (tab.getPosition() == 1)
@@ -358,5 +359,12 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     protected void onPause() {
         super.onPause();
         BaseFragment.transferAppContent = null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mainCourseFeedReady = false;
+        mainArchiveReady = false;
     }
 }

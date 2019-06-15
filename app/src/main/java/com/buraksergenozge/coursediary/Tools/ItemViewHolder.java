@@ -17,6 +17,7 @@ import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.GradingSystem;
 import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
@@ -33,7 +34,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
     private final TextView listItemAdditional_TV;
     private final CheckBox listItemCheckBox;
     private ItemClickListener itemClickListener;
-    private final MaterialCardView materialCardView;
     public AppContent appContent;
 
     ItemViewHolder(final View itemView, MainScreen activity) {
@@ -48,35 +48,34 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
         if(listItemCheckBox != null)
             listItemCheckBox.setTag(this);
         itemView.setOnClickListener(this);
-        materialCardView = (MaterialCardView) itemView;
+        MaterialCardView materialCardView = (MaterialCardView) itemView;
         materialCardView.setOnCreateContextMenuListener(this);
     }
 
     void bindData(final Object viewModel) {
         this.appContent = (AppContent) viewModel;
+        if (listItem_TV != null)
+            listItem_TV.setText(viewModel.toString());
+        if (listItemAdditional_TV != null)
+            listItemAdditional_TV.setVisibility(View.GONE);
         if (viewModel instanceof Semester) {
-            listItem_IV.setImageResource(R.drawable.ic_date_range_gray_36dp);
-            listItem_TV.setText(((Semester) viewModel).getName());
+            listItem_IV.setImageResource(R.drawable.ic_date_range_green_36dp);
             listItemSideText.setVisibility(View.GONE);
-            listItemAdditional_TV.setText("");
         }
         else if (viewModel instanceof Course) {
-            listItem_IV.setImageResource(R.drawable.ic_class_gray_36dp);
-            listItem_TV.setText(((Course) viewModel).getName());
+            listItem_IV.setImageResource(R.drawable.ic_class_green_36dp);
             listItemSideText.setText(((Course)viewModel).getSemester().getName());
-            listItemAdditional_TV.setText("");
         }
         else if (viewModel instanceof Assignment) {
             listItem_IV.setImageResource(R.drawable.ic_assignment_gray_36dp);
-            listItem_TV.setText(((Assignment) viewModel).getTitle());
             listItemSideText.setText(((Assignment)viewModel).getCourse().getName());
+            Objects.requireNonNull(listItemAdditional_TV).setVisibility(View.VISIBLE);
             listItemAdditional_TV.setText(StringManager.getTimeRepresentation(((Assignment) viewModel).getRemainingTimeInMillis(), activity.getResources()));
             if (((Assignment)viewModel).getRemainingTimeInMillis() < 86400000)
                 listItemAdditional_TV.setTextColor(Color.rgb(255,0,0));
         }
         else if (viewModel instanceof CourseHour) {
             listItem_IV.setImageResource(R.drawable.ic_schedule_gray_36dp);
-            listItem_TV.setText(viewModel.toString());
             listItemSideText.setText(((CourseHour)viewModel).getCourse().getName());
             if (((CourseHour) viewModel).getAttendance() == 1)
                 listItemCheckBox.setChecked(true);
@@ -89,15 +88,15 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
         }
         else if (viewModel instanceof Note) {
             listItem_IV.setImageResource(R.drawable.ic_note_gray_36dp);
-            listItem_TV.setText(((Note) viewModel).getTitle());
             listItemSideText.setText(((Note)viewModel).getCourseHour().toString());
-            listItemAdditional_TV.setVisibility(View.GONE);
         }
         else if (viewModel instanceof Audio) {
-            listItem_IV.setImageResource(R.drawable.ic_audiotrack_gray_36dp);
-            listItem_TV.setText(viewModel.toString());
+            listItem_IV.setImageResource(R.drawable.ic_audiotrack_green_36dp);
             listItemSideText.setVisibility(View.GONE);
-            listItemAdditional_TV.setVisibility(View.GONE);
+        }
+        else if (viewModel instanceof GradingSystem) {
+            listItem_IV.setImageResource(R.drawable.ic_assignment_turned_in_green_36dp);
+            listItemSideText.setVisibility(View.GONE);
         }
         else if (viewModel instanceof Photo) {
             Bitmap myBitmap = BitmapFactory.decodeFile(((Photo)viewModel).getFile().getAbsolutePath());

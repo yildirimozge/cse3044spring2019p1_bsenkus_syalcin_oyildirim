@@ -1,7 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -32,35 +31,20 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class CreationDialog extends DialogFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
-    private OnFragmentInteractionListener mListener;
     public Spinner semesterSelectionSpinner, courseSelectionSpinner, courseHourSelectionSpinner;
     public Semester selectedSemester = null;
     public Course selectedCourse = null;
     public  CourseHour selectedCourseHour = null;
     Button createButton;
     TextView toolbarTitle_TV;
-    private ImageView closeIcon;
     public int mode = 0; // 0 for creation, 1 for edit, 2 for info
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
     public static final int INFO_MODE = 2;
     AppContent appContent = null;
 
-    public AppContent getAppContent() {
-        return appContent;
-    }
-
     public void setAppContent(AppContent appContent) {
         this.appContent = appContent;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else
-            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
     }
 
     @Override
@@ -102,7 +86,7 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
 
     void initializeViews() {
         toolbarTitle_TV = Objects.requireNonNull(getView()).findViewById(R.id.creationTitle);
-        closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
+        ImageView closeIcon = Objects.requireNonNull(getView()).findViewById(R.id.creationCloseIcon);
         closeIcon.setOnClickListener(this);
     }
 
@@ -264,16 +248,6 @@ public abstract class CreationDialog extends DialogFragment implements AdapterVi
             selectedCourse = null;
         else if (adapterView == courseHourSelectionSpinner)
             selectedCourseHour = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void updateViewsOfAppContent(AppContent appContent);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override

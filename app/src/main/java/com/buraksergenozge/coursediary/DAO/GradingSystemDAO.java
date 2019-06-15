@@ -19,9 +19,6 @@ public interface GradingSystemDAO {
     @Delete
     void deleteGradingSystem(GradingSystem gradingSystem);
 
-    @Query("DELETE FROM GradingSystem")
-    void deleteAll();
-
     @Query("DELETE FROM Grade WHERE gradingSystem = :gradingSystem")
     void deleteAllGradesOfGradingSystem(GradingSystem gradingSystem);
 

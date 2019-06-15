@@ -2,7 +2,6 @@ package com.buraksergenozge.coursediary.Fragments;
 
 import android.widget.TextView;
 
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.StringManager;
@@ -32,9 +31,5 @@ public class AssignmentFragment extends BaseFragment {
         timeRemaining_TV.setText(StringManager.getTimeRepresentation(((Assignment)appContent).getRemainingTimeInMillis(), getResources()));
         course_TV.setText(((Assignment)appContent).getCourse().getName());
         deadline_TV.setText(StringManager.getDateString(((Assignment)appContent).getDeadline(),"EEE, d MMM yyyy HH:mm"));
-    }
-
-    @Override
-    public void open(AppContent appContent) {
     }
 }

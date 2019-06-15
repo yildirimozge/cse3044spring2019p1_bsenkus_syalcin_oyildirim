@@ -298,7 +298,7 @@ public class CourseCreationDialog extends CreationDialog implements SeekBar.OnSe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        attendanceObligationValueTV.setText(getResources().getString(R.string.progress_holder, i));
+        attendanceObligationValueTV.setText(getResources().getString(R.string.int_progress_holder, i));
     }
 
     @Override

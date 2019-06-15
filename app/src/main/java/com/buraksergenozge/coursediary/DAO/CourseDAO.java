@@ -20,15 +20,6 @@ public interface CourseDAO {
     @Delete
     void deleteCourse(Course course);
 
-    @Query("DELETE FROM Course")
-    void deleteAll();
-
-    @Query("DELETE FROM CourseHour WHERE course = :course")
-    void deleteAllCourseHoursOfCourse(Course course);
-
-    @Query("DELETE FROM Assignment WHERE course = :course")
-    void deleteAllAssignmentsOfCourse(Course course);
-
     @Query("SELECT * FROM Course")
     List<Course> getAll();
 

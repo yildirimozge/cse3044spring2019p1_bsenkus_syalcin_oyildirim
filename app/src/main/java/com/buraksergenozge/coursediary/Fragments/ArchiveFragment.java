@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.R;
 
@@ -43,10 +44,15 @@ public class ArchiveFragment extends BaseFragment {
 
     @Override
     public void open(AppContent appContent) {
-        childFragment = new SemesterFragment();
-        childFragment.parentFragment = this;
-        BaseFragment.transferAppContent = appContent;
-        openFragment(childFragment, SemesterFragment.tag);
+        if (appContent instanceof Semester) {
+            childFragment = new SemesterFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, SemesterFragment.tag);
+        }
+        else {
+            super.open(appContent);
+        }
     }
 
     @Override

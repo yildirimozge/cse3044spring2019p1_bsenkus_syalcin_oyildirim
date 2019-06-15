@@ -21,7 +21,7 @@ public class GradingSystemCreationDialog extends CreationDialog {
     private String name;
     private EditText name_ET, gradeCode_ET, gradeCoefficient_ET;
     private Button addGradeButton, clearButton;
-    private final List<Grade> grades = new ArrayList<>();
+    private List<Grade> grades = new ArrayList<>();
     private final List<String> codes = new ArrayList<>();
     private final List<Float> coefficients = new ArrayList<>();
 
@@ -55,6 +55,7 @@ public class GradingSystemCreationDialog extends CreationDialog {
         name_ET.setText(((GradingSystem) appContent).getName());
         Objects.requireNonNull(getView()).findViewById(R.id.gradesLayout).setVisibility(View.VISIBLE);
         LinearLayout layout = getView().findViewById(R.id.gradesInsideLayout);
+        grades = ((GradingSystem)appContent).getGradeList();
         for (Grade grade: ((GradingSystem)appContent).getGradeList()) {
             codes.add(grade.getCode());
             coefficients.add(grade.getCoefficient());
@@ -72,12 +73,17 @@ public class GradingSystemCreationDialog extends CreationDialog {
         name_ET.setEnabled(false);
         Objects.requireNonNull(getView()).findViewById(R.id.gradesLayout).setVisibility(View.VISIBLE);
         LinearLayout layout = getView().findViewById(R.id.gradesInsideLayout);
+        grades = ((GradingSystem)appContent).getGradeList();
         for (Grade grade: grades) {
             TextView tv = new TextView(getContext());
             tv.setText(grade.getCode() + "\n" + grade.getCoefficient());
             tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             layout.addView(tv);
         }
+        addGradeButton.setVisibility(View.GONE);
+        clearButton.setVisibility(View.GONE);
+        gradeCode_ET.setVisibility(View.GONE);
+        gradeCoefficient_ET.setVisibility(View.GONE);
     }
 
     @Override

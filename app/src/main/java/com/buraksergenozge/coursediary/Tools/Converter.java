@@ -7,7 +7,6 @@ import com.buraksergenozge.coursediary.Data.CourseDiaryDB;
 import com.buraksergenozge.coursediary.Data.CourseHour;
 import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
-import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.Data.Semester;
 
 import java.util.ArrayList;
@@ -43,16 +42,6 @@ public class Converter {
     @TypeConverter
     public static long courseHourToLong(CourseHour courseHour) {
         return courseHour.getCourseHourID();
-    }
-
-    @TypeConverter
-    public static Note longToNote(long noteID) {
-        return CourseDiaryDB.getDBInstance(null).noteDAO().find(noteID);
-    }
-
-    @TypeConverter
-    public static long noteToLong(Note note) {
-        return note.getNoteID();
     }
 
     @TypeConverter

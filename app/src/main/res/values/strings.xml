@@ -96,23 +96,6 @@
     <string name="grading_system_deleted">Grading system deleted.</string>
     <string name="note_deleted">Note deleted.</string>
     <string name="photo_deleted">Photo deleted.</string>
-    <string-array name="app_contents">
-        <item>@string/semester</item>
-        <item>@string/course</item>
-        <item>@string/assignment</item>
-        <item>@string/note</item>
-        <item>@string/photo</item>
-        <item>@string/grading_system</item>
-    </string-array>
-    <string-array name="days">
-        <item>@string/monday</item>
-        <item>@string/tuesday</item>
-        <item>@string/wednesday</item>
-        <item>@string/thursday</item>
-        <item>@string/friday</item>
-        <item>@string/saturday</item>
-        <item>@string/sunday</item>
-    </string-array>
     <string name="grading_system_saved">Grading system saved.</string>
     <string name="note_saved">Note saved.</string>
     <string name="photo_saved">Photo saved.</string>
@@ -139,4 +122,30 @@
     <string name="permission_denied">Some permissions denied</string>
     <string name="audio_delete">Audio deleted.</string>
     <string name="audio_save">Audio saved.</string>
+    <string name="grading_systems">Grading Systems</string>
+    <string name="no_grading_systems">No grading systems!</string>
+    <string name="remind_assignments">Remind assignments</string>
+    <string name="before">before.</string>
+    <string name="icon">Icon</string>
+    <string-array name="app_contents">
+        <item>@string/semester</item>
+        <item>@string/course</item>
+        <item>@string/assignment</item>
+        <item>@string/note</item>
+        <item>@string/photo</item>
+        <item>@string/grading_system</item>
+    </string-array>
+    <string-array name="days">
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+        <item>@string/sunday</item>
+    </string-array>
+    <string-array name="settings_time">
+        <item>@string/hours</item>
+        <item>@string/days</item>
+    </string-array>
 </resources>

@@ -123,4 +123,9 @@
     <string name="permission_grant">İzinler sağlandı.</string>
     <string name="audio_delete">Ses silindi.</string>
     <string name="audio_save">Ses kaydedildi.</string>
+    <string name="grading_systems">Puanlama Sistemleri</string>
+    <string name="no_grading_systems">Hiç puanlama sistemi oluşturulmadı!</string>
+    <string name="before">önceden hatırlat.</string>
+    <string name="remind_assignments">Ödevleri</string>
+    <string name="icon">İkon</string>
 </resources>

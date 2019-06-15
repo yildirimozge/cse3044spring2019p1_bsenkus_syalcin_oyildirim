@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.Objects;
 
 public class AudioCreationDialog extends CreationDialog {
-    private TextView name;
 
     @Override
     protected int getLayoutID() {
@@ -26,7 +25,7 @@ public class AudioCreationDialog extends CreationDialog {
     protected void initializeViews() {
         super.initializeViews();
         toolbarTitle_TV.setText(getString(R.string.new_photo));
-        name = Objects.requireNonNull(getView()).findViewById(R.id.audioCreation_TV);
+        TextView name = Objects.requireNonNull(getView()).findViewById(R.id.audioCreation_TV);
         if (mode == INFO_MODE)
             name.setText(((Audio)MainScreen.contextMenuAppContent).name);
         else

@@ -3,7 +3,6 @@ package com.buraksergenozge.coursediary.Fragments.CreationDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -26,7 +25,6 @@ public class AssignmentCreationDialog extends CreationDialog {
     private Calendar deadline;
     private EditText assignmentTitle_ET, deadlineEditText, assignmentEndTime_ET;
     private int year, month, day, hour, minute;
-    private Button createButton;
 
     @Override
     protected int getLayoutID() {

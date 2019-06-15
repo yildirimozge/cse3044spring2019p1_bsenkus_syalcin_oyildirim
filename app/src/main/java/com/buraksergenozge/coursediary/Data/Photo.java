@@ -49,10 +49,6 @@ public class Photo extends AppContent{
         return savePhotoPath;
     }
 
-    public static void setSavePhotoPath(String savePhotoPath) {
-        Photo.savePhotoPath = savePhotoPath;
-    }
-
     public File getFile() {
         return file;
     }

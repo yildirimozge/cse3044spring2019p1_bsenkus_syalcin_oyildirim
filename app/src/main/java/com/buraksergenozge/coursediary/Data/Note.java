@@ -155,4 +155,9 @@ public class Note extends AppContent {
     public void showInfo(final AppCompatActivity activity) {
         AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.INFO_MODE));
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

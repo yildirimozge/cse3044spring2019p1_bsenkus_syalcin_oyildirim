@@ -19,12 +19,6 @@ public interface SemesterDAO {
     @Delete
     void deleteSemester(Semester semester);
 
-    @Query("DELETE FROM Semester")
-    void deleteAll();
-
-    @Query("DELETE FROM Course WHERE semester = :semester")
-    void deleteAllCoursesOfSemester(Semester semester);
-
     @Query("SELECT * FROM Semester")
     List<Semester> getAll();
 

@@ -53,62 +53,6 @@ public class User {
         return courseHours;
     }
 
-    public static Semester findSemesterByID(long semesterID) {
-        for (Semester semester: semesters) {
-            if (semester.getSemesterID() == semesterID)
-                return semester;
-        }
-        return null;
-    }
-
-    public static Course findCourseByID(long courseID) {
-        for (Semester semester: semesters) {
-            for (Course course: semester.getCourses()) {
-                if (course.getCourseID() == courseID)
-                    return course;
-            }
-        }
-        return null;
-    }
-
-    public static Assignment findAssignmentByID(long assignmentID) {
-        for (Semester semester: semesters) {
-            for (Course course: semester.getCourses()) {
-                for (Assignment assignment: course.getAssignments()) {
-                    if (assignment.getAssignmentID() == assignmentID)
-                        return assignment;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static CourseHour findCourseHourByID(long courseHourID) {
-        for (Semester semester: semesters) {
-            for (Course course: semester.getCourses()) {
-                for (CourseHour courseHour: course.getCourseHours()) {
-                    if (courseHour.getCourseHourID() == courseHourID)
-                        return courseHour;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Note findNoteByID(long noteID) {
-        for (Semester semester: semesters) {
-            for (Course course: semester.getCourses()) {
-                for (CourseHour courseHour: course.getCourseHours()) {
-                    for (Note note: courseHour.getNotes()) {
-                        if (note.getNoteID() == noteID)
-                            return note;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     public static GradingSystem findGradingSystemByID(long gradingSystemID) {
         for (GradingSystem gradingSystem: gradingSystems) {
             if (gradingSystem.getGradingSystemID() == gradingSystemID)

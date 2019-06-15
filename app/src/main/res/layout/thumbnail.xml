@@ -8,7 +8,7 @@
         android:id="@+id/thumbnail_IV"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:contentDescription="TODO">
+        android:contentDescription="@string/photo">
 
     </ImageView>
 </android.support.design.card.MaterialCardView>

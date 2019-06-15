@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
     android:theme="@style/AppTheme">
 
     <include
+        android:id="@+id/toolbar"
         layout="@layout/creation_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/remind_assignments_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remind_assignments"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/remind_assignments_ET"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@+id/remind_assignments_TV"
+            app:layout_constraintBaseline_toBaselineOf="@id/remind_assignments_TV"
+            android:autofillHints="" />
+
+
+        <Spinner
+            android:id="@+id/remind_assignments_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBaseline_toBaselineOf="@id/remind_assignments_TV"
+            app:layout_constraintStart_toEndOf="@+id/remind_assignments_ET"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/before"
+            android:textSize="18sp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@+id/remind_assignments_spinner"
+            app:layout_constraintBaseline_toBaselineOf="@id/remind_assignments_TV"/>
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

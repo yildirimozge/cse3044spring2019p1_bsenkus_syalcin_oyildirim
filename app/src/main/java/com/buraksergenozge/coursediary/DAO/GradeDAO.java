@@ -18,9 +18,6 @@ public interface GradeDAO {
     @Delete
     void deleteGrade(Grade grade);
 
-    @Query("DELETE FROM Grade")
-    void deleteAll();
-
     @Query("SELECT * FROM Grade")
     List<Grade> getAll();
 

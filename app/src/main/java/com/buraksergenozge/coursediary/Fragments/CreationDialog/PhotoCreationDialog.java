@@ -17,7 +17,6 @@ import java.io.File;
 import java.util.Objects;
 
 public class PhotoCreationDialog extends CreationDialog {
-    private ImageView image;
 
     @Override
     protected int getLayoutID() {
@@ -28,7 +27,7 @@ public class PhotoCreationDialog extends CreationDialog {
     protected void initializeViews() {
         super.initializeViews();
         toolbarTitle_TV.setText(getString(R.string.new_photo));
-        image = Objects.requireNonNull(getView()).findViewById(R.id.photoCreation_IV);
+        ImageView image = Objects.requireNonNull(getView()).findViewById(R.id.photoCreation_IV);
         image.setVisibility(View.VISIBLE);
         image.setImageBitmap(BitmapFactory.decodeFile(((Photo)appContent).getFile().getAbsolutePath()));
         createButton = getView().findViewById(R.id.photoCreateButton);

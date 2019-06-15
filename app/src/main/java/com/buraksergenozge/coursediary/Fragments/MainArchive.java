@@ -1,7 +1,6 @@
 package com.buraksergenozge.coursediary.Fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,12 +14,6 @@ import com.buraksergenozge.coursediary.R;
 import java.util.Objects;
 
 public class MainArchive extends Fragment {
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

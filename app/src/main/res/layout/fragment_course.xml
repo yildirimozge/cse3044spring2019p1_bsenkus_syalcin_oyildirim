@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:padding="@dimen/content_padding">
 
     <android.support.design.card.MaterialCardView
         android:id="@+id/course_title_cardview"
@@ -83,8 +83,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="@dimen/first_level_padding"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/course_title_cardview"
@@ -94,7 +93,6 @@
             android:id="@+id/assignments_cardview"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginTop="10sp"
             android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="10dp">
@@ -121,7 +119,7 @@
                     android:layout_marginEnd="10dp"
                     app:srcCompat="@drawable/ic_add_box_gray_36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="TODO" />
+                    android:contentDescription="@string/add" />
 
                 <View
                     android:id="@+id/line3"
@@ -172,7 +170,7 @@
                     android:layout_marginEnd="10dp"
                     app:srcCompat="@drawable/ic_add_box_gray_36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="TODO" />
+                    android:contentDescription="@string/add" />
 
                 <View
                     android:layout_width="match_parent"

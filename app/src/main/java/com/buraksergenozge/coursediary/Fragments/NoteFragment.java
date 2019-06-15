@@ -2,7 +2,6 @@ package com.buraksergenozge.coursediary.Fragments;
 
 import android.widget.TextView;
 
-import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.StringManager;
@@ -30,10 +29,5 @@ public class NoteFragment extends BaseFragment {
         noteTitle_TV.setText(((Note)appContent).getTitle());
         noteCreateDate_TV.setText(StringManager.getDateString(((Note)appContent).getCreateDate(), "EEE, d MMM yyyy HH:mm"));
         noteText_TV.setText(((Note)appContent).getText());
-    }
-
-    @Override
-    public void open(AppContent appContent) {
-
     }
 }

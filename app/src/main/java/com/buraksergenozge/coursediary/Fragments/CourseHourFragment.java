@@ -62,6 +62,9 @@ public class CourseHourFragment extends BaseFragment implements View.OnClickList
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
         }
+        else {
+            super.open(appContent);
+        }
     }
 
     private void setVisibilities(boolean isNoteListEmpty, boolean isPhotoListEmpty, boolean isAudioListEmpty) {

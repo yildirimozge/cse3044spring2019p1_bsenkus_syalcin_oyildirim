@@ -1,6 +1,5 @@
 package com.buraksergenozge.coursediary.Data;
 
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +28,6 @@ public class Audio extends AppContent {
     public static String saveAudioPath = "";
     public static String currentAudioName;
     public static MediaRecorder mediaRecorder;
-    public static MediaPlayer mediaPlayer;
     public static boolean isRecorderActive = false;
     private static final String[] relatedFragmentTags = {CourseHourFragment.tag};
 
@@ -78,29 +76,29 @@ public class Audio extends AppContent {
         file.delete();
     }
 
-    public static void record(AppCompatActivity activity) {
+    public static boolean record(AppCompatActivity activity) {
         if (MainScreen.activeAppContent == null) {
             if (User.getCourseHoursEmpty()) {
                 Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
         }
         else if (MainScreen.activeAppContent instanceof Semester) {
             if (((Semester)MainScreen.activeAppContent).getCourseHoursEmpty()) {
                 Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
         }
         else if (MainScreen.activeAppContent instanceof Course) {
             if (((Course)MainScreen.activeAppContent).getCourseHours().isEmpty()) {
                 Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
         }
         else if (MainScreen.activeAppContent instanceof Assignment) {
             if (((Assignment)MainScreen.activeAppContent).getCourse().getCourseHours().isEmpty()) {
                 Toast.makeText(activity, activity.getString(R.string.no_course_hours), Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
         }
         if (((MainScreen)activity).checkPermissions()) {
@@ -111,11 +109,11 @@ public class Audio extends AppContent {
             else
                 saveAudioPath = createAudioFile(null);
             if (saveAudioPath == null)
-                return;
+                return false;
             setUpMediaRecorder();
             try {
                 if (mediaRecorder == null)
-                    return;
+                    return false;
                 Log.i("burak", "BAŞLADI");
                 mediaRecorder.prepare();
                 mediaRecorder.start();
@@ -124,8 +122,11 @@ public class Audio extends AppContent {
                 ex.printStackTrace();
             }
         }
-        else
+        else {
             ((MainScreen)activity).requestPermissions();
+            return false;
+        }
+        return true;
     }
 
     private static String createAudioFile(CourseHour courseHour) {

@@ -18,9 +18,6 @@ public interface AssignmentDAO {
     @Delete
     void deleteAssignment(Assignment assignment);
 
-    @Query("DELETE FROM Assignment")
-    void deleteAll();
-
     @Query("SELECT * FROM Assignment")
     List<Assignment> getAll();
 

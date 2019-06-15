@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.buraksergenozge.coursediary.Data.AppContent;
+import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.R;
 
@@ -23,10 +24,15 @@ public class SemesterFragment extends BaseFragment {
 
     @Override
     public void open(AppContent appContent) {
-        childFragment = new CourseFragment();
-        childFragment.parentFragment = this;
-        BaseFragment.transferAppContent = appContent;
-        openFragment(childFragment, CourseFragment.tag);
+        if (appContent instanceof Course) {
+            childFragment = new CourseFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, CourseFragment.tag);
+        }
+        else {
+            super.open(appContent);
+        }
     }
 
     private void setVisibilities(boolean isCourseListEmpty) {

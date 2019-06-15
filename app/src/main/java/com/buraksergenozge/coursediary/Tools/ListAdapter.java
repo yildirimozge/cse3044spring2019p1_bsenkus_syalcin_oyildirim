@@ -54,9 +54,9 @@ public class ListAdapter<T> extends BaseAdapter {
         TextView listItemAdditionalText_TV = convertView.findViewById(R.id.listItemAdditionalText);
         TextView listItemSideText_TV = convertView.findViewById(R.id.listItemSideText);
         if (currentItem instanceof Semester)
-            listItem_IV.setImageResource(R.drawable.ic_date_range_gray_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_date_range_green_36dp);
         else if (currentItem instanceof Course)
-            listItem_IV.setImageResource(R.drawable.ic_class_gray_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_class_green_36dp);
         else if (currentItem instanceof Assignment)
             listItem_IV.setImageResource(R.drawable.ic_assignment_gray_36dp);
         else if (currentItem instanceof CourseHour)

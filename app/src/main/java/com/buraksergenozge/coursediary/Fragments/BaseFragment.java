@@ -61,7 +61,14 @@ public abstract class BaseFragment extends Fragment {
         fragTransaction.commit();
     }
 
-    public abstract void open(AppContent appContent);
+    public void open(AppContent appContent) {
+        if (appContent == null) { // For opening grading systems fragment
+            childFragment = new GradingSystemListFragment();
+            childFragment.parentFragment = this;
+            BaseFragment.transferAppContent = appContent;
+            openFragment(childFragment, GradingSystemListFragment.tag);
+        }
+    }
 
     boolean updateRecyclerView(RecyclerView recyclerView, List<?> list) {
         RecyclerAdapter<?> adapter = new RecyclerAdapter<>(this, list, (MainScreen) getActivity());

@@ -19,12 +19,6 @@ public interface NoteDAO {
     @Delete
     void deleteNote(Note note);
 
-    @Query("DELETE FROM Note")
-    void deleteAll();
-
-    @Query("DELETE FROM Note WHERE courseHour = :courseHour")
-    void deleteAllNotesOfCourseHour(CourseHour courseHour);
-
     @Query("SELECT * FROM Note")
     List<Note> getAll();
 

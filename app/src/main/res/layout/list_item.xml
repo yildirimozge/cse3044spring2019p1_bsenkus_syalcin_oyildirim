@@ -18,14 +18,13 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_insert_drive_file_gray_36dp"
             app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/icon" />
 
         <TextView
             android:id="@+id/listItemText"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Item"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@id/list_item_icon"/>
 
@@ -33,7 +32,6 @@
             android:id="@+id/listItemSideText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Side Text"
             android:gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"

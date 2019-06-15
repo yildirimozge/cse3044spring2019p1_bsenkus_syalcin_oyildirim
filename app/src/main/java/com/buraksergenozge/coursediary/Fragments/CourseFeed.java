@@ -85,6 +85,9 @@ public class CourseFeed extends BaseFragment implements View.OnClickListener {
             BaseFragment.transferAppContent = appContent;
             openFragment(childFragment, CourseHourFragment.tag);
         }
+        else {
+            super.open(appContent);
+        }
     }
 
     @Override
