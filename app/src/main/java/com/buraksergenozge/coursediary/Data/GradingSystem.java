@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.GradingSystemCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.GradingSystemListFragment;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class GradingSystem extends AppContent {
     private String name;
     @Ignore
     private List<Grade> gradeList;
+    @Ignore
+    private static final String[] relatedFragmentTags = {GradingSystemListFragment.tag};
 
     public GradingSystem(String name) {
         this.name = name;
@@ -112,7 +115,7 @@ public class GradingSystem extends AppContent {
 
     @Override
     public String[] getRelatedFragmentTags() {
-        return new String[0];
+        return relatedFragmentTags;
     }
 
     @Override

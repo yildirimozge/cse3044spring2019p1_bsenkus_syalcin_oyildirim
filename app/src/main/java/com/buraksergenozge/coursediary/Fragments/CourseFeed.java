@@ -1,10 +1,10 @@
 package com.buraksergenozge.coursediary.Fragments;
 
+import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.buraksergenozge.coursediary.Data.AppContent;
@@ -40,9 +40,9 @@ public class CourseFeed extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void initializeViews() {
-        LinearLayout assignmentListHeader = Objects.requireNonNull(getView()).findViewById(R.id.coursefeed_assignmentListHeader);
+        MaterialCardView assignmentListHeader = Objects.requireNonNull(getView()).findViewById(R.id.coursefeed_assignments_cardview);
         assignmentListHeader.setOnClickListener(this);
-        LinearLayout courseHourListHeader = getView().findViewById(R.id.coursefeed_courseHourListHeader);
+        MaterialCardView courseHourListHeader = getView().findViewById(R.id.coursefeed_coursehours_cardview);
         courseHourListHeader.setOnClickListener(this);
         assignmentRecyclerView = getView().findViewById(R.id.coursefeed_assignment_recyclerview);
         assignmentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -93,13 +93,13 @@ public class CourseFeed extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.coursefeed_assignmentListHeader:
+            case R.id.coursefeed_assignments_cardview:
                 if (assignmentRecyclerView.getVisibility() == View.VISIBLE)
                     assignmentRecyclerView.setVisibility(View.GONE);
                 else
                     assignmentRecyclerView.setVisibility(View.VISIBLE);
                 break;
-            case R.id.coursefeed_courseHourListHeader:
+            case R.id.coursefeed_coursehours_cardview:
                 if (courseHourRecyclerView.getVisibility() == View.VISIBLE)
                     courseHourRecyclerView.setVisibility(View.GONE);
                 else

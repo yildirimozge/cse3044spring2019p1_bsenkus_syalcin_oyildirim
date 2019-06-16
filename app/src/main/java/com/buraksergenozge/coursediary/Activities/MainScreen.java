@@ -33,6 +33,7 @@ import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Audio;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.Grade;
 import com.buraksergenozge.coursediary.Data.GradingSystem;
 import com.buraksergenozge.coursediary.Data.Note;
 import com.buraksergenozge.coursediary.Data.Photo;
@@ -205,13 +206,26 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         User.integrateWithDB(context);
         for (GradingSystem gradingSystem : User.getGradingSystems()) {
             gradingSystem.integrateWithDB(context);
+            for (Grade grade: gradingSystem.getGradeList())
+                grade.setGradingSystem(gradingSystem);
         }
         for (Semester semester: User.getSemesters()) {
             semester.integrateWithDB(context);
             for (Course course : semester.getCourses()) {
+                course.setSemester(semester);
                 course.integrateWithDB(context);
-                for (CourseHour courseHour: course.getCourseHours())
+                for (CourseHour courseHour: course.getCourseHours()) {
+                    courseHour.setCourse(course);
                     courseHour.integrateWithDB(context);
+                    for (Note note: courseHour.getNotes())
+                        note.setCourseHour(courseHour);
+                    for (Photo photo: courseHour.getPhotos())
+                        photo.setCourseHour(courseHour);
+                    for (Audio audio: courseHour.getAudios())
+                        audio.setCourseHour(courseHour);
+                }
+                for (Assignment assignment: course.getAssignments())
+                    assignment.setCourse(course);
             }
         }
     }

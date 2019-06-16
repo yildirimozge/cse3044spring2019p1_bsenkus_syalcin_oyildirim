@@ -128,4 +128,7 @@
     <string name="before">önceden hatırlat.</string>
     <string name="remind_assignments">Ödevleri</string>
     <string name="icon">İkon</string>
+    <string name="notification_assignment_title">Ödev Hatırlatıcısı</string>
+    <string name="notification_assignment_message">%s ödevinin teslimine %s kaldı!</string>
+    <string name="assignment_reminder_value_warning">Ödev hatırlatma değeri 1 olarak kaydedildi!</string>
 </resources>

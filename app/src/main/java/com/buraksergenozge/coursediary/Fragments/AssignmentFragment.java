@@ -2,10 +2,12 @@ package com.buraksergenozge.coursediary.Fragments;
 
 import android.widget.TextView;
 
+import com.buraksergenozge.coursediary.Data.AppContent;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.StringManager;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class AssignmentFragment extends BaseFragment {
@@ -28,7 +30,7 @@ public class AssignmentFragment extends BaseFragment {
     @Override
     public void updateView() {
         title_TV.setText(((Assignment)appContent).getTitle());
-        timeRemaining_TV.setText(StringManager.getTimeRepresentation(((Assignment)appContent).getRemainingTimeInMillis(), getResources()));
+        timeRemaining_TV.setText(StringManager.getTimeRepresentation(AppContent.getTimeDifferenceInMillis(Calendar.getInstance(), ((Assignment)appContent).getDeadline()), getResources()));
         course_TV.setText(((Assignment)appContent).getCourse().getName());
         deadline_TV.setText(StringManager.getDateString(((Assignment)appContent).getDeadline(),"EEE, d MMM yyyy HH:mm"));
     }

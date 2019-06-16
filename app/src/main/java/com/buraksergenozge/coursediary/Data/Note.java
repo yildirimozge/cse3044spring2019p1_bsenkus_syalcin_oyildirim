@@ -8,7 +8,6 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.v7.app.AppCompatActivity;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.AssignmentCreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDialog;
@@ -115,7 +114,7 @@ public class Note extends AppContent {
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((CourseHour)((MainScreen)activity).getVisibleFragment().appContent).getNotes().remove(this);
+        courseHour.getNotes().remove(this);
         CourseDiaryDB.getDBInstance(activity).noteDAO().deleteNote(this);
     }
 

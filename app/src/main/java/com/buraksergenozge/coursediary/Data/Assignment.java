@@ -6,10 +6,11 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
 import com.buraksergenozge.coursediary.Fragments.CourseFragment;
@@ -18,8 +19,10 @@ import com.buraksergenozge.coursediary.Fragments.CreationDialog.CourseCreationDi
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.NoteCreationDialog;
 import com.buraksergenozge.coursediary.Fragments.CreationDialog.PhotoCreationDialog;
+import com.buraksergenozge.coursediary.Fragments.SettingsFragment;
 import com.buraksergenozge.coursediary.R;
 import com.buraksergenozge.coursediary.Tools.ListAdapter;
+import com.buraksergenozge.coursediary.Tools.StringManager;
 
 import java.util.Calendar;
 
@@ -88,13 +91,6 @@ public class Assignment extends AppContent implements Comparable<Assignment> {
         AppContent.openCreationDialog(activity, getCreationDialog(CreationDialog.EDIT_MODE));
     }
 
-    public long getRemainingTimeInMillis() {
-        Calendar now = Calendar.getInstance();
-        if (deadline.getTimeInMillis() - now.getTimeInMillis() < 0)
-            return 0;
-        return deadline.getTimeInMillis() - now.getTimeInMillis();
-    }
-
     @Override
     public int getSaveMessage() {
         return R.string.assignment_saved;
@@ -104,6 +100,7 @@ public class Assignment extends AppContent implements Comparable<Assignment> {
     public void addOperation(AppCompatActivity activity) {
         this.assignmentID = CourseDiaryDB.getDBInstance(activity).assignmentDAO().addAssignment(this);
         course.getAssignments().add(this);
+        updateNotificationTime(activity, false);
     }
 
     @Override
@@ -113,13 +110,15 @@ public class Assignment extends AppContent implements Comparable<Assignment> {
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((Course)((MainScreen)activity).getVisibleFragment().appContent).getAssignments().remove(this);
+        course.getAssignments().remove(this);
         CourseDiaryDB.getDBInstance(activity).assignmentDAO().deleteAssignment(this);
+        updateNotificationTime(activity, true);
     }
 
     @Override
     public void updateOperation(AppCompatActivity activity) {
         CourseDiaryDB.getDBInstance(activity).assignmentDAO().update(this);
+        updateNotificationTime(activity, false);
     }
 
     @Override
@@ -141,6 +140,21 @@ public class Assignment extends AppContent implements Comparable<Assignment> {
         if (creationDialog instanceof NoteCreationDialog || creationDialog instanceof PhotoCreationDialog)
             return;
         creationDialog.selectedCourse = (Course) creationDialog.courseSelectionSpinner.getSelectedItem();
+    }
+
+    public void updateNotificationTime(AppCompatActivity activity, boolean cancel) {
+        Calendar notificationTime = (Calendar) deadline.clone();
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int assignmentRemindValue = sharedPref.getInt(SettingsFragment.ASSIGNMENT_REMIND_VALUE, 1);
+        int assignmentRemindTimeType = sharedPref.getInt(SettingsFragment.ASSIGNMENT_REMIND_TIME_TYPE, 0);
+        if (assignmentRemindTimeType == 0) // Hour
+            notificationTime.add(Calendar.HOUR_OF_DAY, -1 * assignmentRemindValue); // Reminds "assignmentRemindValue" hours before
+        else // Day
+            notificationTime.add(Calendar.DATE, -1 * assignmentRemindValue); // Reminds "assignmentRemindValue" days before
+        String notificationTitle = activity.getString(R.string.notification_assignment_title);
+        String timeRepr = StringManager.getTimeRepresentation(AppContent.getTimeDifferenceInMillis(notificationTime, deadline), activity.getResources());
+        String notificationMessage = activity.getResources().getString(R.string.notification_assignment_message, title, timeRepr);
+        setOrCancelNotification(activity, (int)assignmentID, notificationTime, notificationTitle, notificationMessage, cancel);
     }
 
     @Override

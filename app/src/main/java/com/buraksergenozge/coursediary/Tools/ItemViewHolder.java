@@ -23,6 +23,7 @@ import com.buraksergenozge.coursediary.Data.Photo;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.R;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, View.OnClickListener {
@@ -67,11 +68,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCr
             listItemSideText.setText(((Course)viewModel).getSemester().getName());
         }
         else if (viewModel instanceof Assignment) {
-            listItem_IV.setImageResource(R.drawable.ic_assignment_gray_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_assignment_green_36dp);
             listItemSideText.setText(((Assignment)viewModel).getCourse().getName());
             Objects.requireNonNull(listItemAdditional_TV).setVisibility(View.VISIBLE);
-            listItemAdditional_TV.setText(StringManager.getTimeRepresentation(((Assignment) viewModel).getRemainingTimeInMillis(), activity.getResources()));
-            if (((Assignment)viewModel).getRemainingTimeInMillis() < 86400000)
+            listItemAdditional_TV.setText(StringManager.getTimeRepresentation(AppContent.getTimeDifferenceInMillis(Calendar.getInstance(), ((Assignment)viewModel).getDeadline()), activity.getResources()));
+            if (AppContent.getTimeDifferenceInMillis(Calendar.getInstance(), ((Assignment)viewModel).getDeadline()) < 86400000)
                 listItemAdditional_TV.setTextColor(Color.rgb(255,0,0));
         }
         else if (viewModel instanceof CourseHour) {

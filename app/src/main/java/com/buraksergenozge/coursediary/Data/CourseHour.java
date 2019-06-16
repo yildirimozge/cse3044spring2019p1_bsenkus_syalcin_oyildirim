@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
 import com.buraksergenozge.coursediary.Fragments.CourseFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseHourFragment;
@@ -170,7 +169,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
     public void addOperation(AppCompatActivity activity) {
         this.courseHourID = CourseDiaryDB.getDBInstance(activity).courseHourDAO().addCourseHour(this);
         course.getCourseHours().add(this);
-        File contentDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ("Course Diary/" + courseHourID));
+        File contentDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ("CourseDiary/" + courseHourID));
         if (!contentDir.exists())
             contentDir.mkdirs();
     }
@@ -182,7 +181,7 @@ public class CourseHour extends AppContent implements Comparable<CourseHour>{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((Course)((MainScreen)activity).getVisibleFragment().appContent).getCourseHours().remove(this);
+        course.getCourseHours().remove(this);
         CourseDiaryDB.getDBInstance(activity).courseHourDAO().deleteCourseHour(this);
     }
 

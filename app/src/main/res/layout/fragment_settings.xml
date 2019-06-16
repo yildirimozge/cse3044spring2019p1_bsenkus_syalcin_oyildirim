@@ -26,7 +26,7 @@
             android:text="@string/remind_assignments"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <EditText
             android:id="@+id/remind_assignments_ET"
@@ -44,7 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/remind_assignments_TV"
+            app:layout_constraintTop_toTopOf="@id/remind_assignments_TV"
+            app:layout_constraintBottom_toBottomOf="@id/remind_assignments_TV"
             app:layout_constraintStart_toEndOf="@+id/remind_assignments_ET"/>
 
         <TextView

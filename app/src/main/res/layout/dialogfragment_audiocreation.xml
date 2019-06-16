@@ -97,7 +97,7 @@
                     android:layout_marginTop="15dp"
                     android:textSize="18sp"
                     app:layout_constraintTop_toBottomOf="@id/audioCreationCourseHourSelectionSpinner"
-                    android:contentDescription="TODO" />
+                    android:contentDescription="@string/audios" />
 
                 <Button
                     android:id="@+id/audioCreateButton"

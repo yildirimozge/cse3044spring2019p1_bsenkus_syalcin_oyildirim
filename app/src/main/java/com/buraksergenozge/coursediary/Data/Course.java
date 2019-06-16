@@ -10,7 +10,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.buraksergenozge.coursediary.Activities.MainScreen;
 import com.buraksergenozge.coursediary.Fragments.AssignmentFragment;
 import com.buraksergenozge.coursediary.Fragments.CourseFeed;
 import com.buraksergenozge.coursediary.Fragments.CourseFragment;
@@ -25,13 +24,14 @@ import com.buraksergenozge.coursediary.Tools.ListAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Semester.class, parentColumns = "semesterID", childColumns = "semester", onDelete = CASCADE),
         indices = {@Index("semester")})
-public class Course extends AppContent{
+public class Course extends AppContent implements Comparable<Course> {
     @PrimaryKey(autoGenerate = true)
     private long courseID;
     @ColumnInfo
@@ -195,7 +195,9 @@ public class Course extends AppContent{
 
     public void integrateWithDB(Context context) {
         courseHours = CourseDiaryDB.getDBInstance(context).courseDAO().getAllCourseHoursOfCourse(this);
+        Collections.sort(courseHours);
         assignments = CourseDiaryDB.getDBInstance(context).courseDAO().getAllAssignmentsOfCourse(this);
+        Collections.sort(assignments);
         if (gradingSystem != null)
             gradingSystem = User.findGradingSystemByID(gradingSystem.getGradingSystemID());
     }
@@ -219,7 +221,7 @@ public class Course extends AppContent{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((Semester)((MainScreen)activity).getVisibleFragment().appContent).getCourses().remove(this);
+        semester.getCourses().remove(this);
         CourseDiaryDB.getDBInstance(activity).courseDAO().deleteCourse(this);
     }
 
@@ -258,5 +260,10 @@ public class Course extends AppContent{
     @NonNull
     public String toString() {
         return name;
+    }
+
+    @Override
+    public int compareTo(Course course) {
+        return name.compareTo(course.getName());
     }
 }

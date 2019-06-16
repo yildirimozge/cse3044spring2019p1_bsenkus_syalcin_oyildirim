@@ -32,6 +32,7 @@ public class User {
                 }
             }
         }
+        Collections.sort(assignments);
         return assignments;
     }
 

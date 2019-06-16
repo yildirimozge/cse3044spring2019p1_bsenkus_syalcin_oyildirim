@@ -20,7 +20,6 @@ import com.buraksergenozge.coursediary.Fragments.CreationDialog.CreationDialog;
 import com.buraksergenozge.coursediary.Tools.ItemViewHolder;
 import com.buraksergenozge.coursediary.R;
 
-import java.util.Collections;
 import java.util.Objects;
 
 public class CourseFragment extends BaseFragment implements View.OnClickListener {
@@ -63,8 +62,6 @@ public class CourseFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void updateView() {
         courseTitle_TV.setText(((Course)appContent).getName());
-        Collections.sort(((Course)appContent).getCourseHours());
-        Collections.sort(((Course)appContent).getAssignments());
         boolean isCourseHourListEmpty = updateRecyclerView(courseHourRecyclerView, ((Course)appContent).getCourseHours());
         boolean isAssignmentListEmpty = updateRecyclerView(assignmentRecyclerView, ((Course)appContent).getAssignments());
         setVisibilities(isCourseHourListEmpty, isAssignmentListEmpty);

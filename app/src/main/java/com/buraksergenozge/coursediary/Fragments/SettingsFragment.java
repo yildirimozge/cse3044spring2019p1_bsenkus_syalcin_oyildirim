@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.buraksergenozge.coursediary.Data.Assignment;
+import com.buraksergenozge.coursediary.Data.User;
 import com.buraksergenozge.coursediary.R;
 
 import java.util.Objects;
@@ -24,9 +27,9 @@ public class SettingsFragment extends DialogFragment implements View.OnClickList
     private Spinner remindAssignmentsTimeSpinner;
     private EditText remindAssignmentsValue_ET;
     public static final String tag = "settingsFragment";
-    private static final String ASSIGNMENT_REMIND_VALUE = "assignmentRemindValue";
+    public static final String ASSIGNMENT_REMIND_VALUE = "assignmentRemindValue";
     private static int assignmentRemindValue;
-    private static final String ASSIGNMENT_REMIND_TIME_TYPE = "assignmentRemindTimeType";
+    public static final String ASSIGNMENT_REMIND_TIME_TYPE = "assignmentRemindTimeType";
     private static int assignmentRemindTimeType;
 
     @Override
@@ -78,7 +81,7 @@ public class SettingsFragment extends DialogFragment implements View.OnClickList
         String valueString = remindAssignmentsValue_ET.getText().toString();
         if (valueString.equals("") || valueString.length() > 2) {
             assignmentRemindValue = 1;
-            Toast.makeText(getContext(), "Ödev hatırlatma değeri 1 olarak kaydedildi!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.assignment_reminder_value_warning), Toast.LENGTH_SHORT).show();
         }
         else
             assignmentRemindValue = Integer.parseInt(valueString);
@@ -88,5 +91,7 @@ public class SettingsFragment extends DialogFragment implements View.OnClickList
         editor.putInt(ASSIGNMENT_REMIND_VALUE, assignmentRemindValue);
         editor.putInt(ASSIGNMENT_REMIND_TIME_TYPE, assignmentRemindTimeType);
         editor.apply();
+        for (Assignment assignment: User.getActiveAssignments())
+            assignment.updateNotificationTime((AppCompatActivity) getActivity(), false);
     }
 }

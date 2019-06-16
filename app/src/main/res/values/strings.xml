@@ -148,4 +148,7 @@
         <item>@string/hours</item>
         <item>@string/days</item>
     </string-array>
+    <string name="notification_assignment_title">Assignment Reminder</string>
+    <string name="notification_assignment_message">Assignment %s has %s left to deadline!</string>
+    <string name="assignment_reminder_value_warning">Assignment reminder value saved as 1!</string>
 </resources>

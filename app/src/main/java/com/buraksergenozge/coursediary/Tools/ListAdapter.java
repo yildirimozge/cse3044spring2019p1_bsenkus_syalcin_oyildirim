@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.buraksergenozge.coursediary.Data.Assignment;
 import com.buraksergenozge.coursediary.Data.Course;
 import com.buraksergenozge.coursediary.Data.CourseHour;
+import com.buraksergenozge.coursediary.Data.GradingSystem;
 import com.buraksergenozge.coursediary.Data.Semester;
 import com.buraksergenozge.coursediary.R;
 
@@ -58,9 +59,11 @@ public class ListAdapter<T> extends BaseAdapter {
         else if (currentItem instanceof Course)
             listItem_IV.setImageResource(R.drawable.ic_class_green_36dp);
         else if (currentItem instanceof Assignment)
-            listItem_IV.setImageResource(R.drawable.ic_assignment_gray_36dp);
+            listItem_IV.setImageResource(R.drawable.ic_assignment_green_36dp);
         else if (currentItem instanceof CourseHour)
             listItem_IV.setImageResource(R.drawable.ic_schedule_gray_36dp);
+        else if (currentItem instanceof GradingSystem)
+            listItem_IV.setImageResource(R.drawable.ic_assignment_turned_in_green_36dp);
         listItemSideText_TV.setVisibility(View.GONE);
         listItemAdditionalText_TV.setVisibility(View.GONE);
         return convertView;

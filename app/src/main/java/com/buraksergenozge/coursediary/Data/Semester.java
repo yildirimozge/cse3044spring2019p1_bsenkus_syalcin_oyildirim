@@ -18,6 +18,7 @@ import com.buraksergenozge.coursediary.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -113,6 +114,7 @@ public class Semester extends AppContent {
 
     public void integrateWithDB(Context context) {
         courses = CourseDiaryDB.getDBInstance(context).semesterDAO().getAllCoursesOfSemester(this);
+        Collections.sort(courses);
     }
 
     public long getNumberOfDaysRemaining() {

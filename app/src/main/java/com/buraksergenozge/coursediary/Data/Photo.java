@@ -154,7 +154,7 @@ public class Photo extends AppContent{
 
     @Override
     public void deleteOperation(AppCompatActivity activity) {
-        ((CourseHour)((MainScreen)activity).getVisibleFragment().appContent).getPhotos().remove(this);
+        courseHour.getPhotos().remove(this);
         file.delete();
     }
 
