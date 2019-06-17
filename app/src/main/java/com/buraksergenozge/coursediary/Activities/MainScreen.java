@@ -51,8 +51,7 @@ import com.buraksergenozge.coursediary.R;
 
 import java.util.Objects;
 
-public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener,
-        DialogInterface.OnClickListener {
+public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTabSelectedListener, View.OnClickListener, DialogInterface.OnClickListener {
     public static String activeDialog;
     private static String activeArchiveFragmentTag = ArchiveFragment.tag;
     private static String activeCourseFeedFragmentTag = CourseFeed.tag;
@@ -64,6 +63,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
     private static final int REQUEST_PERMISSION_CODE = 100;
     public static boolean mainCourseFeedReady = false;
     public static boolean mainArchiveReady = false;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
         addButton.setOnClickListener(this);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
-        ViewPager viewPager = findViewById(R.id.main_pager);
+        viewPager = findViewById(R.id.main_pager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -232,6 +232,7 @@ public class MainScreen extends AppCompatActivity implements TabLayout.BaseOnTab
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
         if (tab.getPosition() == 0)
             activeTabID = R.id.mainCourseFeedLayout;
         else if (tab.getPosition() == 1)
